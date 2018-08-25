@@ -1,0 +1,9 @@
+<fieldset>
+    <h3>{$item->caption}<span class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</span></h3>
+    <div class="form-group form-group-checkbox" n:foreach="$item->items as $key=>$_item">
+        <div class="checkbox-wrap">
+            {input $item:$key}
+            {label $item:$key}{$_item}{/label}
+        </div>
+    </div>
+</fieldset>

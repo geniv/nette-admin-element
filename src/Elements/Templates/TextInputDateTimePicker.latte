@@ -1,0 +1,28 @@
+<div class="form-group form-group-datetime">
+    {label $item/}
+    {input $item, class=>"form-element"}
+    <div class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</div>
+</div>
+
+{*
+//TODO dodelat textove elementy na vlozeni multidat!
+<div class="form-group form-group-datetimerange">
+    <label for="frm-formAddEdit-kovcpokvcbkoc">Datum a cas rozsah</label>
+    <input type="text" name="kovcpokvcbkoc" id="frm-formAddEdit-kovcpokvcbkoc" class="form-element">
+</div>
+
+<div class="form-group form-group-daterange">
+    <label for="frm-formAddEdit-bxcnbcxjkobxcko">Datum rozsah</label>
+    <input type="text" name="bxcnbcxjkobxcko" id="frm-formAddEdit-bxcnbcxjkobxcko" class="form-element">
+</div>
+
+<div class="form-group form-group-datearray">
+    <label for="frm-formAddEdit-xcbcxbxcbxcvc">Pole datumu</label>
+    <input type="text" name="xcbcxbxcbxcvc" id="frm-formAddEdit-xcbcxbxcbxcvc" class="form-element">
+</div>
+
+<div class="form-group form-group-datetimearray">
+    <label for="frm-formAddEdit-cxnbxckobcxko">Pole datumu a casu</label>
+    <input type="text" name="cxnbxckobcxko" id="frm-formAddEdit-cxnbxckobcxko" class="form-element">
+</div>
+*}

@@ -1,0 +1,59 @@
+{*navigace:<br>*}
+{*{foreach $form->getGroups() as $group}*}
+    {*<a href="{link this}#{_$group->getOption('label')|webalize}">{_$group->getOption('label')}</a><br>*}
+{*{/foreach}*}
+
+{*<div n:foreach="$form->getGroups() as $group"{if $group->getOption('label')} id="{_$group->getOption('label')|webalize}"{/if} class="admin-form-configure-fieldset{if $iterator->last} admin-form-configure-fieldset-last{/if}">*}
+    {*<h3 n:if="$group->getOption('label')">{_$group->getOption('label')}</h3>*}
+    {foreach $form->getControls() as $item}
+        {if $item->getOption('rendered')!==null}
+            {*({get_class($item)})*}
+            {switch get_class($item)}
+                {case 'Nette\Forms\Controls\TextInput'}
+                    {include "Elements/Templates/TextInput.latte", item=>$item}
+                {case 'Nette\Forms\Controls\SelectBox'}
+                    {include "Elements/Templates/SelectBox.latte", item=>$item}
+                {case 'Nette\Forms\Controls\MultiSelectBox'}
+                    {include "Elements/Templates/SelectBox.latte", item=>$item}
+                {case 'Nette\Forms\Controls\Checkbox'}
+                    {include "Elements/Templates/Checkbox.latte", item=>$item}
+                {case 'Nette\Forms\Controls\CheckboxList'}
+                    {include "Elements/Templates/CheckboxList.latte", item=>$item}
+                {case 'Nette\Forms\Controls\RadioList'}
+                    {include "Elements/Templates/RadioList.latte", item=>$item}
+                {*{case 'Nette\Forms\Controls\SubmitButton'}*}
+                    {*{include "Elements/Templates/SubmitButton.latte", item=>$item}*}
+                {case 'Form\HrefLabelInput'}
+                    {include "Elements/Templates/HrefLabelInput.latte", item=>$item}
+                {*{default}*}
+                    {*{label $item/}*}
+                    {*{input $item}*}
+            {/switch}
+        {/if}
+    {/foreach}
+
+    {*special foreach for button*}
+    <nav class="btn-wrap">
+        {foreach $form->getControls() as $item}
+            {switch get_class($item)}
+                {case 'Nette\Forms\Controls\SubmitButton'}
+                    {include "Elements/Templates/SubmitButton.latte", item=>$item}
+                {*{default}*}
+            {/switch}
+        {/foreach}
+    </nav>
+{*</div>*}
+
+{*special foreach for hidden*}
+{foreach $form->getControls() as $name=>$item}
+    {switch get_class($item)}
+        {case 'Nette\Forms\Controls\HiddenField'}
+            {*{label $item/}*}
+            {input $item}
+        {*{default}*}
+    {/switch}
+{/foreach}
+
+{*<ul class="errors" n:if="$form->hasErrors()">*}
+    {*<li n:foreach="$form->errors as $error">{$error}</li>*}
+{*</ul>*}

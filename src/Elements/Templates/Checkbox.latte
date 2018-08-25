@@ -1,0 +1,7 @@
+<div class="form-group form-group-checkbox{$item->getOption('hint')?' form-group-helpbox'}">
+    <div class="checkbox-wrap">
+        <input type="checkbox" n:name="$item" n:confirm="$presenter->translator->translate($item->getOption('confirm'))">
+        <label n:name="$item">{_$item->caption}</label>
+    </div>
+    <div class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</div>
+</div>

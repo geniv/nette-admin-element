@@ -1,0 +1,5 @@
+<div class="form-group form-group-select">
+    {label $item/}
+    {input $item, class=>"form-element".($item->getOption('image')?' image-in-option'), placeholder=>method_exists($item, 'getPrompt')?$item->getPrompt():null}
+    <div class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</div>
+</div>

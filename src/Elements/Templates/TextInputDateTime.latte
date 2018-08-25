@@ -1,0 +1,13 @@
+<div class="form-group form-group-label">
+    {label $item/}
+    {input $item, class=>"form-content"}
+    <div class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</div>
+</div>
+
+{*
+<div class="form-group form-group-datetime">
+    {label $item/}
+    {input $item, class=>"form-element"}
+    <div class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</div>
+</div>
+*}

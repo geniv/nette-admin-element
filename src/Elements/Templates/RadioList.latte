@@ -1,0 +1,9 @@
+<fieldset>
+    <h3>{$item->caption}<span class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</span></h3>
+    <div class="form-group form-group-radio" n:foreach="$item->items as $key=>$_item">
+        <div class="radio-wrap">
+            {input $item:$key}
+            {label $item:$key}{$_item}{/label}
+        </div>
+    </div>
+</fieldset>
