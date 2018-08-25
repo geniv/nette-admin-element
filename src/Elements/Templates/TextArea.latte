@@ -1,0 +1,5 @@
+<div class="form-group form-group-textarea">
+    {label $item/}
+    {input $item, rows=>4, class=>"form-element"}
+    <div class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</div>
+</div>

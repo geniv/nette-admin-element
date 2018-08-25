@@ -1,0 +1,18 @@
+<div class="form-group form-group-file">
+    <label>
+        {input $item}
+        <span class="file-element-label" n:if="$item->caption">{_$item->caption}</span>
+        <span class="file-element-inner">
+            <span class="file-element-desc">{$item->getOption('textbutton')}</span>
+            <span class="file-element-name" data-drop-error-message="{_'upload-element-error-one-file'}"></span>
+        </span>
+        <span class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</span>
+    </label>
+</div>
+
+<div n:class="!$item->getOption('image') && !$item->getOption('content') ? hidden, group-custom-contents">
+    <img n:if="$item->getOption('image')" class="before-upload-image-preview hidden">
+    {if $item->getOption('content')}
+        <a n:tag-if="$item->getOption('image')" href="{$item->getOption('path')}" target="_blank">{$item->getOption('content')}</a>
+    {/if}
+</div>

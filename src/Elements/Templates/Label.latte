@@ -1,0 +1,5 @@
+<div class="form-group form-group-label">
+    {label $item/}
+    {input $item, class=>"form-content"}
+    <div class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</div>
+</div>

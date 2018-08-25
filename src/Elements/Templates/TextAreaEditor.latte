@@ -1,0 +1,29 @@
+{if $item->getOption('fileslist') && $user->isAllowed('FileSystem', 'default')}
+    <div class="form-group form-group-editor form-group-fileslist">
+        {label $item/}
+        <div class="editor-fileslist-wrap">
+            <div class="col-editor">
+                {input $item, rows=>4}
+            </div>
+            <div class="col-fileslist">
+                <ul class="files-list">
+                    <li n:foreach="$item->getOption('list') as $file" draggable="true">
+                        <div class="data-source" data-file-type="{if $item->getOption('isImage')($file)}image{else}file{/if}" data-file-name="{$file->getBasename()}">
+                            <span>
+                                <img src="{if $item->getOption('isImage')($file)}{thumb $item->getOption('path'), $file->getBasename(), 280, 140}{else}www/images/file-image.svg{/if}" alt="{$file->getBasename()}">
+                            </span>
+                            <b>{$file->getBasename()}</b>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</div>
+    </div>
+{else}
+    <div class="form-group form-group-editor">
+        {label $item/}
+        {input $item, rows=>4}
+        <div class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</div>
+    </div>
+{/if}

@@ -1,0 +1,142 @@
+{*{dump $form->getComponents()}*}
+{*{dump $form->getControls()}*}
+{*{dump $form->getGroups()}*}
+
+{php $startGroup=null; $endGroup=false; $currentGroup=null}
+{foreach $form->getControls() as $name=>$item}
+    {var $configure=$listItems[$name]??null}
+
+    {foreach $form->getGroups() as $group}
+        {if in_array($item, $group->getControls(), true)}
+            {if $currentGroup!=$group->getOption('label')}
+                {php $startGroup=$group->getOption('label'); $currentGroup=$startGroup}
+            {/if}
+
+            {if $currentGroup && array_search($item, $group->getControls())==count($group->getControls())-1}
+                {php $endGroup=true; $currentGroup=null}
+            {/if}
+        {/if}
+    {/foreach}
+
+    {if $startGroup}
+        <div class="form-group-elements">
+        {php $startGroup=null}
+    {/if}
+
+    {*({$name} - {$item->getOption('type')})*}
+    {switch $item->getOption('type')}
+        {case checkbox}
+            {*({$configure['type']})*}
+            {switch $configure['type']}
+                {case checkboxlist}
+                    {include "Elements/Templates/CheckboxList.latte", item=>$item}
+            {default}
+                {*checkbox, foreigncheckbox*}
+                {include "Elements/Templates/Checkbox.latte", item=>$item}
+            {/switch}
+        {case label}
+            {*({$configure['type']})*}
+            {switch $configure['type']}
+                {case date}
+                    {include "Elements/Templates/TextInputDateTime.latte", item=>$item}
+                {case time}
+                    {include "Elements/Templates/TextInputDateTime.latte", item=>$item}
+                {case datetime}
+                    {include "Elements/Templates/TextInputDateTime.latte", item=>$item}
+                {case foreigndatetime}
+                    {include "Elements/Templates/TextInputDateTime.latte", item=>$item}
+                {default}
+                    {*label, foreignlabel*}
+                    {include "Elements/Templates/Label.latte", item=>$item}
+            {/switch}
+        {case text}
+            {*({$configure['type']})*}
+            {switch $configure['type']}
+                {case password}
+                    {include "Elements/Templates/TextInputPassword.latte", item=>$item}
+                {case datepicker}
+                    {include "Elements/Templates/TextInputDatePicker.latte", item=>$item}
+                {case timepicker}
+                    {include "Elements/Templates/TextInputTimePicker.latte", item=>$item}
+                {case datetimepicker}
+                    {include "Elements/Templates/TextInputDateTimePicker.latte", item=>$item}
+                {case foreigndatetimepicker}
+                    {include "Elements/Templates/TextInputDateTimePicker.latte", item=>$item}
+                {default}
+                    {*text, foreigntext*}
+                    {include "Elements/Templates/TextInput.latte", item=>$item}
+            {/switch}
+        {case radio}
+            {include "Elements/Templates/RadioList.latte", item=>$item}
+        {case select}
+            {*({$configure['type']})*}
+            {*select, fkselect, foreignselect*}
+            {include "Elements/Templates/SelectBox.latte", item=>$item}
+        {case textarea}
+            {*({$configure['type']})*}
+            {switch $configure['type']}
+                {case textarea}
+                    {include "Elements/Templates/TextArea.latte", item=>$item}
+                {case foreigntextarea}
+                    {include "Elements/Templates/TextArea.latte", item=>$item}
+                {case editor}
+                    {include "Elements/Templates/TextAreaEditor.latte", item=>$item}
+                {case foreigneditor}
+                    {include "Elements/Templates/TextAreaEditor.latte", item=>$item}
+                {*{default}*}
+            {/switch}
+        {case file}
+            {*({$configure['type']})*}
+            {switch $configure['type']}
+                {case upload}
+                    <h3>{_'content-addedit-upload-h3'}</h3>
+                    {include "Elements/Templates/UploadControl.latte", item=>$item}
+                {case foreignupload}
+                    <h3>{_'content-addedit-upload-h3'}</h3>
+                    {include "Elements/Templates/UploadControl.latte", item=>$item}
+                {case uploadimage}
+                    <h3>{_'content-addedit-uploadimage-h3'}</h3>
+                    {include "Elements/Templates/UploadControl.latte", item=>$item}
+                {case foreignuploadimage}
+                    <h3>{_'content-addedit-uploadimage-h3'}</h3>
+                    {include "Elements/Templates/UploadControl.latte", item=>$item}
+                {default}
+                    {include "Elements/Templates/UploadControl.latte", item=>$item}
+            {/switch}
+        {*{case button}*}
+            {*{include "Elements/Templates/SubmitButton.latte", item=>$item}*}
+        {*{default}*}
+            {*{$name}*}
+            {*{label $item/}*}
+            {*{input $item}*}
+    {/switch}
+
+    {if $endGroup}
+        </div>
+        {php $endGroup=null}
+    {/if}
+{/foreach}
+
+{*special foreach for button*}
+<nav class="btn-wrap">
+    {foreach $form->getControls() as $name=>$item}
+        {switch $item->getOption('type')}
+            {case button}
+                 {include "Elements/Templates/SubmitButton.latte", item=>$item}
+            {*{default}*}
+        {/switch}
+    {/foreach}
+</nav>
+
+{*special foreach for hidden*}
+{foreach $form->getControls() as $name=>$item}
+    {switch $item->getOption('type')}
+        {case hidden}
+            {input $item}
+        {*{default}*}
+    {/switch}
+{/foreach}
+
+{*<ul class="errors" n:if="$form->hasErrors()">*}
+    {*<li n:foreach="$form->errors as $error">{$error}</li>*}
+{*</ul>*}
