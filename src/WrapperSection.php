@@ -573,7 +573,7 @@ class WrapperSection
             ->where(['t.table_schema' => $this->connection->getConfig('database')]);    // load by table schema
 
         if ($this->isTestSQL()) {
-            $result->test();
+            $this->processTestSQL($result);
         }
         return $result->fetchAssoc('table_name');
     }
@@ -587,7 +587,7 @@ class WrapperSection
 //            ->where(['tc.table_name' => $table]);
 //
 //        if ($this->isTestSQL()) {
-//            $result->test();
+//            $this->processTestSQL($result);
 //        }
 //        return $result->fetchPairs('constraint_name', 'constraint_type');
 //    }
@@ -605,7 +605,7 @@ class WrapperSection
 //                ->where(['c.table_name' => $table]);
 //
 //            if ($this->isTestSQL()) {
-//                $result->test();
+//                $this->processTestSQL($result);
 //            }
 //            self::$databaseListColumnsArray = $result->fetchAssoc('column_name');
 //        }
@@ -639,7 +639,7 @@ class WrapperSection
             }
 
             if ($this->isTestSQL()) {
-                $result->test();
+                $this->processTestSQL($result);
             }
 //            self::$staticDatabaseTableFk[$tableName] = $result->fetchAssoc('constraint_name');
 //        }
@@ -679,6 +679,18 @@ class WrapperSection
     private function isTestSQL(): bool
     {
         return $this->configureSectionArray['database']['testsql'] ?? false;
+    }
+
+
+    /**
+     * Process test SQL.
+     *
+     * @internal
+     * @param Fluent $fluent
+     */
+    private function processTestSQL(Fluent $fluent)
+    {
+        Debugger::log((string) $fluent, 'test-sql');
     }
 
 
@@ -885,9 +897,12 @@ class WrapperSection
         }
 
         $result = $this->getSource()
-            ->where([$pk => $id])
-            ->fetch();
-        return (array) ($result ?: []);
+            ->where([$pk => $id]);
+
+        if ($this->isTestSQL()) {
+            $this->processTestSQL($result);
+        }
+        return (array) ($result->fetch() ?: []);
     }
 
 
@@ -1000,7 +1015,7 @@ class WrapperSection
             }
 
             if ($this->isTestSQL()) {
-                $result->test();
+                $this->processTestSQL($result);
             }
             self::$staticSource = $result;
         }
@@ -1763,7 +1778,7 @@ class WrapperSection
                 // separate value can be []
                 $res = $this->connection->insert($fkPk['referenced_table_name'], $separateValues);
                 if ($this->isTestSQL()) {
-                    $res->test();
+                    $this->processTestSQL($res);
                 }
 
                 $id = $res->execute(Dibi::IDENTIFIER);
@@ -1789,7 +1804,7 @@ class WrapperSection
                     if (!$id) {
                         $res = $this->connection->insert($fkWhere['referenced_table_name'], $separateValues);
                         if ($this->isTestSQL()) {
-                            $res->test();
+                            $this->processTestSQL($res);
                         }
 
                         // set new id for M: relationship
@@ -1807,7 +1822,7 @@ class WrapperSection
             // main save
             $res = $this->connection->insert($this->getDatabaseTableName(), $col);
             if ($this->isTestSQL()) {
-                $res->test();
+                $this->processTestSQL($res);
                 $this->connection->rollback();
                 die;
             }
@@ -1872,7 +1887,7 @@ class WrapperSection
                     $res = $this->connection->update($fkPk['referenced_table_name'], $separateValues)
                         ->where([$fkPk['referenced_column_name'] => $id]);
                     if ($this->isTestSQL()) {
-                        $res->test();
+                        $this->processTestSQL($res);
                     }
                     $result += $res->execute(Dibi::AFFECTED_ROWS);
                 }
@@ -1894,7 +1909,7 @@ class WrapperSection
                     $res = $this->connection->update($fkWhere['referenced_table_name'], $separateValues)
                         ->where([$fkWhere['referenced_column_name'] => $id]);
                     if ($this->isTestSQL()) {
-                        $res->test();
+                        $this->processTestSQL($res);
                     }
 
                     $result += $res->execute(Dibi::AFFECTED_ROWS);
@@ -1928,7 +1943,7 @@ class WrapperSection
             }
 
             if ($this->isTestSQL()) {
-                $res->test();
+                $this->processTestSQL($res);
                 $this->connection->rollback();
                 die;
             }
@@ -1994,7 +2009,7 @@ class WrapperSection
                         ->where([$fkPk['referenced_column_name'] => $fk[$fkPk['referenced_column_name']]]);
 
                     if ($this->isTestSQL()) {
-                        $res->test();
+                        $this->processTestSQL($res);
                     }
 
                     $result += $res->execute(Dibi::AFFECTED_ROWS);
@@ -2009,7 +2024,7 @@ class WrapperSection
             }
 
             if ($res && $this->isTestSQL()) {
-                $res->test();
+                $this->processTestSQL($res);
                 $this->connection->rollback();
                 die;
             }
@@ -2071,7 +2086,7 @@ class WrapperSection
         $this->cleanCache();
 
         if ($this->isTestSQL()) {
-            $result->test();
+            $this->processTestSQL($result);
             die;
         }
         return $result->execute();

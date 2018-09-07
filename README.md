@@ -15,7 +15,8 @@ or
 require:
 ```json
 "php": ">=7.0.0",
-"nette/nette": ">=2.4.0"
+"nette/nette": ">=2.4.0",
+"dibi/dibi": ">=3.0.0"
 ```
 
 Include in application
