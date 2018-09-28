@@ -2,7 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use Admin\App\Model\ConfigureSection;
+use AdminElement\IConfigureSection;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
 
@@ -18,7 +18,7 @@ class ForeignTextElement extends AbstractTextElement
     // define general constant
     const
         DESCRIPTION = 'foreign text from table by FK for M:N',
-        USAGE = [ConfigureSection::PRESENTER_FOREIGN];
+        USAGE = [IConfigureSection::PRESENTER_FOREIGN];
 
 
     /**

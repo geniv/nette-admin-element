@@ -22,6 +22,12 @@ interface IConfigureSection
         //        self::PRESENTER_TREE    => 'ContentTree',     // tree     //TODO TREE jeste nefunguje!
     ];
 
+    // configure block for url
+    const
+        BLOCK_MAIN = 'main',
+//        BLOCK_LINK = 'link',
+        BLOCK_DATABASE = 'database';
+
 
     /**
      * Get list section.

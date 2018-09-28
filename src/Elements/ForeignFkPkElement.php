@@ -2,7 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use Admin\App\Model\ConfigureSection;
+use AdminElement\IConfigureSection;
 use AdminElement\WrapperSection;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
@@ -19,7 +19,7 @@ class ForeignFkPkElement extends AbstractElement
     // define general constant
     const
         DESCRIPTION = 'FK PK (:N)',
-        USAGE = [ConfigureSection::PRESENTER_FOREIGN],
+        USAGE = [IConfigureSection::PRESENTER_FOREIGN],
         ACTION_TYPES = [WrapperSection::ACTION_ADD, WrapperSection::ACTION_EDIT];
 
 

@@ -3,6 +3,7 @@
 namespace AdminElement\Bridges\Nette;
 
 use AdminElement\AdminElement;
+use AdminElement\Elements\ArchiveElement;
 use AdminElement\Elements\CheckboxElement;
 use AdminElement\Elements\DateElement;
 use AdminElement\Elements\DatePickerElement;
@@ -10,6 +11,7 @@ use AdminElement\Elements\DateTimeElement;
 use AdminElement\Elements\DateTimePickerElement;
 use AdminElement\Elements\EditorElement;
 use AdminElement\Elements\FkSelectElement;
+use AdminElement\Elements\ForeignArchiveElement;
 use AdminElement\Elements\ForeignCheckboxElement;
 use AdminElement\Elements\ForeignDateTimeElement;
 use AdminElement\Elements\ForeignDateTimePickerElement;
@@ -65,6 +67,7 @@ class Extension extends CompilerExtension
             'datetimepicker'        => DateTimePickerElement::class,
             'checkbox'              => CheckboxElement::class,
             'position'              => PositionElement::class,
+            'archive'               => ArchiveElement::class,
             'upload'                => UploadElement::class,
             'uploadimage'           => UploadImageElement::class,
             'radio'                 => RadioElement::class,
@@ -84,6 +87,7 @@ class Extension extends CompilerExtension
             'foreigndatetimepicker' => ForeignDateTimePickerElement::class,
             'foreigncheckbox'       => ForeignCheckboxElement::class,
             'foreignposition'       => ForeignPositionElement::class,
+            'foreignarchive'        => ForeignArchiveElement::class,
         ],
     ];
 

@@ -7,15 +7,15 @@ use Nette\Forms\Container;
 
 
 /**
- * Class ForeignPositionElement
+ * Class ForeignArchiveElement
  *
  * @author  geniv
  * @package AdminElement\Elements
  */
-class ForeignPositionElement extends PositionElement
+class ForeignArchiveElement extends ArchiveElement
 {
     const
-        DESCRIPTION = 'foreign position element from table by FK for M:N',
+        DESCRIPTION = 'foreign archive/deleted element for archive row from table by FK for M:N',
         USAGE = [IConfigureSection::PRESENTER_FOREIGN];
 
 

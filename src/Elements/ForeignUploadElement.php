@@ -2,8 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use Admin\App\Model\ConfigureSection;
-use Nette\Application\UI\Form;
+use AdminElement\IConfigureSection;
 use Nette\Forms\Container;
 
 
@@ -18,7 +17,7 @@ class ForeignUploadElement extends UploadElement
     // define general constant
     const
         DESCRIPTION = 'foreign upload element by FK for M:N',
-        USAGE = [ConfigureSection::PRESENTER_FOREIGN];
+        USAGE = [IConfigureSection::PRESENTER_FOREIGN];
 
 
     /**
