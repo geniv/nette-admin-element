@@ -2,7 +2,6 @@
 
 namespace AdminElement;
 
-use Admin\App\Model\ConfigureSection;
 use AdminElement\Elements\AbstractElement;
 use AdminElement\Elements\PositionElement;
 use dibi;
@@ -46,7 +45,7 @@ class WrapperSection
     const
         DEFAULT_ORDER_TYPES = [null => 'NULL', 'asc' => 'ASC', 'desc' => 'DESC',];
 
-    /** @var ConfigureSection */
+    /** @var IConfigureSection */
     private $configureSection;
     /** @var AdminElement */
     private $adminElement;
@@ -60,11 +59,8 @@ class WrapperSection
     private $actionType;
 
 
-    // // // removed
-
 
     // // // removed
-
 
     //TODO naimplementovat tyto promenne?!!
     //FIMXE will be removed!!! - vyhodit indexy z superglobalniho pole!!
@@ -83,11 +79,8 @@ class WrapperSection
 //    private $container;
     //FIMXE will be removed!!!
 
-
     // // // removed
 
-
-    // // // removed
 
 
     /** @var string */
@@ -109,13 +102,13 @@ class WrapperSection
     /**
      * WrapperSection constructor.
      *
-     * @param ConfigureSection $configureSection
-     * @param AdminElement     $adminElement
-     * @param Container        $container
-     * @param Connection       $connection
-     * @param IStorage         $storage
+     * @param IConfigureSection $configureSection
+     * @param AdminElement      $adminElement
+     * @param Container         $container
+     * @param Connection        $connection
+     * @param IStorage          $storage
      */
-    public function __construct(ConfigureSection $configureSection, AdminElement $adminElement, Container $container, Connection $connection, IStorage $storage)
+    public function __construct(IConfigureSection $configureSection, AdminElement $adminElement, Container $container, Connection $connection, IStorage $storage)
     {
         $this->configureSection = $configureSection;            // load configure section
         $this->adminElement = $adminElement;                    // load admin element

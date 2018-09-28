@@ -21,4 +21,71 @@ interface IConfigureSection
         self::PRESENTER_FOREIGN => 'ContentForeign',  // M:N
         //        self::PRESENTER_TREE    => 'ContentTree',     // tree     //TODO TREE jeste nefunguje!
     ];
+
+
+    /**
+     * Get list section.
+     *
+     * @return array
+     */
+    public function getListSection(): array;
+
+
+    /**
+     * Get section by id.
+     *
+     * @param string $id
+     * @return array
+     */
+    public function getSectionById(string $id): array;
+
+
+    /**
+     * Get list section by group.
+     *
+     * @param string $idGroup
+     * @return array
+     */
+    public function getListSectionByGroup(string $idGroup): array;
+
+
+    /**
+     * Save section part.
+     *
+     * @param string      $id
+     * @param string|null $part
+     * @param array       $values
+     * @return string
+     */
+    public function saveSectionPart(string $id, string $part = null, array $values): string;
+
+
+    /**
+     * Delete section part.
+     *
+     * @param string $id
+     * @param string $part
+     * @param string $idPart
+     * @return string
+     */
+    public function deleteSectionPart(string $id, string $part, string $idPart): string;
+
+
+    /**
+     * Delete section.
+     *
+     * @param string $id
+     * @return string
+     */
+    public function deleteSection(string $id): string;
+
+
+    /**
+     * Save section sortable.
+     *
+     * @param string|null $id
+     * @param array       $values
+     * @return int
+     */
+    public function saveSectionSortable(string $id = null, array $values): int;
 }
