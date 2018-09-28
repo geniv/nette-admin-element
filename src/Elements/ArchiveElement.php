@@ -15,7 +15,7 @@ class ArchiveElement extends HiddenElement
 {
     const
         DESCRIPTION = 'archive/deleted element for archive row in 1:N table',
-        ACTION_TYPES = [WrapperSection::ACTION_LIST, WrapperSection::ACTION_DELETE];
+        ACTION_TYPES = [];
 
 
     public function preProcessUpdateValues(array $values)
