@@ -6,9 +6,9 @@ use Nette\Application\UI\Form;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
 use Nette\Forms\Container;
+use Nette\Http\FileUpload;
 use Nette\Utils\Finder;
 use Nette\Utils\Html;
-use Thumbnail\Thumbnail;
 
 
 /**
@@ -259,7 +259,7 @@ class UploadElement extends AbstractElement
     public function preProcessUpdateValues(array $values)
     {
         $file = $values[$this->idElement] ?? null;
-        if ($file && $file->isOk()) {
+        if ($file && ($file instanceof FileUpload) && $file->isOk()) {
 //            $sanitizedName = date('Y-m-d-H-i-s') . '-' . $this->idElement . '-' . $file->getSanitizedName();
             $pathInfo = pathinfo($file->getSanitizedName());
             $sanitizedName = $pathInfo['filename'] . '-' . $this->idElement . '-' . date('Y-m-d-H-i-s') . (isset($pathInfo['extension']) ? '.' . $pathInfo['extension'] : '');
@@ -271,7 +271,7 @@ class UploadElement extends AbstractElement
 
             $values[$this->idElement] = $sanitizedName;
         } else {
-            if ($file && $file->getError()) {
+            if ($file && ($file instanceof FileUpload) && $file->getError()) {
 //                dump($file->getError());
 //                $phpFileUploadErrors = array(
 //                    0 => 'There is no error, the file uploaded with success',
@@ -303,7 +303,7 @@ class UploadElement extends AbstractElement
             }
 
             // nullable empty file
-            if ((!$file || !$file->hasFile()) && !$values[$this->idElement . 'select']) {
+            if ((!$file || !(($file instanceof FileUpload) && $file->hasFile())) && !$values[$this->idElement . 'select']) {
                 $values[$this->idElement] = null;
             }
         }
