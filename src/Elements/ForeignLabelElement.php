@@ -2,7 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use Admin\App\Model\ConfigureSection;
+use AdminElement\IConfigureSection;
 use AdminElement\WrapperSection;
 use Nette\Forms\Container;
 
@@ -17,7 +17,7 @@ class ForeignLabelElement extends LabelElement
 {
     const
         DESCRIPTION = 'foreign label element from table by FK for M:N',
-        USAGE = [ConfigureSection::PRESENTER_FOREIGN],
+        USAGE = [IConfigureSection::PRESENTER_FOREIGN],
         ACTION_TYPES = [WrapperSection::ACTION_EDIT];
 
 

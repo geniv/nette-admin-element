@@ -2,7 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use Admin\App\Model\ConfigureSection;
+use AdminElement\IConfigureSection;
 use Nette\Forms\Container;
 
 
@@ -17,7 +17,7 @@ class ForeignUploadImageElement extends AbstractUploadImageElement
     // define general constant
     const
         DESCRIPTION = 'foreign upload image element by FK for M:N',
-        USAGE = [ConfigureSection::PRESENTER_FOREIGN];
+        USAGE = [IConfigureSection::PRESENTER_FOREIGN];
 
 
     /**

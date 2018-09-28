@@ -2,7 +2,6 @@
 
 namespace AdminElement\Elements;
 
-use AdminElement\WrapperSection;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
 

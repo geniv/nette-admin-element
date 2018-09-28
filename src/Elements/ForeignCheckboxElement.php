@@ -2,7 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use Admin\App\Model\ConfigureSection;
+use AdminElement\IConfigureSection;
 use Nette\Forms\Container;
 
 
@@ -16,7 +16,7 @@ class ForeignCheckboxElement extends CheckboxElement
 {
     const
         DESCRIPTION = 'foreign checkbox element for bool state from table by FK for M:N',
-        USAGE = [ConfigureSection::PRESENTER_FOREIGN];
+        USAGE = [IConfigureSection::PRESENTER_FOREIGN];
 
 
     /**

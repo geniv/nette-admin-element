@@ -2,8 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use Admin\App\Model\ConfigureSection;
-use AdminElement\WrapperSection;
+use AdminElement\IConfigureSection;
 use Nette\Forms\Container;
 
 
@@ -17,7 +16,7 @@ class ForeignHiddenElement extends HiddenElement
 {
     const
         DESCRIPTION = 'foreign hidden element for transport plain text from table by FK for M:N',
-        USAGE = [ConfigureSection::PRESENTER_FOREIGN];
+        USAGE = [IConfigureSection::PRESENTER_FOREIGN];
 
 
     /**

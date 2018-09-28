@@ -2,7 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use Admin\App\Model\ConfigureSection;
+use AdminElement\IConfigureSection;
 use Nette\Forms\Container;
 
 
@@ -17,7 +17,7 @@ class ForeignSelectElement extends AbstractFkSelectElement
     // define general constant
     const
         DESCRIPTION = 'dynamic select in M:N [+:M in extra] for FK foreign table',
-        USAGE = [ConfigureSection::PRESENTER_FOREIGN];
+        USAGE = [IConfigureSection::PRESENTER_FOREIGN];
 
 
     /**

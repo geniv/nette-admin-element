@@ -2,7 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use Admin\App\Model\ConfigureSection;
+use AdminElement\IConfigureSection;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
 use AdminElement\WrapperSection;
@@ -22,7 +22,7 @@ abstract class AbstractElement implements IElement
     // define general constant
     const
         DESCRIPTION = '',
-        USAGE = [ConfigureSection::PRESENTER_TABLE, ConfigureSection::PRESENTER_FOREIGN, ConfigureSection::PRESENTER_TREE],
+        USAGE = [IConfigureSection::PRESENTER_TABLE, IConfigureSection::PRESENTER_FOREIGN, IConfigureSection::PRESENTER_TREE],
         ACTION_TYPES = WrapperSection::ACTION_TYPES;
 
     /** @var WrapperSection */

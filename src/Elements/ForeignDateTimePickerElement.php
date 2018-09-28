@@ -2,7 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use Admin\App\Model\ConfigureSection;
+use AdminElement\IConfigureSection;
 use Nette\Forms\Container;
 
 
@@ -16,7 +16,7 @@ class ForeignDateTimePickerElement extends DateTimePickerElement
 {
     const
         DESCRIPTION = 'foreign datetime picker for date and time from table by FK for M:N',
-        USAGE = [ConfigureSection::PRESENTER_FOREIGN];
+        USAGE = [IConfigureSection::PRESENTER_FOREIGN];
 
 
     /**
