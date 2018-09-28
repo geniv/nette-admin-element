@@ -9,6 +9,7 @@ use Nette\Forms\Container;
 use Nette\Http\FileUpload;
 use Nette\Utils\Finder;
 use Nette\Utils\Html;
+use Thumbnail\Thumbnail;
 
 
 /**
