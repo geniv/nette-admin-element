@@ -35,6 +35,7 @@ class WrapperSection
         ACTION_ADD = 'add',
         ACTION_EDIT = 'edit',
         ACTION_DELETE = 'delete',
+        ACTION_ARCHIVE = 'archive',
         ACTION_DETAIL = 'detail',
         ACTION_EMPTY = 'empty', //FIXME vyhodit tento typ!!
         ACTION_SORTABLE = 'sortable';
