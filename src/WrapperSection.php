@@ -59,7 +59,6 @@ class WrapperSection
     private $actionType;
 
 
-
     // // // removed
 
     //TODO naimplementovat tyto promenne?!!
@@ -80,7 +79,6 @@ class WrapperSection
     //FIMXE will be removed!!!
 
     // // // removed
-
 
 
     /** @var string */
@@ -1066,8 +1064,8 @@ class WrapperSection
         $configure = $abstractElement->getConfigure();
 
         if (isset($configure['foreign']) && $configure['foreign']) {
-            if ($this->configureSectionArray[ConfigureSection::FILE_SECTION_DATABASE_INDEX][$type] != $abstractElement->getIdElement()) {
-                $this->configureSection->saveSectionPart($this->configureSectionArray['id'], ConfigureSection::FILE_SECTION_DATABASE_INDEX, [$type => $abstractElement->getIdElement()]);
+            if ($this->configureSectionArray[IConfigureSection::FILE_SECTION_DATABASE_INDEX][$type] != $abstractElement->getIdElement()) {
+                $this->configureSection->saveSectionPart($this->configureSectionArray['id'], IConfigureSection::FILE_SECTION_DATABASE_INDEX, [$type => $abstractElement->getIdElement()]);
             }
         }
     }
