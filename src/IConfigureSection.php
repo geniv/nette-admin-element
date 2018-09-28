@@ -22,7 +22,12 @@ interface IConfigureSection
         //        self::PRESENTER_TREE    => 'ContentTree',     // tree     //TODO TREE jeste nefunguje!
     ];
 
-    // configure block for url
+    // block name for neon
+    const
+        FILE_SECTION_DATABASE_INDEX = 'database',
+        FILE_SECTION_ITEMS_INDEX = 'items';
+
+    // block name for url
     const
         BLOCK_MAIN = 'main',
 //        BLOCK_LINK = 'link',
