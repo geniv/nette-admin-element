@@ -899,6 +899,28 @@ class WrapperSection
 
 
     /**
+     * Get connection.
+     *
+     * @return Connection
+     */
+    public function getConnection(): Connection
+    {
+        return $this->connection;
+    }
+
+
+    /**
+     * Get cache.
+     *
+     * @return Cache
+     */
+    public function getCache(): Cache
+    {
+        return $this->cache;
+    }
+
+
+    /**
      * Get source.
      *
      * @param bool $singleton
@@ -917,53 +939,53 @@ class WrapperSection
             $orderDefault = [];
             $orderPosition = 1;
             foreach ($this->getItems() as $idItem => $item) {
+                $element = $this->getElement($idItem);
+
                 if (isset($item['foreign']) && $item['foreign']) {
                     $foreign = $this->databaseTableListFk[$item['foreign']];
-//FIXME postelovat pokud bude zlobit!
-
-//FIXME zjednodisit!! toto by melo jit napsat i jednim elementem ktery to nastavi!!!! via: ForeignFkPkWhereElement
 
 //                    if (isset($this->configureSectionArray['database']['fkwhere']) && in_array($idItem, $this->configureSectionArray['database']['fkwhere'])) {
-                    if (isset($this->configureSectionArray['database']['fkwhere']) && ($this->configureSectionArray['database']['fkwhere'] == $idItem || $this->configureSectionArray['database']['fkpk'] == $idItem)) {
-                        // detect fkpk or fkwhere
-                        $aliasTableName = $this->getDatabaseAliasName($foreign['referenced_table_name']);
-
-                        $result->select([$aliasTableName . '.' . $foreign['referenced_column_name'] => $idItem]);
-
-                        $result->rightJoin($foreign['referenced_table_name'])->as($aliasTableName)->on('[' . $aliasTableName . '].[' . $foreign['referenced_column_name'] . ']=[' . $this->getDatabaseAliasName($foreign['table_name']) . '].[' . $foreign['column_name'] . ']');
-
-                        // detect fkWhere element
-                        if ($this->configureSectionArray['database']['fkwhere'] == $idItem && isset($item['fkid']) && $item['fkid']) {
-                            // if not fkId set and default value is set
-                            if (!$this->fkId && isset($item['defaultvalue']) && $item['defaultvalue']) {
-                                $this->fkId = $item['defaultvalue'];  // set default value
-                            }
-
-                            // set default fkid for locale content
-                            if (isset($item['fkdefaultid']) && $item['fkdefaultid']) {
-                                if (!$this->fkId) {
-                                    $this->fkId = $item['fkdefaultid'];
-                                }
-                            }
-
-                            if (!$this->fkId && $item['fkidfirst']) {
-                                $cacheName = 'getSource-fkidfirst' . $idItem;
-                                $this->fkId = $this->cache->load($cacheName);
-                                if ($this->fkId === null) {
-                                    $this->fkId = $this->connection->select($foreign['referenced_column_name'])
-                                        ->from($foreign['referenced_table_name'])
-                                        ->orderBy([$foreign['referenced_column_name'] => 'asc'])
-                                        ->fetchSingle();
-                                    try {
-                                        $this->cache->save($cacheName, $this->fkId, [Cache::TAGS => 'fk']);
-                                    } catch (\Throwable $e) {
-                                    }
-                                }
-                            }
-
-                            $result->and([$aliasTableName . '.' . $foreign['referenced_column_name'] => $this->fkId]);
-                        }
-                    } else {
+//                    if (isset($this->configureSectionArray['database']['fkwhere']) && ($this->configureSectionArray['database']['fkwhere'] == $idItem || $this->configureSectionArray['database']['fkpk'] == $idItem)) {
+//                        // detect fkpk or fkwhere
+//                        $aliasTableName = $this->getDatabaseAliasName($foreign['referenced_table_name']);
+//
+//                        $result->select([$aliasTableName . '.' . $foreign['referenced_column_name'] => $idItem]);
+//
+//                        $result->rightJoin($foreign['referenced_table_name'])->as($aliasTableName)->on('[' . $aliasTableName . '].[' . $foreign['referenced_column_name'] . ']=[' . $this->getDatabaseAliasName($foreign['table_name']) . '].[' . $foreign['column_name'] . ']');
+//
+//                        // detect fkWhere element
+//                        if ($this->configureSectionArray['database']['fkwhere'] == $idItem && isset($item['fkid']) && $item['fkid']) {
+//                            // if not fkId set and default value is set
+//                            if (!$this->fkId && isset($item['defaultvalue']) && $item['defaultvalue']) {
+//                                $this->fkId = $item['defaultvalue'];  // set default value
+//                            }
+//
+//                            // set default fkid for locale content
+//                            if (isset($item['fkdefaultid']) && $item['fkdefaultid']) {
+//                                if (!$this->fkId) {
+//                                    $this->fkId = $item['fkdefaultid'];
+//                                }
+//                            }
+//
+//                            if (!$this->fkId && $item['fkidfirst']) {
+//                                $cacheName = 'getSource-fkidfirst' . $idItem;
+//                                $this->fkId = $this->cache->load($cacheName);
+//                                if ($this->fkId === null) {
+//                                    $this->fkId = $this->connection->select($foreign['referenced_column_name'])
+//                                        ->from($foreign['referenced_table_name'])
+//                                        ->orderBy([$foreign['referenced_column_name'] => 'asc'])
+//                                        ->fetchSingle();
+//                                    try {
+//                                        $this->cache->save($cacheName, $this->fkId, [Cache::TAGS => 'fk']);
+//                                    } catch (\Throwable $e) {
+//                                    }
+//                                }
+//                            }
+//
+//                            $result->and([$aliasTableName . '.' . $foreign['referenced_column_name'] => $this->fkId]);
+//                        }
+//                    } else {
+                    if (!($element instanceof \AdminElement\Elements\ForeignFkWhereElement || $element instanceof \AdminElement\Elements\ForeignFkPkElement)) {
                         $result->select([$this->getDatabaseAliasName($foreign['referenced_table_name']) . '.' . $item['name'] => $idItem]);
                     }
                 } else {
@@ -985,7 +1007,7 @@ class WrapperSection
                 }
 
                 // call getSource for each element
-                $this->getElement($idItem)->getSource($result);
+                $element->getSource($result);
 
                 // collected default order
                 if (isset($item['orderdefault']) && $item['orderdefault'] && isset($item['name'])) {

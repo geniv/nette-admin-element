@@ -4,6 +4,7 @@ namespace AdminElement\Elements;
 
 use AdminElement\IConfigureSection;
 use AdminElement\WrapperSection;
+use Dibi\Fluent;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
 
@@ -60,5 +61,19 @@ class ForeignFkPkElement extends AbstractElement
         $form->addHidden($this->idElement); // only hidden => show minimum for add+edit!
 
         parent::getFormContainerContent($form); // last position
+    }
+
+
+    public function getSource(Fluent $fluent)
+    {
+        $foreign = $this->wrapperSection->getDatabaseTableListFk();
+        $fk = $foreign[$this->configure['foreign']];
+
+        // detect fkpk or fkwhere
+        $aliasTableName = $this->wrapperSection->getDatabaseAliasName($fk['referenced_table_name']);
+
+        $fluent->select([$aliasTableName . '.' . $fk['referenced_column_name'] => $this->idElement]);
+
+        $fluent->rightJoin($fk['referenced_table_name'])->as($aliasTableName)->on('[' . $aliasTableName . '].[' . $fk['referenced_column_name'] . ']=[' . $this->wrapperSection->getDatabaseAliasName($fk['table_name']) . '].[' . $fk['column_name'] . ']');
     }
 }

@@ -4,7 +4,9 @@ namespace AdminElement\Elements;
 
 use AdminElement\IConfigureSection;
 use AdminElement\WrapperSection;
+use Dibi\Fluent;
 use Nette\Application\UI\Form;
+use Nette\Caching\Cache;
 use Nette\Forms\Container;
 
 
@@ -52,9 +54,11 @@ class ForeignFkWhereElement extends AbstractElement
         $form->addText('fkcode', $prefix . 'fkcode')
             ->setOption('hint', $prefix . 'fkcode-hint');
         // group by fkId
-        $form->addCheckbox('fkid', $prefix . 'fkid');
+        $form->addCheckbox('fkid', $prefix . 'fkid')
+            ->setDefaultValue(true);
         // select first value
-        $form->addCheckbox('fkidfirst', $prefix . 'fkidfirst');
+        $form->addCheckbox('fkidfirst', $prefix . 'fkidfirst')
+            ->setDefaultValue(true);
         // set fkid for list in grid
         $form->addText('fkdefaultid', $prefix . 'fkdefaultid')
             ->setOption('hint', $prefix . 'fkdefaultid-hint');
@@ -107,5 +111,59 @@ class ForeignFkWhereElement extends AbstractElement
             return serialize(['items' => $items, 'active' => $active]);
         }
         return '';
+    }
+
+
+    public function getSource(Fluent $fluent)
+    {
+        $foreign = $this->wrapperSection->getDatabaseTableListFk();
+        $fk = $foreign[$this->configure['foreign']];
+
+        // detect fkpk or fkwhere
+        $aliasTableName = $this->wrapperSection->getDatabaseAliasName($fk['referenced_table_name']);
+
+        $fluent->select([$aliasTableName . '.' . $fk['referenced_column_name'] => $this->idElement]);
+
+        $fluent->rightJoin($fk['referenced_table_name'])->as($aliasTableName)->on('[' . $aliasTableName . '].[' . $fk['referenced_column_name'] . ']=[' . $this->wrapperSection->getDatabaseAliasName($fk['table_name']) . '].[' . $fk['column_name'] . ']');
+
+        $fkId = $this->wrapperSection->getFkId();
+
+        // detect fkWhere element
+//        if ($this->configureSectionArray['database']['fkwhere'] == $idItem && isset($item['fkid']) && $item['fkid']) {
+        if (isset($this->configure['fkid']) && $this->configure['fkid']) {
+            // ifkId set and default value is set
+            if (!$fkId && isset($this->configure['defaultvalue']) && $this->configure['defaultvalue']) {
+                $fkId = $this->configure['defaultvalue'];  // set default value
+            }
+
+            // set default fkid for locale content
+            if (isset($this->configure['fkdefaultid']) && $this->configure['fkdefaultid']) {
+                if (!$fkId) {
+                    $fkId = $this->configure['fkdefaultid'];
+                }
+            }
+
+            if (!$fkId && $this->configure['fkidfirst']) {
+                $cache = $this->wrapperSection->getCache();
+                $cacheName = 'getSource-fkidfirst' . $this->idElement;
+                $fkId = $cache->load($cacheName);
+                if ($fkId === null) {
+                    $fkId = $this->wrapperSection->getConnection()->select($fk['referenced_column_name'])
+                        ->from($fk['referenced_table_name'])
+                        ->orderBy([$fk['referenced_column_name'] => 'asc'])
+                        ->fetchSingle();
+                    try {
+                        $cache->save($cacheName, $fkId, [Cache::TAGS => 'fk']);
+                    } catch (\Throwable $e) {
+                    }
+                }
+            }
+
+            $fluent->and([$aliasTableName . '.' . $fk['referenced_column_name'] => $fkId]);
+
+            if ($fkId != $this->wrapperSection->getFkId()) {
+                $this->wrapperSection->setFkId((int) $fkId);
+            }
+        }
     }
 }
