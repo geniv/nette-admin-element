@@ -3,6 +3,7 @@
 namespace AdminElement\Elements;
 
 use AdminElement\IConfigureSection;
+use Dibi\Fluent;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
 use AdminElement\WrapperSection;
@@ -167,7 +168,7 @@ abstract class AbstractElement implements IElement
             ->setItems(WrapperSection::ACTION_TYPES, false)
             ->setTranslator(null);
 
-        //TODO zobrazovat typu: zobrazit kdyz element X (select) bude mit tuto Y (text) honodu
+        //TODO zobrazovani typu: zobrazit kdyz element X (select) bude mit tuto Y (text) honodu
     }
 
 
@@ -221,6 +222,14 @@ abstract class AbstractElement implements IElement
         // Renderer (format) row of column for grid.
         return (string) $data[$this->idElement];
     }
+
+
+    /**
+     * Get source.
+     *
+     * @param Fluent $fluent
+     */
+    public function getSource(Fluent $fluent) { }
 
 
     /*

@@ -716,7 +716,7 @@ class WrapperSection
      * @param string $name
      * @return string
      */
-    private function getDatabaseAliasName(string $name): string
+    public function getDatabaseAliasName(string $name): string
     {
         $explode = array_slice(explode('_', $name), 1); // always remove prefix
         $letter = array_map(function ($row) {
@@ -984,6 +984,9 @@ class WrapperSection
                     }
                 }
 
+                // call getSource for each element
+                $this->getElement($idItem)->getSource($result);
+
                 // collected default order
                 if (isset($item['orderdefault']) && $item['orderdefault'] && isset($item['name'])) {
                     $index = $this->databaseTableAs . '.' . $item['name'];
@@ -1033,6 +1036,18 @@ class WrapperSection
             }
         }
         return null;
+    }
+
+
+    /**
+     * Get database table list fk.
+     *
+     * @internal
+     * @return array
+     */
+    public function getDatabaseTableListFk(): array
+    {
+        return $this->databaseTableListFk;
     }
 
 
