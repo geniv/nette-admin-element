@@ -168,7 +168,7 @@ abstract class AbstractElement implements IElement
             ->setItems(WrapperSection::ACTION_TYPES, false)
             ->setTranslator(null);
 
-        //TODO zobrazovani typu: zobrazit kdyz element X (select) bude mit tuto Y (text) honodu
+        //TODO zobrazovani podle typu: zobrazit kdyz element X (select) bude mit tuto Y (text) honodu - eg.selektivni prepinani => insert: text, update: label
     }
 
 
