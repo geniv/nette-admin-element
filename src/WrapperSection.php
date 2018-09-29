@@ -1254,6 +1254,14 @@ class WrapperSection
     public function setSubSectionId(string $subSectionId)
     {
         $this->subSectionId = $subSectionId;
+
+
+        //TODO pilot verze!
+        if (isset($this->configureSectionArray['subelementconfig']) && $this->configureSectionArray['subelementconfig']) {
+            $this->getById($this->configureSectionArray['subelementconfig'], WrapperSection::ACTION_LIST);
+        }
+
+
         $this->getSource(false);    // need regenerate fluent with new subSectionId!!
     }
 
