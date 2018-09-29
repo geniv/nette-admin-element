@@ -58,7 +58,7 @@ class SelectElement extends AbstractSelectElement
         parent::getFormContainerAdmin($form, $prefix);  // first position
 
         $form->addText('items', $prefix . 'items')
-            ->setOption('hint', 'separate row ";", separate key-value ":"');
+            ->setOption('hint', $prefix . 'items-hint');
 
         // enable null value
         $form->addText('prompt', $prefix . 'prompt');
