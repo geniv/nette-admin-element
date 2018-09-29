@@ -1258,7 +1258,7 @@ class WrapperSection
 
         //TODO pilot verze!
         if (isset($this->configureSectionArray['subelementconfig']) && $this->configureSectionArray['subelementconfig']) {
-            $this->getById($this->configureSectionArray['subelementconfig'], WrapperSection::ACTION_LIST);
+            $this->getById($this->configureSectionArray['subelementconfig'], $this->actionType);
         }
 
 
