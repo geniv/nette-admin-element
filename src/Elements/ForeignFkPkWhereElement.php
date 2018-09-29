@@ -20,7 +20,7 @@ class ForeignFkPkWhereElement extends AbstractElement
     const
         DESCRIPTION = 'FK PK+WHERE (M:N)',
         USAGE = [IConfigureSection::PRESENTER_FOREIGN],
-        ACTION_TYPES = [WrapperSection::ACTION_LIST, WrapperSection::ACTION_ADD, WrapperSection::ACTION_EDIT];
+        ACTION_TYPES = [WrapperSection::ACTION_LIST, WrapperSection::ACTION_ADD, WrapperSection::ACTION_EDIT, WrapperSection::ACTION_ARCHIVE];
 //FIXME dodelat tento element technologicky!!!!
 
 

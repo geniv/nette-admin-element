@@ -20,7 +20,7 @@ class ForeignFkPkElement extends AbstractElement
     const
         DESCRIPTION = 'FK PK (:N)',
         USAGE = [IConfigureSection::PRESENTER_FOREIGN],
-        ACTION_TYPES = [WrapperSection::ACTION_ADD, WrapperSection::ACTION_EDIT];
+        ACTION_TYPES = [WrapperSection::ACTION_ADD, WrapperSection::ACTION_EDIT, WrapperSection::ACTION_ARCHIVE];
 
 
     /**
