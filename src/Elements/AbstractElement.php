@@ -161,7 +161,7 @@ abstract class AbstractElement implements IElement
         if (isset($this->configure['orderdefault']) && $this->configure['orderdefault']) { // if orderdefault is define
             $form->addText('orderposition', $prefix . 'orderposition');     // position order
         }
-        $form->addText('hint', $prefix . 'hint');   // hint text in AdminRenderer
+        $form->addText('hint', $prefix . 'hint');   // hint text in Renderer
 
         // show for grid
         $form->addCheckboxList('show', $translator->translate($prefix . 'show'))

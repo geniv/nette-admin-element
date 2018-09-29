@@ -10,6 +10,8 @@ use Nette\Http\FileUpload;
 use Nette\Utils\Finder;
 use Nette\Utils\Html;
 use Thumbnail\Thumbnail;
+use Tracy\Debugger;
+use Tracy\ILogger;
 
 
 /**
@@ -273,19 +275,17 @@ class UploadElement extends AbstractElement
             $values[$this->idElement] = $sanitizedName;
         } else {
             if ($file && ($file instanceof FileUpload) && $file->getError()) {
-//                dump($file->getError());
-//                $phpFileUploadErrors = array(
-//                    0 => 'There is no error, the file uploaded with success',
-//                    1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
-//                    2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
-//                    3 => 'The uploaded file was only partially uploaded',
-//                    4 => 'No file was uploaded',
-//                    6 => 'Missing a temporary folder',
-//                    7 => 'Failed to write file to disk.',
-//                    8 => 'A PHP extension stopped the file upload.',
-//                );
-//                dump($phpFileUploadErrors[$file->getError()]);
-//                throw new \Exception($file->getError());
+                $phpFileUploadErrors = array(
+                    0 => 'There is no error, the file uploaded with success',
+                    1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+                    2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+                    3 => 'The uploaded file was only partially uploaded',
+                    4 => 'No file was uploaded',
+                    6 => 'Missing a temporary folder',
+                    7 => 'Failed to write file to disk.',
+                    8 => 'A PHP extension stopped the file upload.',
+                );
+                Debugger::log($phpFileUploadErrors[$file->getError()], ILogger::ERROR);
             }
 
             // reset (remove) file
