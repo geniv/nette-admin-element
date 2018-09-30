@@ -98,7 +98,7 @@ class WrapperSection
     /** @var string */
     private $subSectionId;
     /** @var bool */
-    private $archive;
+    private $archive = false;
 
 
     /**

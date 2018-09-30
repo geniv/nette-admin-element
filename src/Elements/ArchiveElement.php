@@ -5,7 +5,6 @@ namespace AdminElement\Elements;
 use AdminElement\WrapperSection;
 use DateTime;
 use Dibi\Fluent;
-use Nette\Forms\Container;
 
 
 /**
@@ -19,22 +18,6 @@ class ArchiveElement extends HiddenElement
     const
         DESCRIPTION = 'archive/deleted element for archive row in 1:N table',
         ACTION_TYPES = [WrapperSection::ACTION_ARCHIVE];
-
-
-    /**
-     * Get form container admin.
-     *
-     * @param Container $form
-     * @param string    $prefix
-     */
-    public function getFormContainerAdmin(Container $form, string $prefix)
-    {
-        parent::getFormContainerAdmin($form, $prefix);  // first position
-
-        $form->addCheckbox('autohide', $prefix . 'autohide')
-            ->setDefaultValue(true)
-            ->setOption('hint', $prefix . 'autohide-hint');
-    }
 
 
     /**
@@ -58,8 +41,8 @@ class ArchiveElement extends HiddenElement
      */
     public function getSource(Fluent $fluent)
     {
-        if ($this->configure['autohide'] ?? true || $this->wrapperSection->isArchive()) {
-            // if auto hide enabled
+        if (!$this->wrapperSection->isArchive()) {
+            // if archive disabled (default false)
             if ($this->configure['foreign']) {
                 $foreign = $this->wrapperSection->getDatabaseTableListFk();
                 $fk = $foreign[$this->configure['foreign']];

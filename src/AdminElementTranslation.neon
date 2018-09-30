@@ -40,8 +40,6 @@ configure-section-form-items-fileslist: "Přikládat soubory"
 configure-section-form-items-group: "Seskupit podle elementu"
 configure-section-form-items-group-hint: "Seskupovani elemtnu pro sekce kde je vic polozek stejneho typu, obvykle: galerie"
 configure-section-form-items-group-prompt: "--- Vybrat sloupec ---"
-configure-section-form-items-autohide: "Automaticky skrývat"
-configure-section-form-items-autohide-hint: "Automaticky skrývat archivované položky"
 
 configure-section-form-items-truncate: "Zkracování (maximální délka)"
 configure-section-form-items-textformat: "Výstupní textový formát"
