@@ -97,6 +97,8 @@ class WrapperSection
     private $fkId;
     /** @var string */
     private $subSectionId;
+    /** @var bool */
+    private $archive;
 
 
     /**
@@ -1107,6 +1109,28 @@ class WrapperSection
                 $this->configureSection->saveSectionPart($this->configureSectionArray['id'], IConfigureSection::FILE_SECTION_DATABASE_INDEX, [$type => $abstractElement->getIdElement()]);
             }
         }
+    }
+
+
+    /**
+     * Set archive.
+     *
+     * @param bool $archive
+     */
+    public function setArchive(bool $archive)
+    {
+        $this->archive = $archive;
+    }
+
+
+    /**
+     * Is archive.
+     *
+     * @return bool
+     */
+    public function isArchive(): bool
+    {
+        return $this->archive;
     }
 
 

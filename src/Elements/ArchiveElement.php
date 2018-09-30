@@ -58,7 +58,7 @@ class ArchiveElement extends HiddenElement
      */
     public function getSource(Fluent $fluent)
     {
-        if ($this->configure['autohide'] ?? true) {
+        if ($this->configure['autohide'] ?? true || $this->wrapperSection->isArchive()) {
             // if auto hide enabled
             if ($this->configure['foreign']) {
                 $foreign = $this->wrapperSection->getDatabaseTableListFk();
