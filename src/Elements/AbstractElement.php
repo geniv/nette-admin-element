@@ -167,8 +167,6 @@ abstract class AbstractElement implements IElement
         $form->addCheckboxList('show', $translator->translate($prefix . 'show'))
             ->setItems(WrapperSection::ACTION_TYPES, false)
             ->setTranslator(null);
-
-        //TODO zobrazovani podle typu: zobrazit kdyz element X (select) bude mit tuto Y (text) honodu - eg.selektivni prepinani => insert: text, update: label
     }
 
 

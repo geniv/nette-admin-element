@@ -4,6 +4,8 @@ namespace AdminElement;
 
 use AdminElement\Elements\AbstractElement;
 use AdminElement\Elements\ArchiveElement;
+use AdminElement\Elements\ForeignFkPkElement;
+use AdminElement\Elements\ForeignFkWhereElement;
 use AdminElement\Elements\PositionElement;
 use dibi;
 use Dibi\Connection;
@@ -186,8 +188,6 @@ class WrapperSection
         if (isset($configure['items'][$configure['subelement']])) {
             $item = $configure['items'][$configure['subelement']];
 
-//FIXME predelat na korektni system galerie v submenu, filtrovani bude je v ramci gridu
-
             $instance = $this->adminElement->getElement($item['type']);
             $instance->setWrapperSection($this);
 
@@ -299,9 +299,11 @@ class WrapperSection
 //FIXME system podmenu predelat!! filtrovani jako bylo tenkrat na konfiguratoru bude leda umet fitr na gridu!!!!!
 //TODO grid: filtrovani on-off, hledani on-off <- session + multiple moznost v zakladu
 
-//TODO grid: export: csv, pdf...a moznost dalsich
+//TODO grid: export: csv, pdf, xml...a moznost dalsich
 
 //FIXME pri editaci foreign sekce a defaultni zvolenem jazyku se nezobrazi obsah i kdyz je nastavevym pro proklikani se zobrazi konektne
+
+//TODO zobrazovani podle typu: zobrazit kdyz element X (select) bude mit tuto Y (text) honodu - eg.selektivni prepinani => insert: text, update: label
 
     /**
      * Init internal configure.
@@ -941,7 +943,7 @@ class WrapperSection
                 if (isset($item['foreign']) && $item['foreign']) {
                     $foreign = $this->databaseTableListFk[$item['foreign']];
 
-                    if (!($element instanceof \AdminElement\Elements\ForeignFkWhereElement || $element instanceof \AdminElement\Elements\ForeignFkPkElement)) {
+                    if (!($element instanceof ForeignFkWhereElement || $element instanceof ForeignFkPkElement)) {
                         $result->select([$this->getDatabaseAliasName($foreign['referenced_table_name']) . '.' . $item['name'] => $idItem]);
                     }
                 } else {

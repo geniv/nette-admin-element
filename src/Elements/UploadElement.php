@@ -234,7 +234,7 @@ class UploadElement extends AbstractElement
             $html = Html::el('a');
             $html->href = $this->getRelativePath() . $item;
             $html->target = '_blank';
-            $html->setText($item);  //TODO truncate na nazev
+            $html->setText($item);  //TODO truncate na nazev??
             return (string) $html;
         }
         return '';
