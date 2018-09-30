@@ -3,6 +3,9 @@
 namespace AdminElement;
 
 use AdminElement\Elements\AbstractElement;
+use AdminElement\Elements\ArchiveElement;
+use AdminElement\Elements\ForeignFkPkElement;
+use AdminElement\Elements\ForeignFkWhereElement;
 use AdminElement\Elements\PositionElement;
 use dibi;
 use Dibi\Connection;
@@ -35,12 +38,13 @@ class WrapperSection
         ACTION_ADD = 'add',
         ACTION_EDIT = 'edit',
         ACTION_DELETE = 'delete',
+        ACTION_ARCHIVE = 'archive',
         ACTION_DETAIL = 'detail',
         ACTION_EMPTY = 'empty', //FIXME vyhodit tento typ!!
         ACTION_SORTABLE = 'sortable';
     // list all action types (actiontype)
     const
-        ACTION_TYPES = [self::ACTION_LIST, self::ACTION_ADD, self::ACTION_EDIT, self::ACTION_DETAIL];
+        ACTION_TYPES = [self::ACTION_LIST, self::ACTION_ADD, self::ACTION_EDIT, self::ACTION_DETAIL, self::ACTION_ARCHIVE];
     // default order types
     const
         DEFAULT_ORDER_TYPES = [null => 'NULL', 'asc' => 'ASC', 'desc' => 'DESC',];
@@ -57,7 +61,6 @@ class WrapperSection
     private $configureMain, $configureDatabase, $configureItems, $configureElements, $configureParameters;
     /** @var string */
     private $actionType;
-
 
 
     // // // removed
@@ -82,7 +85,6 @@ class WrapperSection
     // // // removed
 
 
-
     /** @var string */
     private $databaseTablePrefix, $databaseTable, $databaseTableAs, $databaseTablePk, $databaseTablePkIndex;
     /** @var array */
@@ -97,6 +99,8 @@ class WrapperSection
     private $fkId;
     /** @var string */
     private $subSectionId;
+    /** @var bool */
+    private $archive = false;
 
 
     /**
@@ -184,8 +188,6 @@ class WrapperSection
         if (isset($configure['items'][$configure['subelement']])) {
             $item = $configure['items'][$configure['subelement']];
 
-//FIXME predelat na korektni system galerie v submenu, filtrovani bude je v ramci gridu
-
             $instance = $this->adminElement->getElement($item['type']);
             $instance->setWrapperSection($this);
 
@@ -268,13 +270,10 @@ class WrapperSection
     }
 
 
-//TODO slidebar.latte zajistit cachovani obsahu!
 //TODO prenaset nejak razeni - pokud se odering na strance 1 seradi tak aby drzel sort na dalsi stranky paginatoru 2,3...?? treba pres session?? http://localhost/NetteWeb/admin/content-foreign/?page=3&idSection=5b20edd043afe
 //TODO konfigurator komponenta by mohla umet group/list kde se bude pouzivat jako overlay a bude mit obsah jako sablonu jednoho radku, a v nastaveni komponenty v latte definovane obsahy, kazdy soupec bude mit take mozost enabled pro povolovani ci zakazovani v ramci jazyka!
 
-//TODO razeni adminu: 1) skupiny, 2) polozky ve skupinach (polozky konfigurace), 3) sloupce v konfiguraci, 4) poradi polozek v databazi (tuto bude ovladat jen uzivatelsky admin), 1-3 jsou systemove
-
-//TODO do toble a foreign pridat tlacitko duplikace!
+//TODO do table a foreign pridat tlacitko duplikace!
 
 //TODO admin: cisty export dat (do CSV) podle aktualniho vypisu
 //TODO zobrazovani elementu pro submenu/zobrazovani elementu pro hlavni sekci, zobrazovat pro: element=hodnota
@@ -300,12 +299,11 @@ class WrapperSection
 //FIXME system podmenu predelat!! filtrovani jako bylo tenkrat na konfiguratoru bude leda umet fitr na gridu!!!!!
 //TODO grid: filtrovani on-off, hledani on-off <- session + multiple moznost v zakladu
 
-//TODO grid: export: csv, pdf...a moznost dalsich
-
-//TODO predelat system zanorenych skupin -> subitems: gallery (vypis vsech galerii v hlavni kategorii) -> v menu vypis jednotlivych galerii (vypis jednotlivych galerii co radek to jedna galerie) -> vypis v submenu (samotne polozky galerie)
-//FIXME elementy by meli umet nastavit i tlacitko smazat jako ARCHIVOVAT!!! (upravit s priznakem deleted=>now())
+//TODO grid: export: csv, pdf, xml...a moznost dalsich
 
 //FIXME pri editaci foreign sekce a defaultni zvolenem jazyku se nezobrazi obsah i kdyz je nastavevym pro proklikani se zobrazi konektne
+
+//TODO zobrazovani podle typu: zobrazit kdyz element X (select) bude mit tuto Y (text) honodu - eg.selektivni prepinani => insert: text, update: label
 
     /**
      * Init internal configure.
@@ -717,7 +715,7 @@ class WrapperSection
      * @param string $name
      * @return string
      */
-    private function getDatabaseAliasName(string $name): string
+    public function getDatabaseAliasName(string $name): string
     {
         $explode = array_slice(explode('_', $name), 1); // always remove prefix
         $letter = array_map(function ($row) {
@@ -900,6 +898,28 @@ class WrapperSection
 
 
     /**
+     * Get connection.
+     *
+     * @return Connection
+     */
+    public function getConnection(): Connection
+    {
+        return $this->connection;
+    }
+
+
+    /**
+     * Get cache.
+     *
+     * @return Cache
+     */
+    public function getCache(): Cache
+    {
+        return $this->cache;
+    }
+
+
+    /**
      * Get source.
      *
      * @param bool $singleton
@@ -918,53 +938,12 @@ class WrapperSection
             $orderDefault = [];
             $orderPosition = 1;
             foreach ($this->getItems() as $idItem => $item) {
+                $element = $this->getElement($idItem);
+
                 if (isset($item['foreign']) && $item['foreign']) {
                     $foreign = $this->databaseTableListFk[$item['foreign']];
-//FIXME postelovat pokud bude zlobit!
 
-//FIXME zjednodisit!! toto by melo jit napsat i jednim elementem ktery to nastavi!!!! via: ForeignFkPkWhereElement
-
-//                    if (isset($this->configureSectionArray['database']['fkwhere']) && in_array($idItem, $this->configureSectionArray['database']['fkwhere'])) {
-                    if (isset($this->configureSectionArray['database']['fkwhere']) && ($this->configureSectionArray['database']['fkwhere'] == $idItem || $this->configureSectionArray['database']['fkpk'] == $idItem)) {
-                        // detect fkpk or fkwhere
-                        $aliasTableName = $this->getDatabaseAliasName($foreign['referenced_table_name']);
-
-                        $result->select([$aliasTableName . '.' . $foreign['referenced_column_name'] => $idItem]);
-
-                        $result->rightJoin($foreign['referenced_table_name'])->as($aliasTableName)->on('[' . $aliasTableName . '].[' . $foreign['referenced_column_name'] . ']=[' . $this->getDatabaseAliasName($foreign['table_name']) . '].[' . $foreign['column_name'] . ']');
-
-                        // detect fkWhere element
-                        if ($this->configureSectionArray['database']['fkwhere'] == $idItem && isset($item['fkid']) && $item['fkid']) {
-                            // if not fkId set and default value is set
-                            if (!$this->fkId && isset($item['defaultvalue']) && $item['defaultvalue']) {
-                                $this->fkId = $item['defaultvalue'];  // set default value
-                            }
-
-                            // set default fkid for locale content
-                            if (isset($item['fkdefaultid']) && $item['fkdefaultid']) {
-                                if (!$this->fkId) {
-                                    $this->fkId = $item['fkdefaultid'];
-                                }
-                            }
-
-                            if (!$this->fkId && $item['fkidfirst']) {
-                                $cacheName = 'getSource-fkidfirst' . $idItem;
-                                $this->fkId = $this->cache->load($cacheName);
-                                if ($this->fkId === null) {
-                                    $this->fkId = $this->connection->select($foreign['referenced_column_name'])
-                                        ->from($foreign['referenced_table_name'])
-                                        ->orderBy([$foreign['referenced_column_name'] => 'asc'])
-                                        ->fetchSingle();
-                                    try {
-                                        $this->cache->save($cacheName, $this->fkId, [Cache::TAGS => 'fk']);
-                                    } catch (\Throwable $e) {
-                                    }
-                                }
-                            }
-
-                            $result->and([$aliasTableName . '.' . $foreign['referenced_column_name'] => $this->fkId]);
-                        }
-                    } else {
+                    if (!($element instanceof ForeignFkWhereElement || $element instanceof ForeignFkPkElement)) {
                         $result->select([$this->getDatabaseAliasName($foreign['referenced_table_name']) . '.' . $item['name'] => $idItem]);
                     }
                 } else {
@@ -984,6 +963,9 @@ class WrapperSection
                         $result->where([$this->databaseTableAs . '.' . $item['name'] => $this->subSectionId]);
                     }
                 }
+
+                // call getSource for each element
+                $element->getSource($result);
 
                 // collected default order
                 if (isset($item['orderdefault']) && $item['orderdefault'] && isset($item['name'])) {
@@ -1038,6 +1020,18 @@ class WrapperSection
 
 
     /**
+     * Get database table list fk.
+     *
+     * @internal
+     * @return array
+     */
+    public function getDatabaseTableListFk(): array
+    {
+        return $this->databaseTableListFk;
+    }
+
+
+    /**
      * Get foreign items.
      *
      * @return array
@@ -1066,10 +1060,59 @@ class WrapperSection
         $configure = $abstractElement->getConfigure();
 
         if (isset($configure['foreign']) && $configure['foreign']) {
-            if ($this->configureSectionArray[ConfigureSection::FILE_SECTION_DATABASE_INDEX][$type] != $abstractElement->getIdElement()) {
-                $this->configureSection->saveSectionPart($this->configureSectionArray['id'], ConfigureSection::FILE_SECTION_DATABASE_INDEX, [$type => $abstractElement->getIdElement()]);
+            if ($this->configureSectionArray[IConfigureSection::FILE_SECTION_DATABASE_INDEX][$type] != $abstractElement->getIdElement()) {
+                $this->configureSection->saveSectionPart($this->configureSectionArray['id'], IConfigureSection::FILE_SECTION_DATABASE_INDEX, [$type => $abstractElement->getIdElement()]);
             }
         }
+    }
+
+
+    /**
+     * Set archive.
+     *
+     * @param bool $archive
+     */
+    public function setArchive(bool $archive)
+    {
+        $this->archive = $archive;
+    }
+
+
+    /**
+     * Is archive.
+     *
+     * @return bool
+     */
+    public function isArchive(): bool
+    {
+        return $this->archive;
+    }
+
+
+    /**
+     * Get archive element.
+     *
+     * @return string
+     */
+    public function getArchiveElement(): string
+    {
+        // detection position element in configure
+        $elements = array_filter($this->getElements(), function ($row) {
+            return ($row instanceof ArchiveElement);
+        });
+        return implode(array_keys($elements));
+    }
+
+
+    /**
+     * Is archive configure.
+     *
+     * @return bool
+     */
+    public function isArchiveConfigure(): bool
+    {
+        $element = $this->getArchiveElement();
+        return $element != '';
     }
 
 
@@ -1081,10 +1124,10 @@ class WrapperSection
     public function getSortableElement(): string
     {
         // detection position element in configure
-        $positionElements = array_filter($this->getElements(), function ($row) {
+        $elements = array_filter($this->getElements(), function ($row) {
             return ($row instanceof PositionElement);
         });
-        return implode(array_keys($positionElements));
+        return implode(array_keys($elements));
     }
 
 
@@ -1214,10 +1257,17 @@ class WrapperSection
      * Set sub section id.
      *
      * @param string $subSectionId
+     * @throws Exception
      */
     public function setSubSectionId(string $subSectionId)
     {
         $this->subSectionId = $subSectionId;
+
+        // if subelementconfig is set
+        if (isset($this->configureSectionArray['subelementconfig']) && $this->configureSectionArray['subelementconfig']) {
+            $this->getById($this->configureSectionArray['subelementconfig'], $this->actionType);
+        }
+
         $this->getSource(false);    // need regenerate fluent with new subSectionId!!
     }
 

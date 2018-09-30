@@ -4,6 +4,7 @@ namespace AdminElement\Elements;
 
 use AdminElement\IConfigureSection;
 use AdminElement\WrapperSection;
+use Dibi\Fluent;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
 
@@ -20,7 +21,7 @@ class ForeignFkPkElement extends AbstractElement
     const
         DESCRIPTION = 'FK PK (:N)',
         USAGE = [IConfigureSection::PRESENTER_FOREIGN],
-        ACTION_TYPES = [WrapperSection::ACTION_ADD, WrapperSection::ACTION_EDIT];
+        ACTION_TYPES = [WrapperSection::ACTION_ADD, WrapperSection::ACTION_EDIT, WrapperSection::ACTION_ARCHIVE];
 
 
     /**
@@ -60,5 +61,24 @@ class ForeignFkPkElement extends AbstractElement
         $form->addHidden($this->idElement); // only hidden => show minimum for add+edit!
 
         parent::getFormContainerContent($form); // last position
+    }
+
+
+    /**
+     * Get source.
+     *
+     * @param Fluent $fluent
+     */
+    public function getSource(Fluent $fluent)
+    {
+        $foreign = $this->wrapperSection->getDatabaseTableListFk();
+        $fk = $foreign[$this->configure['foreign']];
+
+        // fkpk
+        $aliasTableName = $this->wrapperSection->getDatabaseAliasName($fk['referenced_table_name']);
+
+        $fluent->select([$aliasTableName . '.' . $fk['referenced_column_name'] => $this->idElement]);
+
+        $fluent->rightJoin($fk['referenced_table_name'])->as($aliasTableName)->on('[' . $aliasTableName . '].[' . $fk['referenced_column_name'] . ']=[' . $this->wrapperSection->getDatabaseAliasName($fk['table_name']) . '].[' . $fk['column_name'] . ']');
     }
 }

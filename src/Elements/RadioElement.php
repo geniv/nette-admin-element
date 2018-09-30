@@ -75,7 +75,7 @@ class RadioElement extends AbstractSelectElement
                 $this->configure['defaultvalue'] = $this->wrapperSection->getSubSectionId();
             }
         }
-//TODO kontrola poctu elementu $items, musi byt minimalne 2 elementy
+//TODO kontrola poctu elementu $items, musi byt minimalne 2 elementy??!
         $items = $this->getSelectItems($this->configure);
 
         // select element

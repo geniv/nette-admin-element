@@ -2,7 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use Admin\App\Presenters\FileSystemPresenter;
+use AdminElement\FileSystem;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
 use Nette\Utils\Callback;
@@ -49,10 +49,10 @@ class EditorElement extends AbstractTextElement
         if (isset($this->configure['fileslist'])) {
             $form[$this->idElement]->setOption('fileslist', $this->configure['fileslist']);
             $webDir = $this->wrapperSection->getConfigureParameterByIndex('webDir');
-            $path = $webDir . FileSystemPresenter::FILES_DIR;
-            $form[$this->idElement]->setOption('list', FileSystemPresenter::getListFiles($path));
-            $form[$this->idElement]->setOption('path', '../' . FileSystemPresenter::FILES_DIR);
-            $form[$this->idElement]->setOption('isImage', Callback::closure(FileSystemPresenter::class . '::isImage'));
+            $path = $webDir . FileSystem::FILES_DIR;
+            $form[$this->idElement]->setOption('list', FileSystem::getListFiles($path));
+            $form[$this->idElement]->setOption('path', '../' . FileSystem::FILES_DIR);
+            $form[$this->idElement]->setOption('isImage', Callback::closure(FileSystem::class . '::isImage'));
         }
 
         parent::getFormContainerContent($form); // last position
