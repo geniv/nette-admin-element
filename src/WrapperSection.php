@@ -270,13 +270,10 @@ class WrapperSection
     }
 
 
-//TODO slidebar.latte zajistit cachovani obsahu!
 //TODO prenaset nejak razeni - pokud se odering na strance 1 seradi tak aby drzel sort na dalsi stranky paginatoru 2,3...?? treba pres session?? http://localhost/NetteWeb/admin/content-foreign/?page=3&idSection=5b20edd043afe
 //TODO konfigurator komponenta by mohla umet group/list kde se bude pouzivat jako overlay a bude mit obsah jako sablonu jednoho radku, a v nastaveni komponenty v latte definovane obsahy, kazdy soupec bude mit take mozost enabled pro povolovani ci zakazovani v ramci jazyka!
 
-//TODO razeni adminu: 1) skupiny, 2) polozky ve skupinach (polozky konfigurace), 3) sloupce v konfiguraci, 4) poradi polozek v databazi (tuto bude ovladat jen uzivatelsky admin), 1-3 jsou systemove
-
-//TODO do toble a foreign pridat tlacitko duplikace!
+//TODO do table a foreign pridat tlacitko duplikace!
 
 //TODO admin: cisty export dat (do CSV) podle aktualniho vypisu
 //TODO zobrazovani elementu pro submenu/zobrazovani elementu pro hlavni sekci, zobrazovat pro: element=hodnota
@@ -303,9 +300,6 @@ class WrapperSection
 //TODO grid: filtrovani on-off, hledani on-off <- session + multiple moznost v zakladu
 
 //TODO grid: export: csv, pdf...a moznost dalsich
-
-//TODO predelat system zanorenych skupin -> subitems: gallery (vypis vsech galerii v hlavni kategorii) -> v menu vypis jednotlivych galerii (vypis jednotlivych galerii co radek to jedna galerie) -> vypis v submenu (samotne polozky galerie)
-//FIXME elementy by meli umet nastavit i tlacitko smazat jako ARCHIVOVAT!!! (upravit s priznakem deleted=>now())
 
 //FIXME pri editaci foreign sekce a defaultni zvolenem jazyku se nezobrazi obsah i kdyz je nastavevym pro proklikani se zobrazi konektne
 
@@ -1302,17 +1296,16 @@ class WrapperSection
      * Set sub section id.
      *
      * @param string $subSectionId
+     * @throws Exception
      */
     public function setSubSectionId(string $subSectionId)
     {
         $this->subSectionId = $subSectionId;
 
-
-        //TODO pilot verze!
+        // if subelementconfig is set
         if (isset($this->configureSectionArray['subelementconfig']) && $this->configureSectionArray['subelementconfig']) {
             $this->getById($this->configureSectionArray['subelementconfig'], $this->actionType);
         }
-
 
         $this->getSource(false);    // need regenerate fluent with new subSectionId!!
     }
