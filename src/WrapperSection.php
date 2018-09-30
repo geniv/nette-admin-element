@@ -66,7 +66,7 @@ class WrapperSection
     // // // removed
 
     //TODO naimplementovat tyto promenne?!!
-    //FIMXE will be removed!!! - vyhodit indexy z superglobalniho pole!!
+    //FIXME will be removed!!! - vyhodit indexy z superglobalniho pole!!
     // types of configure
     const
 //        CONFIGURE_ACTION_TYPE = 'actionType',
@@ -80,7 +80,7 @@ class WrapperSection
 
 //    /** @var Container */
 //    private $container;
-    //FIMXE will be removed!!!
+    //FIXME will be removed!!!
 
     // // // removed
 
@@ -220,7 +220,6 @@ class WrapperSection
                 $list = $this->configureSection->getListSection();
                 foreach ($list as $item) {
                     if (isset($item['subelement'])) {
-//                    $result[$item['id']]['subsection'] = $this->getSubSectionByElement($item['items'][$item['subelement']]);
                         $result[$item['id']]['subsection'] = $this->getSubSectionByElement($item);
                     }
                 }
@@ -386,12 +385,6 @@ class WrapperSection
     {
         // set action type
         $this->actionType = $actionType;
-
-
-//        if (!in_array($actionType, self::ACTION_TYPES)) {
-//            die('unknown action type: ' . $actionType . '!');
-//        }
-//        $this->configureSectionArray[self::CONFIGURE_ACTION_TYPE] = $actionType;    //FIXME remove
     }
 
 
