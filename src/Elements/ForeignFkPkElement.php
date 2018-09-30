@@ -64,12 +64,17 @@ class ForeignFkPkElement extends AbstractElement
     }
 
 
+    /**
+     * Get source.
+     *
+     * @param Fluent $fluent
+     */
     public function getSource(Fluent $fluent)
     {
         $foreign = $this->wrapperSection->getDatabaseTableListFk();
         $fk = $foreign[$this->configure['foreign']];
 
-        // detect fkpk or fkwhere
+        // fkpk
         $aliasTableName = $this->wrapperSection->getDatabaseAliasName($fk['referenced_table_name']);
 
         $fluent->select([$aliasTableName . '.' . $fk['referenced_column_name'] => $this->idElement]);

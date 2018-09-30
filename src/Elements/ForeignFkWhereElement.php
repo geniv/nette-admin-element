@@ -114,23 +114,27 @@ class ForeignFkWhereElement extends AbstractElement
     }
 
 
+    /**
+     * Get source.
+     *
+     * @param Fluent $fluent
+     */
     public function getSource(Fluent $fluent)
     {
         $foreign = $this->wrapperSection->getDatabaseTableListFk();
         $fk = $foreign[$this->configure['foreign']];
 
-        // detect fkpk or fkwhere
+        // fkwhere
         $aliasTableName = $this->wrapperSection->getDatabaseAliasName($fk['referenced_table_name']);
 
         $fluent->select([$aliasTableName . '.' . $fk['referenced_column_name'] => $this->idElement]);
 
         $fluent->rightJoin($fk['referenced_table_name'])->as($aliasTableName)->on('[' . $aliasTableName . '].[' . $fk['referenced_column_name'] . ']=[' . $this->wrapperSection->getDatabaseAliasName($fk['table_name']) . '].[' . $fk['column_name'] . ']');
 
-        $fkId = $this->wrapperSection->getFkId();
-
-        // detect fkWhere element
-//        if ($this->configureSectionArray['database']['fkwhere'] == $idItem && isset($item['fkid']) && $item['fkid']) {
+        // detect fkid
         if (isset($this->configure['fkid']) && $this->configure['fkid']) {
+            $fkId = $this->wrapperSection->getFkId();
+
             // ifkId set and default value is set
             if (!$fkId && isset($this->configure['defaultvalue']) && $this->configure['defaultvalue']) {
                 $fkId = $this->configure['defaultvalue'];  // set default value
@@ -162,6 +166,7 @@ class ForeignFkWhereElement extends AbstractElement
             $fluent->and([$aliasTableName . '.' . $fk['referenced_column_name'] => $fkId]);
 
             if ($fkId != $this->wrapperSection->getFkId()) {
+                // set fkid only one
                 $this->wrapperSection->setFkId((int) $fkId);
             }
         }
