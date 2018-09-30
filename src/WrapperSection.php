@@ -3,6 +3,7 @@
 namespace AdminElement;
 
 use AdminElement\Elements\AbstractElement;
+use AdminElement\Elements\ArchiveElement;
 use AdminElement\Elements\PositionElement;
 use dibi;
 use Dibi\Connection;
@@ -1110,6 +1111,33 @@ class WrapperSection
 
 
     /**
+     * Get archive element.
+     *
+     * @return string
+     */
+    public function getArchiveElement(): string
+    {
+        // detection position element in configure
+        $elements = array_filter($this->getElements(), function ($row) {
+            return ($row instanceof ArchiveElement);
+        });
+        return implode(array_keys($elements));
+    }
+
+
+    /**
+     * Is archive configure.
+     *
+     * @return bool
+     */
+    public function isArchiveConfigure(): bool
+    {
+        $element = $this->getArchiveElement();
+        return $element != '';
+    }
+
+
+    /**
      * Get sortable element.
      *
      * @return string
@@ -1117,10 +1145,10 @@ class WrapperSection
     public function getSortableElement(): string
     {
         // detection position element in configure
-        $positionElements = array_filter($this->getElements(), function ($row) {
+        $elements = array_filter($this->getElements(), function ($row) {
             return ($row instanceof PositionElement);
         });
-        return implode(array_keys($positionElements));
+        return implode(array_keys($elements));
     }
 
 
