@@ -86,7 +86,11 @@ class WrapperSection
 
 
     /** @var string */
-    private $databaseTablePrefix, $databaseTable, $databaseTableAs, $databaseTablePk, $databaseTablePkIndex;
+    private $databaseTablePrefix, $databaseTable, $databaseTableAs, $databaseTablePk, $databaseTablePkIndex, $databaseTableFkPk, $databaseTableFkWhere;
+    /** @var int */
+    private $databaseTableLimit = 0;
+    /** @var bool */
+    private $databaseTableTestSql = false;
     /** @var array */
     private $databaseOrderDefault = [];
     /** @var array */
@@ -383,7 +387,6 @@ class WrapperSection
      */
     public function setActionType(string $actionType)
     {
-        // set action type
         $this->actionType = $actionType;
     }
 
@@ -419,6 +422,30 @@ class WrapperSection
     {
         $this->configureSectionArray['database']['fkpk'] = $fkPk;
         $this->configureSectionArray['database']['fkwhere'] = $fkWhere;
+        $this->databaseTableFkPk = $fkPk;
+        $this->databaseTableFkWhere = $fkWhere;
+    }
+
+
+    /**
+     * Set database limit.
+     *
+     * @param int $limit
+     */
+    public function setDatabaseLimit(int $limit)
+    {
+        $this->databaseTableLimit = $limit;
+    }
+
+
+    /**
+     * Set database test sql.
+     *
+     * @param bool $state
+     */
+    public function setDatabaseTestSql(bool $state)
+    {
+        $this->databaseTableTestSql = $state;
     }
 
 
@@ -453,15 +480,25 @@ class WrapperSection
         }
 
 //TODO nastavovat po jednom jako v konfiguraci contentu!!!!
-//TODO databaze nacitat do vlasniho pole!!!!
 
         // set database
         if (isset($configureSectionArray['database'])) {
             // if define database for add configuration section mode
             $this->setDatabase($configureSectionArray['database']['table'], $configureSectionArray['database']['pk']);
 
+            //set fkpk + fkwhere
             if (isset($configureSectionArray['database']['fkpk']) && isset($configureSectionArray['database']['fkwhere'])) {
                 $this->setDatabaseFk($configureSectionArray['database']['fkpk'], $configureSectionArray['database']['fkwhere']);
+            }
+
+            // set limit
+            if (isset($configureSectionArray['database']['limit'])) {
+                $this->setDatabaseLimit($configureSectionArray['database']['limit']);
+            }
+
+            // set testSql
+            if (isset($configureSectionArray['database']['testsql'])) {
+                $this->setDatabaseTestSql($configureSectionArray['database']['testsql']);
             }
         }
 
@@ -618,7 +655,7 @@ class WrapperSection
      */
     private function isTestSQL(): bool
     {
-        return $this->configureSectionArray['database']['testsql'] ?? false;
+        return $this->databaseTableTestSql;
     }
 
 
@@ -694,7 +731,7 @@ class WrapperSection
      */
     public function getDatabaseLimit(int $default = 50): int
     {
-        return (int) $this->configureSectionArray['database']['limit'] ?: $default;
+        return (int) $this->databaseTableLimit ?: $default;
     }
 
 
@@ -1163,7 +1200,7 @@ class WrapperSection
      */
     public function isFkIdSelectFirstValue(): bool
     {
-        $item = $this->getItem($this->configureSectionArray['database']['fkwhere']);
+        $item = $this->getItem($this->databaseTableFkWhere);
         return $item['fkidfirst'];
     }
 
