@@ -420,8 +420,6 @@ class WrapperSection
      */
     public function setDatabaseFk(string $fkPk, string $fkWhere)
     {
-        $this->configureSectionArray['database']['fkpk'] = $fkPk;
-        $this->configureSectionArray['database']['fkwhere'] = $fkWhere;
         $this->databaseTableFkPk = $fkPk;
         $this->databaseTableFkWhere = $fkWhere;
     }
@@ -994,8 +992,19 @@ class WrapperSection
      */
     private function getFkNameByType(string $fkType, string $index = 'foreign')
     {
-        if (isset($this->configureSectionArray['database'][$fkType])) {
-            $idElement = $this->configureSectionArray['database'][$fkType];
+        $idElement = null;
+        // switch fkType for correct idElement
+        switch ($fkType) {
+            case'fkpk':
+                $idElement = $this->databaseTableFkPk;
+                break;
+
+            case 'fkwhere':
+                $idElement = $this->databaseTableFkWhere;
+                break;
+        }
+
+        if ($idElement) {
             $item = $this->getItem($idElement);
             if (isset($item[$index])) {
                 return $item[$index];
