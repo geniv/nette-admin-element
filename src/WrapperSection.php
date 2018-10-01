@@ -1190,7 +1190,7 @@ class WrapperSection
             $item = $this->getItem($groupByColumn);
             $result->where([$item['name'] => $value[$groupByColumn]]);
         }
-        return $result->fetchSingle();
+        return $result->fetchSingle() ?? 1;
     }
 
 
