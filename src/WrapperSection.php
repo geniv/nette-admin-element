@@ -1085,8 +1085,6 @@ class WrapperSection
     {
         $configure = $abstractElement->getConfigure();
         if (isset($configure['foreign']) && $configure['foreign']) {
-//            if ($this->configureSectionArray[IConfigureSection::FILE_SECTION_DATABASE_INDEX][$type] != $abstractElement->getIdElement()) {
-            //$this->sectionId
             if ($this->getIdElementByFkType($type) != $abstractElement->getIdElement()) {
                 $this->configureSection->saveSectionPart($this->sectionId, IConfigureSection::FILE_SECTION_DATABASE_INDEX, [$type => $abstractElement->getIdElement()]);
             }
