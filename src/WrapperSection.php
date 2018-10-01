@@ -267,7 +267,7 @@ class WrapperSection
      */
     public function getSubsectionName(string $idSubSection = null): string
     {
-        $items = $this->getSubSectionByElement($this->configureSectionArray);   //FIXME predelat!!
+        $items = $this->getSubSectionByElement(['subelement' => $this->getSubElementName()]);
         return $items[$idSubSection]['name'] ?? '';
     }
 
