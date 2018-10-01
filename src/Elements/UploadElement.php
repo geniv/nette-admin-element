@@ -350,7 +350,7 @@ class UploadElement extends AbstractElement
     public function postProcessSuccessDelete(int $id)
     {
         if (isset($this->configure['share']) && !$this->configure['share']) {
-            $values = $this->wrapperSection->getConfigureSectionValue('values');
+            $values = $this->wrapperSection->getDatabaseValues();
             $this->removeFile($this->getAbsolutePath() . $values);
         }
     }
