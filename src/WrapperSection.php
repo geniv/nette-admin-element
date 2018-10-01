@@ -95,6 +95,8 @@ class WrapperSection
     private static $staticSource;
     /** @var Cache */
     private $cache;
+    /** @var array */
+    private $cacheNames = [];
     /** @var int */
     private $fkId;
     /** @var string */
@@ -275,6 +277,8 @@ class WrapperSection
 //TODO do table a foreign pridat tlacitko duplikace!
 
 //TODO admin: cisty export dat (do CSV) podle aktualniho vypisu
+//TODO grid: export: csv, pdf, xml...a moznost dalsich - ovladat pres typ zobrazeni co se ma exportovat a co ne!!!
+
 //TODO zobrazovani elementu pro submenu/zobrazovani elementu pro hlavni sekci, zobrazovat pro: element=hodnota
 //TODO element podle vybrane moznosti - napr: select moznost: admin: element=upload, guest=textarea, moderator=text
 
@@ -298,7 +302,6 @@ class WrapperSection
 //FIXME system podmenu predelat!! filtrovani jako bylo tenkrat na konfiguratoru bude leda umet fitr na gridu!!!!!
 //TODO grid: filtrovani on-off, hledani on-off <- session + multiple moznost v zakladu
 
-//TODO grid: export: csv, pdf, xml...a moznost dalsich
 
 //FIXME pri editaci foreign sekce a defaultni zvolenem jazyku se nezobrazi obsah i kdyz je nastavevym pro proklikani se zobrazi konektne
 
@@ -357,6 +360,7 @@ class WrapperSection
         // set elements to configure
         $this->loadElements($items);
 
+        // tell configure is ready
         $this->configureReady = true;
     }
 
@@ -368,7 +372,7 @@ class WrapperSection
      */
     public function setCacheNames(array $names)
     {
-        $this->configureSectionArray['cache'] = $names;
+        $this->cacheNames = $names;
     }
 
 
@@ -450,7 +454,6 @@ class WrapperSection
 
 //TODO nastavovat po jednom jako v konfiguraci contentu!!!!
 //TODO databaze nacitat do vlasniho pole!!!!
-//FIXME musi vzit konfiguraci ze souboru a tady si ju roztriskat na jednotlive metody a ty nastavit - nec nemuize jit magii!!!!
 
         // set database
         if (isset($configureSectionArray['database'])) {
@@ -1426,9 +1429,9 @@ class WrapperSection
         $this->cache->clean([Cache::TAGS => 'grid']);   // internal clean cache for grid
 
         // user defined cache
-        if (isset($this->configureSectionArray['cache']) && $this->configureSectionArray['cache']) {
+        if ($this->cacheNames) {
             $tempWebDir = $this->configureParameters['tempWebDir'];
-            foreach ($this->configureSectionArray['cache'] as $cacheDir) {
+            foreach ($this->cacheNames as $cacheDir) {
                 // prochazeni a fyzicke mazani cache souboru primo z tempu
                 $finder = Finder::findFiles('*');
                 $tempPath = $tempWebDir . $cacheDir;
