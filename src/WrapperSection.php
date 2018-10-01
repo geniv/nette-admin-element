@@ -102,7 +102,7 @@ class WrapperSection
     /** @var int */
     private $fkId;
     /** @var string */
-    private $subSectionId, $subElementName, $subElementConfig;
+    private $sectionName, $subSectionId, $subElementName, $subElementConfig;
     /** @var bool */
     private $archive = false;
 
@@ -188,7 +188,7 @@ class WrapperSection
      */
     private function getSubSectionByElement(array $configure): array
     {
-        $result = [];//FIXME upravit!
+        $result = [];
         if (isset($configure['items'][$configure['subelement']])) {
             $item = $configure['items'][$configure['subelement']];
 
@@ -223,7 +223,7 @@ class WrapperSection
             if (isset($idSection)) {
                 $list = $this->configureSection->getListSection();
                 foreach ($list as $item) {
-                    if (isset($item['subelement'])) {   //FIXME upravit!
+                    if (isset($item['subelement'])) {
                         $result[$item['id']]['subsection'] = $this->getSubSectionByElement($item);
                     }
                 }
@@ -236,8 +236,6 @@ class WrapperSection
         return $result ?? [];
     }
 
-    //FIXME subsection configure!!! optimalizovat!!!!
-
 
     /**
      * Get section name.
@@ -246,7 +244,18 @@ class WrapperSection
      */
     public function getSectionName(): string
     {
-        return $this->configureSectionArray['name'];    //FIXME vyhodit!
+        return $this->sectionName ?? '';
+    }
+
+
+    /**
+     * Set section name.
+     *
+     * @param string|null $sectionName
+     */
+    public function setSectionName(string $sectionName = null)
+    {
+        $this->sectionName = $sectionName;
     }
 
 
@@ -522,6 +531,9 @@ class WrapperSection
                 $this->setDatabaseTestSql($configureSectionArray['database']['testsql']);
             }
         }
+
+        // set section name
+        $this->setSectionName($configureSectionArray['name']);
 
         // set sub-element
         $this->setSubElementName($configureSectionArray['subelement'] ?? null);
@@ -1280,8 +1292,7 @@ class WrapperSection
      */
     public function getSubElementName(): string
     {
-        return $this->subElementName;
-//        return $this->configureSectionArray['subelement'];
+        return $this->subElementName ?? '';
     }
 
 
@@ -1303,7 +1314,7 @@ class WrapperSection
      */
     public function getSubElementConfig(): string
     {
-        return $this->subElementConfig;
+        return $this->subElementConfig ?? '';
     }
 
 
