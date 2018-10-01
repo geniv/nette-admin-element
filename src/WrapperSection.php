@@ -493,7 +493,7 @@ class WrapperSection
 
             // set limit
             if (isset($configureSectionArray['database']['limit'])) {
-                $this->setDatabaseLimit($configureSectionArray['database']['limit']);
+                $this->setDatabaseLimit((int) $configureSectionArray['database']['limit']);
             }
 
             // set testSql
