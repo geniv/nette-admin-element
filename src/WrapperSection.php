@@ -61,30 +61,6 @@ class WrapperSection
     private $configureMain, $configureDatabase, $configureItems, $configureElements, $configureParameters;
     /** @var string */
     private $actionType;
-
-
-    // // // removed
-
-    //TODO naimplementovat tyto promenne?!!
-    //FIXME will be removed!!! - vyhodit indexy z superglobalniho pole!!
-    // types of configure
-    const
-//        CONFIGURE_ACTION_TYPE = 'actionType',
-//        CONFIGURE_PARAMETERS = 'parameters',
-        CONFIGURE_ITEMS = 'items',
-        CONFIGURE_ELEMENTS = 'elements';
-//    /** @var array */
-//    private $configure = ['ready' => false];    //FIXME toto by tu memuselo byt?!
-//    /** @var array */
-    private $configureSectionArray;// = ['ready' => false];    //FIXME @deprecated
-
-//    /** @var Container */
-//    private $container;
-    //FIXME will be removed!!!
-
-    // // // removed
-
-
     /** @var string */
     private $databaseTablePrefix, $databaseTable, $databaseTableAs, $databaseTablePk, $databaseTablePkIndex, $databaseTableFkPk, $databaseTableFkWhere;
     /** @var int */
@@ -492,8 +468,6 @@ class WrapperSection
         if (!$configureSectionArray) {
             throw new Exception('Section "' . $idSection . '" does not exist!');
         }
-
-        $this->configureSectionArray = $configureSectionArray;  //FIXME docasna obrzlicka!!!
 
         //TODO tady toto pouzit jen nako lokalni promennou: configureSectionArray!!!
 
