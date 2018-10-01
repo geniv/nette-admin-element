@@ -98,7 +98,7 @@ class ForeignFkWhereElement extends AbstractElement
     {
         if (isset($this->configure['fkcode']) && $this->configure['fkcode']) {
             $items = $this->wrapperSection->getDataByFk($this->configure['foreign'], $this->configure['fkcode']);
-            $fkPk = $this->wrapperSection->getConfigureSectionValue('database')['fkpk'];
+            $fkPk = $this->wrapperSection->getDatabaseTableFkPk();
             $active = array_keys($this->wrapperSection->getMByIdN($data[$fkPk]));
             if (isset($this->configure['fkexclude']) && $this->configure['fkexclude']) {
                 foreach ($this->configure['fkexclude'] as $id) {

@@ -27,40 +27,7 @@ neon configure:
 ```neon
 # admin element
 adminElement:
-    elements:
-        label: AdminElement\Elements\LabelElement
-        hidden: AdminElement\Elements\HiddenElement
-        text: AdminElement\Elements\TextElement
-        textarea: AdminElement\Elements\TextAreaElement
-        editor: AdminElement\Elements\EditorElement
-        password: AdminElement\Elements\PasswordElement
-        date: AdminElement\Elements\DateElement
-        datepicker: AdminElement\Elements\DatePickerElement
-        time: AdminElement\Elements\TimeElement
-        timepicker: AdminElement\Elements\TimePickerElement
-        datetime: AdminElement\Elements\DateTimeElement
-        datetimepicker: AdminElement\Elements\DateTimePickerElement
-        checkbox: AdminElement\Elements\CheckboxElement
-        position: AdminElement\Elements\PositionElement
-        upload: AdminElement\Elements\UploadElement
-        uploadimage: AdminElement\Elements\UploadImageElement
-        radio: AdminElement\Elements\RadioElement
-        select: AdminElement\Elements\SelectElement
-        fkselect: AdminElement\Elements\FkSelectElement
-        foreignfkpk: AdminElement\Elements\ForeignFkPkElement
-        foreignfkwhere: AdminElement\Elements\ForeignFkWhereElement
-        foreignlabel: AdminElement\Elements\ForeignLabelElement
-        foreignhidden: AdminElement\Elements\ForeignHiddenElement
-        foreigntext: AdminElement\Elements\ForeignTextElement
-        foreigntextarea: AdminElement\Elements\ForeignTextAreaElement
-        foreigneditor: AdminElement\Elements\ForeignEditorElement
-        foreignselect: AdminElement\Elements\ForeignSelectElement
-        foreignupload: AdminElement\Elements\ForeignUploadElement
-        foreignuploadimage: AdminElement\Elements\ForeignUploadImageElement
-        foreigndatetime: AdminElement\Elements\ForeignDateTimeElement
-        foreigndatetimepicker: AdminElement\Elements\ForeignDateTimePickerElement
-        foreigncheckbox: AdminElement\Elements\ForeignCheckboxElement
-        foreignposition: AdminElement\Elements\ForeignPositionElement
+    elements: [...]
 ```
 
 neon configure extension:

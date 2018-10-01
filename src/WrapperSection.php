@@ -61,44 +61,24 @@ class WrapperSection
     private $configureMain, $configureDatabase, $configureItems, $configureElements, $configureParameters;
     /** @var string */
     private $actionType;
-
-
-    // // // removed
-
-    //TODO naimplementovat tyto promenne?!!
-    //FIMXE will be removed!!! - vyhodit indexy z superglobalniho pole!!
-    // types of configure
-    const
-//        CONFIGURE_ACTION_TYPE = 'actionType',
-//        CONFIGURE_PARAMETERS = 'parameters',
-        CONFIGURE_ITEMS = 'items',
-        CONFIGURE_ELEMENTS = 'elements';
-//    /** @var array */
-//    private $configure = ['ready' => false];    //FIXME toto by tu memuselo byt?!
-//    /** @var array */
-    private $configureSectionArray;// = ['ready' => false];    //FIXME @deprecated
-
-//    /** @var Container */
-//    private $container;
-    //FIMXE will be removed!!!
-
-    // // // removed
-
-
     /** @var string */
-    private $databaseTablePrefix, $databaseTable, $databaseTableAs, $databaseTablePk, $databaseTablePkIndex;
+    private $databaseTablePrefix, $databaseTable, $databaseTableAs, $databaseTablePk, $databaseTablePkIndex, $databaseTableFkPk, $databaseTableFkWhere;
+    /** @var int */
+    private $databaseLimit = 0;
+    /** @var bool */
+    private $databaseTestSql = false;
     /** @var array */
-    private $databaseOrderDefault = [];
-    /** @var array */
-    private $databaseTableListFk = [];
+    private $databaseOrderDefault = [], $databaseTableListFk = [], $databaseValues = [];
     /** @var Fluent */
     private static $staticSource;
     /** @var Cache */
     private $cache;
+    /** @var array */
+    private $cacheNames = [];
     /** @var int */
     private $fkId;
     /** @var string */
-    private $subSectionId;
+    private $sectionId, $sectionName, $subSectionId, $subElementName, $subElementConfig;
     /** @var bool */
     private $archive = false;
 
@@ -220,7 +200,6 @@ class WrapperSection
                 $list = $this->configureSection->getListSection();
                 foreach ($list as $item) {
                     if (isset($item['subelement'])) {
-//                    $result[$item['id']]['subsection'] = $this->getSubSectionByElement($item['items'][$item['subelement']]);
                         $result[$item['id']]['subsection'] = $this->getSubSectionByElement($item);
                     }
                 }
@@ -241,7 +220,18 @@ class WrapperSection
      */
     public function getSectionName(): string
     {
-        return $this->configureSectionArray['name'];
+        return $this->sectionName ?? '';
+    }
+
+
+    /**
+     * Set section name.
+     *
+     * @param string|null $sectionName
+     */
+    public function setSectionName(string $sectionName = null)
+    {
+        $this->sectionName = $sectionName;
     }
 
 
@@ -253,7 +243,7 @@ class WrapperSection
      */
     public function getSubsectionName(string $idSubSection = null): string
     {
-        $items = $this->getSubSectionByElement($this->configureSectionArray);
+        $items = $this->getSubSectionByElement(['subelement' => $this->getSubElementName()]);
         return $items[$idSubSection]['name'] ?? '';
     }
 
@@ -276,6 +266,8 @@ class WrapperSection
 //TODO do table a foreign pridat tlacitko duplikace!
 
 //TODO admin: cisty export dat (do CSV) podle aktualniho vypisu
+//TODO grid: export: csv, pdf, xml...a moznost dalsich - ovladat pres typ zobrazeni co se ma exportovat a co ne!!!
+
 //TODO zobrazovani elementu pro submenu/zobrazovani elementu pro hlavni sekci, zobrazovat pro: element=hodnota
 //TODO element podle vybrane moznosti - napr: select moznost: admin: element=upload, guest=textarea, moderator=text
 
@@ -299,7 +291,6 @@ class WrapperSection
 //FIXME system podmenu predelat!! filtrovani jako bylo tenkrat na konfiguratoru bude leda umet fitr na gridu!!!!!
 //TODO grid: filtrovani on-off, hledani on-off <- session + multiple moznost v zakladu
 
-//TODO grid: export: csv, pdf, xml...a moznost dalsich
 
 //FIXME pri editaci foreign sekce a defaultni zvolenem jazyku se nezobrazi obsah i kdyz je nastavevym pro proklikani se zobrazi konektne
 
@@ -353,15 +344,12 @@ class WrapperSection
         $this->initConfigure();
 
         // set items
-//        $this->configureSectionArray[self::CONFIGURE_ITEMS] = $items;
-
-        // set items
         $this->configureItems = $items;
-
 
         // set elements to configure
         $this->loadElements($items);
 
+        // tell configure is ready
         $this->configureReady = true;
     }
 
@@ -373,7 +361,7 @@ class WrapperSection
      */
     public function setCacheNames(array $names)
     {
-        $this->configureSectionArray['cache'] = $names;
+        $this->cacheNames = $names;
     }
 
 
@@ -384,14 +372,7 @@ class WrapperSection
      */
     public function setActionType(string $actionType)
     {
-        // set action type
         $this->actionType = $actionType;
-
-
-//        if (!in_array($actionType, self::ACTION_TYPES)) {
-//            die('unknown action type: ' . $actionType . '!');
-//        }
-//        $this->configureSectionArray[self::CONFIGURE_ACTION_TYPE] = $actionType;    //FIXME remove
     }
 
 
@@ -424,8 +405,52 @@ class WrapperSection
      */
     public function setDatabaseFk(string $fkPk, string $fkWhere)
     {
-        $this->configureSectionArray['database']['fkpk'] = $fkPk;
-        $this->configureSectionArray['database']['fkwhere'] = $fkWhere;
+        $this->databaseTableFkPk = $fkPk;
+        $this->databaseTableFkWhere = $fkWhere;
+    }
+
+
+    /**
+     * Get database table FkPk.
+     *
+     * @return string
+     */
+    public function getDatabaseTableFkPk(): string
+    {
+        return $this->databaseTableFkPk;
+    }
+
+
+    /**
+     * Get database table FkWhere.
+     *
+     * @return string
+     */
+    public function getDatabaseTableFkWhere(): string
+    {
+        return $this->databaseTableFkWhere;
+    }
+
+
+    /**
+     * Set database limit.
+     *
+     * @param int $limit
+     */
+    public function setDatabaseLimit(int $limit)
+    {
+        $this->databaseLimit = $limit;
+    }
+
+
+    /**
+     * Set database test sql.
+     *
+     * @param bool $state
+     */
+    public function setDatabaseTestSql(bool $state)
+    {
+        $this->databaseTestSql = $state;
     }
 
 
@@ -434,92 +459,69 @@ class WrapperSection
      *
      * @param string $idSection
      * @param string $actionType
+     * @return array
      * @throws Exception
      */
-    public function getById(string $idSection, string $actionType)
+    public function getById(string $idSection, string $actionType): array
     {
         $configureSectionArray = $this->configureSection->getSectionById($idSection);
         if (!$configureSectionArray) {
             throw new Exception('Section "' . $idSection . '" does not exist!');
         }
 
-        $this->configureSectionArray = $configureSectionArray;  //FIXME docasna obrzlicka!!!
-
         //TODO tady toto pouzit jen nako lokalni promennou: configureSectionArray!!!
-//        $this->configureSectionArray = $this->configureSection->getSectionById($idSection);
-//        if (!$this->configureSectionArray) {
-//            throw new Exception('Section "' . $idSection . '" does not exist!');
-//        }
 
-        $this->initConfigure();
+        // set idSection
+        $this->sectionId = $idSection;
 
         // set action type
-//        $this->configureSectionArray['actiontype'] = $actionType;
         $this->setActionType($actionType);
-        // set global configuration
-//        $this->configureSectionArray['parameters'] = $this->container->parameters;
 
         /*
          * internal set
          */
 
-        if (isset($this->configureSectionArray['cache'])) {
+        if (isset($configureSectionArray['cache'])) {
             // if define cache, explode by ";"
-            $this->setCacheNames(explode(';', $this->configureSectionArray['cache']));
+            $this->setCacheNames(explode(';', $configureSectionArray['cache']));
         }
 
 //TODO nastavovat po jednom jako v konfiguraci contentu!!!!
-//TODO databaze nacitat do vlasniho pole!!!!
-//FIXME musi vzit konfiguraci ze souboru a tady si ju roztriskat na jednotlive metody a ty nastavit - nec nemuize jit magii!!!!
 
-        // table name from configure
-//        $this->databaseTable = $this->configureSectionArray['database']['table'] ?? null;
-        if (isset($this->configureSectionArray['database'])) {
+        // set database
+        if (isset($configureSectionArray['database'])) {
             // if define database for add configuration section mode
-            $this->setDatabase($this->configureSectionArray['database']['table'], $this->configureSectionArray['database']['pk']);
+            $this->setDatabase($configureSectionArray['database']['table'], $configureSectionArray['database']['pk']);
 
-            //TODO nastaveni FKxx
-//            $this->wrapperSection->setDatabaseFk('id_ident', 'id_locale');
+            //set fkpk + fkwhere
+            if (isset($configureSectionArray['database']['fkpk']) && isset($configureSectionArray['database']['fkwhere'])) {
+                $this->setDatabaseFk($configureSectionArray['database']['fkpk'], $configureSectionArray['database']['fkwhere']);
+            }
+
+            // set limit
+            if (isset($configureSectionArray['database']['limit'])) {
+                $this->setDatabaseLimit((int) $configureSectionArray['database']['limit']);
+            }
+
+            // set testSql
+            if (isset($configureSectionArray['database']['testsql'])) {
+                $this->setDatabaseTestSql($configureSectionArray['database']['testsql']);
+            }
         }
 
+        // set section name
+        $this->setSectionName($configureSectionArray['name']);
+
+        // set sub-element
+        $this->setSubElementName($configureSectionArray['subelement'] ?? null);
+        $this->setSubElementConfig($configureSectionArray['subelementconfig'] ?? null);
 
 //FIXME FK-WHERE + FKPK -> musi byt where->pk musi byt v tomto poradi!!!!
 
+        // set items
+        $this->setItems($configureSectionArray['items'] ?? []);
 
-//        // table name for AS
-//        $this->databaseTableAs = $this->getDatabaseAliasName($this->getDatabaseTableName());
-//        // only name PK for use index in values
-//        $this->databaseTablePkIndex = $this->configureSectionArray['database']['pk'] ?? null;
-//        // sql name for use in sql query with table AS
-//        $this->databaseTablePk = $this->databaseTableAs . '.' . $this->databaseTablePkIndex;
-
-//        // load information schema key column usage
-//        $this->databaseTableListFk = $this->getInformationSchemaKeyColumnUsage();
-
-        //TODO obrzlicka na nastaveni items!!! - opravit!!!
-        $this->configureItems = $this->configureSectionArray['items'] ?? [];
-
-        // set elements to configure
-        $this->loadElements($this->getItems());
-
-
-//TODO sjednotit na jednu globalni metodu!!
-        // load visible elements
-//        $elements = [];
-//        foreach ($this->getItems() as $key => $item) {
-//            $element = $this->adminElement->getElement($item['type']);
-//            if ($element) {
-//                $instance = clone $element; // clone instance
-//                if ($instance) {
-//                    $instance->setWrapperSection($this);    // set wrapper
-//                    $instance->setIdElement($key);          // set element id
-//                    $elements[$key] = $instance;
-//                }
-//            }
-//        }
-//        $this->configureSectionArray['elements'] = $elements;   // set elements to configure section array
-
-        $this->configureReady = true;
+        return $configureSectionArray;
     }
 
 
@@ -669,7 +671,7 @@ class WrapperSection
      */
     private function isTestSQL(): bool
     {
-        return $this->configureSectionArray['database']['testsql'] ?? false;
+        return $this->databaseTestSql;
     }
 
 
@@ -682,29 +684,6 @@ class WrapperSection
     private function processTestSQL(Fluent $fluent)
     {
         Debugger::log((string) $fluent, 'test-sql');
-    }
-
-
-    /**
-     * Get configure section array.
-     *
-     * @return array
-     */
-    public function getConfigureSectionArray(): array
-    {
-        return $this->configureSectionArray;
-    }
-
-
-    /**
-     * Get configure section value.
-     *
-     * @param string $index
-     * @return mixed|null
-     */
-    public function getConfigureSectionValue(string $index)
-    {
-        return $this->configureSectionArray[$index] ?? null;
     }
 
 
@@ -745,7 +724,7 @@ class WrapperSection
      */
     public function getDatabaseLimit(int $default = 50): int
     {
-        return (int) $this->configureSectionArray['database']['limit'] ?: $default;
+        return (int) $this->databaseLimit ?: $default;
     }
 
 
@@ -954,7 +933,7 @@ class WrapperSection
                 }
 
                 // select by subSectionId
-                if (isset($this->configureSectionArray['subelement']) && $this->subSectionId && $this->configureSectionArray['subelement'] == $idItem) {
+                if ($this->getSubElementName() && $this->getSubElementName() == $idItem && $this->subSectionId) {
                     if (isset($item['fk'])) {
                         $fk = $this->databaseTableListFk[$item['fk']];
 //                        dump($fk);
@@ -999,6 +978,27 @@ class WrapperSection
 
 
     /**
+     * Get idElement by fkType.
+     *
+     * @internal
+     * @param string $fkType
+     * @return string
+     */
+    private function getIdElementByFkType(string $fkType): string
+    {
+        // switch fkType for correct idElement
+        switch ($fkType) {
+            case'fkpk':
+                return $this->databaseTableFkPk;
+
+            case 'fkwhere':
+                return $this->databaseTableFkWhere;
+        }
+        return '';
+    }
+
+
+    /**
      * Get FK name by type.
      *
      * @internal
@@ -1008,8 +1008,8 @@ class WrapperSection
      */
     private function getFkNameByType(string $fkType, string $index = 'foreign')
     {
-        if (isset($this->configureSectionArray['database'][$fkType])) {
-            $idElement = $this->configureSectionArray['database'][$fkType];
+        $idElement = $this->getIdElementByFkType($fkType);
+        if ($idElement) {
             $item = $this->getItem($idElement);
             if (isset($item[$index])) {
                 return $item[$index];
@@ -1058,10 +1058,9 @@ class WrapperSection
     public function setForeign(AbstractElement $abstractElement, string $type)
     {
         $configure = $abstractElement->getConfigure();
-
         if (isset($configure['foreign']) && $configure['foreign']) {
-            if ($this->configureSectionArray[IConfigureSection::FILE_SECTION_DATABASE_INDEX][$type] != $abstractElement->getIdElement()) {
-                $this->configureSection->saveSectionPart($this->configureSectionArray['id'], IConfigureSection::FILE_SECTION_DATABASE_INDEX, [$type => $abstractElement->getIdElement()]);
+            if ($this->getIdElementByFkType($type) != $abstractElement->getIdElement()) {
+                $this->configureSection->saveSectionPart($this->sectionId, IConfigureSection::FILE_SECTION_DATABASE_INDEX, [$type => $abstractElement->getIdElement()]);
             }
         }
     }
@@ -1203,7 +1202,7 @@ class WrapperSection
             $item = $this->getItem($groupByColumn);
             $result->where([$item['name'] => $value[$groupByColumn]]);
         }
-        return $result->fetchSingle();
+        return $result->fetchSingle() ?? 1;
     }
 
 
@@ -1214,7 +1213,7 @@ class WrapperSection
      */
     public function isFkIdSelectFirstValue(): bool
     {
-        $item = $this->getItem($this->configureSectionArray['database']['fkwhere']);
+        $item = $this->getItem($this->databaseTableFkWhere);
         return $item['fkidfirst'];
     }
 
@@ -1263,9 +1262,9 @@ class WrapperSection
     {
         $this->subSectionId = $subSectionId;
 
-        // if subelementconfig is set
-        if (isset($this->configureSectionArray['subelementconfig']) && $this->configureSectionArray['subelementconfig']) {
-            $this->getById($this->configureSectionArray['subelementconfig'], $this->actionType);
+        // if sub-element config is set
+        if ($this->subElementConfig) {
+            $this->getById($this->subElementConfig, $this->actionType);
         }
 
         $this->getSource(false);    // need regenerate fluent with new subSectionId!!
@@ -1273,13 +1272,46 @@ class WrapperSection
 
 
     /**
-     * Get sub element name.
+     * Get sub-element name.
      *
      * @return string
      */
     public function getSubElementName(): string
     {
-        return $this->configureSectionArray['subelement'];
+        return $this->subElementName ?? '';
+    }
+
+
+    /**
+     * Set sub-element name.
+     *
+     * @param string|null $subElementName
+     */
+    public function setSubElementName(string $subElementName = null)
+    {
+        $this->subElementName = $subElementName;
+    }
+
+
+    /**
+     * Get sub-element config.
+     *
+     * @return string
+     */
+    public function getSubElementConfig(): string
+    {
+        return $this->subElementConfig ?? '';
+    }
+
+
+    /**
+     * Set sub-element config.
+     *
+     * @param string|null $subElementConfig
+     */
+    public function setSubElementConfig(string $subElementConfig = null)
+    {
+        $this->subElementConfig = $subElementConfig;
     }
 
 
@@ -1382,11 +1414,6 @@ class WrapperSection
     public function getItems(): array
     {
         return $this->configureItems ?? [];
-
-//        return $this->configureSectionArray[self::CONFIGURE_ITEMS] ?? [];
-//        return array_filter($this->configureSectionArray[self::CONFIGURE_ITEMS] ?? [], function ($item) use ($limitedByShow) {
-//            return ($limitedByShow ? in_array($this->configureSectionArray[self::CONFIGURE_ACTION_TYPE], $item['show']) : true);  // deactivate filter for false value
-//        });
     }
 
 
@@ -1480,9 +1507,9 @@ class WrapperSection
         $this->cache->clean([Cache::TAGS => 'grid']);   // internal clean cache for grid
 
         // user defined cache
-        if (isset($this->configureSectionArray['cache']) && $this->configureSectionArray['cache']) {
+        if ($this->cacheNames) {
             $tempWebDir = $this->configureParameters['tempWebDir'];
-            foreach ($this->configureSectionArray['cache'] as $cacheDir) {
+            foreach ($this->cacheNames as $cacheDir) {
                 // prochazeni a fyzicke mazani cache souboru primo z tempu
                 $finder = Finder::findFiles('*');
                 $tempPath = $tempWebDir . $cacheDir;
@@ -1579,8 +1606,19 @@ class WrapperSection
                 $values[$key] = $val;
             }
         }
-        $this->configureSectionArray['values'] = $values;
+        $this->databaseValues = $values;
         return $values;
+    }
+
+
+    /**
+     * Get database values.
+     *
+     * @return array
+     */
+    public function getDatabaseValues(): array
+    {
+        return $this->databaseValues;
     }
 
 
