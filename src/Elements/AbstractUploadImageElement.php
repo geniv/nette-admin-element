@@ -23,7 +23,7 @@ abstract class AbstractUploadImageElement extends UploadElement
      */
     protected function getFormContainerContentElement(Form $form)
     {
-        $values = $this->wrapperSection->getDatabaseValues();
+        $values = $this->wrapperSection->getDatabaseValues() ?: null;
         // uploadimage element
         $form->addUploadImage($this->idElement, $this->getTranslateNameContent())
             ->setPath($this->getRelativePath())
