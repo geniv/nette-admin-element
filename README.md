@@ -105,12 +105,12 @@ $this->template->sectionId = $id;
 $this->template->sectionName = $this->wrapperSection->getSectionName();
 $this->template->subSectionName = $this->wrapperSection->getSubsectionName($idSubSection);
 
-$this->template->detail = $this->wrapperSection->getDetailContainerContent($id);
-
 $this->template->idSubSection = $this->idSubSection = $idSubSection;
 if ($idSubSection) {
     $this->wrapperSection->setSubSectionId($idSubSection);
 }
+
+$this->template->detail = $this->wrapperSection->getDetailContainerContent($id);
 
 $this->template->page = $page;
 ```
@@ -251,14 +251,14 @@ if ($idSubSection) {
 $this->template->page = $page;
 $this->template->listItems = $this->wrapperSection->getItems();
 
-// define form success
-$this->setOnSuccessAdd();
-
 // remove ajaxSend submit button for ADD
 unset($this['formAddEdit']['ajaxSend']);
 
 // set FkId
 $this->wrapperSection->setFkId($fkId);
+
+// define form success
+$this->setOnSuccessAdd();
 ```
 
 presenters - action edit - foreign:
@@ -277,16 +277,14 @@ if ($idSubSection) {
 $this->template->page = $page;
 $this->template->listItems = $this->wrapperSection->getItems();
 
-// define form success
-$this->setOnSuccessEdit();
-
 // set FkId
 $this->wrapperSection->setFkId($fkId);
 $this['switchFkId']->addVariableTemplate('hasLocale', $this->wrapperSection->getMByIdN($id));
 
-//TODO ACL block for user leve?!?! - musi umet zobrazovat jen data pro danou ACL roli!
-
 $defaults = $this->wrapperSection->setDefaults($this->wrapperSection->getDataById($id));
+
+// define form success
+$this->setOnSuccessEdit();
 ```
 
 presenters - handle delete switch fkId:
