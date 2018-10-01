@@ -426,6 +426,28 @@ class WrapperSection
 
 
     /**
+     * Get database table FkPk.
+     *
+     * @return string
+     */
+    public function getDatabaseTableFkPk(): string
+    {
+        return $this->databaseTableFkPk;
+    }
+
+
+    /**
+     * Get database table FkWhere.
+     *
+     * @return string
+     */
+    public function getDatabaseTableFkWhere(): string
+    {
+        return $this->databaseTableFkWhere;
+    }
+
+
+    /**
      * Set database limit.
      *
      * @param int $limit
