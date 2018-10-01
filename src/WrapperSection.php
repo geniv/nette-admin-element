@@ -986,15 +986,18 @@ class WrapperSection
      */
     private function getIdElementByFkType(string $fkType): string
     {
+        $idElement = null;
         // switch fkType for correct idElement
         switch ($fkType) {
             case'fkpk':
-                return $this->databaseTableFkPk;
+                $idElement = $this->databaseTableFkPk;
+                break;
 
             case 'fkwhere':
-                return $this->databaseTableFkWhere;
+                $idElement = $this->databaseTableFkWhere;
+                break;
         }
-        return '';
+        return $idElement ?? '';
     }
 
 
