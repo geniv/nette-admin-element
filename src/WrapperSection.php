@@ -88,13 +88,11 @@ class WrapperSection
     /** @var string */
     private $databaseTablePrefix, $databaseTable, $databaseTableAs, $databaseTablePk, $databaseTablePkIndex, $databaseTableFkPk, $databaseTableFkWhere;
     /** @var int */
-    private $databaseTableLimit = 0;
+    private $databaseLimit = 0;
     /** @var bool */
-    private $databaseTableTestSql = false;
+    private $databaseTestSql = false;
     /** @var array */
-    private $databaseOrderDefault = [];
-    /** @var array */
-    private $databaseTableListFk = [];
+    private $databaseOrderDefault = [], $databaseTableListFk = [], $databaseValues = [];
     /** @var Fluent */
     private static $staticSource;
     /** @var Cache */
@@ -432,7 +430,7 @@ class WrapperSection
      */
     public function setDatabaseLimit(int $limit)
     {
-        $this->databaseTableLimit = $limit;
+        $this->databaseLimit = $limit;
     }
 
 
@@ -443,7 +441,7 @@ class WrapperSection
      */
     public function setDatabaseTestSql(bool $state)
     {
-        $this->databaseTableTestSql = $state;
+        $this->databaseTestSql = $state;
     }
 
 
@@ -653,7 +651,7 @@ class WrapperSection
      */
     private function isTestSQL(): bool
     {
-        return $this->databaseTableTestSql;
+        return $this->databaseTestSql;
     }
 
 
@@ -672,6 +670,7 @@ class WrapperSection
     /**
      * Get configure section array.
      *
+     * @deprecated
      * @return array
      */
     public function getConfigureSectionArray(): array
@@ -683,6 +682,7 @@ class WrapperSection
     /**
      * Get configure section value.
      *
+     * @deprecated
      * @param string $index
      * @return mixed|null
      */
@@ -729,7 +729,7 @@ class WrapperSection
      */
     public function getDatabaseLimit(int $default = 50): int
     {
-        return (int) $this->databaseTableLimit ?: $default;
+        return (int) $this->databaseLimit ?: $default;
     }
 
 
@@ -1574,8 +1574,22 @@ class WrapperSection
                 $values[$key] = $val;
             }
         }
-        $this->configureSectionArray['values'] = $values;
+        $this->databaseValues = $values;
         return $values;
+    }
+
+
+    //TODO subsection configure!!! optimalizovat!!!!
+
+
+    /**
+     * Get database values.
+     *
+     * @return array
+     */
+    public function getDatabaseValues(): array
+    {
+        return $this->databaseValues;
     }
 
 
