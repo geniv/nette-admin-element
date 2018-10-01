@@ -236,6 +236,8 @@ class WrapperSection
         return $result ?? [];
     }
 
+    //FIXME subsection configure!!! optimalizovat!!!!
+
 
     /**
      * Get section name.
@@ -244,7 +246,7 @@ class WrapperSection
      */
     public function getSectionName(): string
     {
-        return $this->configureSectionArray['name'];
+        return $this->configureSectionArray['name'];    //FIXME vyhodit!
     }
 
 
@@ -256,7 +258,7 @@ class WrapperSection
      */
     public function getSubsectionName(string $idSubSection = null): string
     {
-        $items = $this->getSubSectionByElement($this->configureSectionArray);
+        $items = $this->getSubSectionByElement($this->configureSectionArray);   //FIXME vyhodit!
         return $items[$idSubSection]['name'] ?? '';
     }
 
@@ -450,9 +452,10 @@ class WrapperSection
      *
      * @param string $idSection
      * @param string $actionType
+     * @return array
      * @throws Exception
      */
-    public function getById(string $idSection, string $actionType)
+    public function getById(string $idSection, string $actionType): array
     {
         $configureSectionArray = $this->configureSection->getSectionById($idSection);
         if (!$configureSectionArray) {
@@ -502,6 +505,8 @@ class WrapperSection
 
         // set items
         $this->setItems($configureSectionArray['items'] ?? []);
+
+        return $configureSectionArray;
     }
 
 
@@ -668,21 +673,10 @@ class WrapperSection
 
 
     /**
-     * Get configure section array.
-     *
-     * @deprecated
-     * @return array
-     */
-    public function getConfigureSectionArray(): array
-    {
-        return $this->configureSectionArray;
-    }
-
-
-    /**
      * Get configure section value.
      *
      * @deprecated
+     *
      * @param string $index
      * @return mixed|null
      */
@@ -1377,11 +1371,6 @@ class WrapperSection
     public function getItems(): array
     {
         return $this->configureItems ?? [];
-
-//        return $this->configureSectionArray[self::CONFIGURE_ITEMS] ?? [];
-//        return array_filter($this->configureSectionArray[self::CONFIGURE_ITEMS] ?? [], function ($item) use ($limitedByShow) {
-//            return ($limitedByShow ? in_array($this->configureSectionArray[self::CONFIGURE_ACTION_TYPE], $item['show']) : true);  // deactivate filter for false value
-//        });
     }
 
 
@@ -1577,9 +1566,6 @@ class WrapperSection
         $this->databaseValues = $values;
         return $values;
     }
-
-
-    //TODO subsection configure!!! optimalizovat!!!!
 
 
     /**
