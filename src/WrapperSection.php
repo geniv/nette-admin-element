@@ -352,11 +352,7 @@ class WrapperSection
         $this->initConfigure();
 
         // set items
-//        $this->configureSectionArray[self::CONFIGURE_ITEMS] = $items;
-
-        // set items
         $this->configureItems = $items;
-
 
         // set elements to configure
         $this->loadElements($items);
@@ -439,16 +435,13 @@ class WrapperSection
         $this->configureSectionArray = $configureSectionArray;  //FIXME docasna obrzlicka!!!
 
         //TODO tady toto pouzit jen nako lokalni promennou: configureSectionArray!!!
-//        $this->configureSectionArray = $this->configureSection->getSectionById($idSection);
-//        if (!$this->configureSectionArray) {
-//            throw new Exception('Section "' . $idSection . '" does not exist!');
-//        }
+
 
         $this->initConfigure();
 
         // set action type
-//        $this->configureSectionArray['actiontype'] = $actionType;
         $this->setActionType($actionType);
+
         // set global configuration
 //        $this->configureSectionArray['parameters'] = $this->container->parameters;
 
@@ -456,9 +449,9 @@ class WrapperSection
          * internal set
          */
 
-        if (isset($this->configureSectionArray['cache'])) {
+        if (isset($configureSectionArray['cache'])) {
             // if define cache, explode by ";"
-            $this->setCacheNames(explode(';', $this->configureSectionArray['cache']));
+            $this->setCacheNames(explode(';', $configureSectionArray['cache']));
         }
 
 //TODO nastavovat po jednom jako v konfiguraci contentu!!!!
@@ -467,12 +460,11 @@ class WrapperSection
 
         // table name from configure
 //        $this->databaseTable = $this->configureSectionArray['database']['table'] ?? null;
-        if (isset($this->configureSectionArray['database'])) {
+        if (isset($configureSectionArray['database'])) {
             // if define database for add configuration section mode
-            $this->setDatabase($this->configureSectionArray['database']['table'], $this->configureSectionArray['database']['pk']);
+            $this->setDatabase($configureSectionArray['database']['table'], $configureSectionArray['database']['pk']);
 
-            //TODO nastaveni FKxx
-//            $this->wrapperSection->setDatabaseFk('id_ident', 'id_locale');
+            $this->setDatabaseFk($configureSectionArray['database']['fkpk'], $configureSectionArray['database']['fkwhere']);
         }
 
 
@@ -490,11 +482,13 @@ class WrapperSection
 //        $this->databaseTableListFk = $this->getInformationSchemaKeyColumnUsage();
 
         //TODO obrzlicka na nastaveni items!!! - opravit!!!
-        $this->configureItems = $this->configureSectionArray['items'] ?? [];
+//        $this->configureItems = $configureSectionArray['items'] ?? [];
+
+        // set items
+        $this->setItems($configureSectionArray['items'] ?? []);
 
         // set elements to configure
-        $this->loadElements($this->getItems());
-
+//        $this->loadElements($this->getItems());
 
 //TODO sjednotit na jednu globalni metodu!!
         // load visible elements
@@ -512,7 +506,7 @@ class WrapperSection
 //        }
 //        $this->configureSectionArray['elements'] = $elements;   // set elements to configure section array
 
-        $this->configureReady = true;
+//        $this->configureReady = true;
     }
 
 
