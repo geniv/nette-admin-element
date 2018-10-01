@@ -457,7 +457,9 @@ class WrapperSection
             // if define database for add configuration section mode
             $this->setDatabase($configureSectionArray['database']['table'], $configureSectionArray['database']['pk']);
 
-            $this->setDatabaseFk($configureSectionArray['database']['fkpk'], $configureSectionArray['database']['fkwhere']);
+            if (isset($configureSectionArray['database']['fkpk']) && isset($configureSectionArray['database']['fkwhere'])) {
+                $this->setDatabaseFk($configureSectionArray['database']['fkpk'], $configureSectionArray['database']['fkwhere']);
+            }
         }
 
 //FIXME FK-WHERE + FKPK -> musi byt where->pk musi byt v tomto poradi!!!!
