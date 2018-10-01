@@ -436,14 +436,8 @@ class WrapperSection
 
         //TODO tady toto pouzit jen nako lokalni promennou: configureSectionArray!!!
 
-
-        $this->initConfigure();
-
         // set action type
         $this->setActionType($actionType);
-
-        // set global configuration
-//        $this->configureSectionArray['parameters'] = $this->container->parameters;
 
         /*
          * internal set
@@ -458,8 +452,7 @@ class WrapperSection
 //TODO databaze nacitat do vlasniho pole!!!!
 //FIXME musi vzit konfiguraci ze souboru a tady si ju roztriskat na jednotlive metody a ty nastavit - nec nemuize jit magii!!!!
 
-        // table name from configure
-//        $this->databaseTable = $this->configureSectionArray['database']['table'] ?? null;
+        // set database
         if (isset($configureSectionArray['database'])) {
             // if define database for add configuration section mode
             $this->setDatabase($configureSectionArray['database']['table'], $configureSectionArray['database']['pk']);
@@ -467,46 +460,10 @@ class WrapperSection
             $this->setDatabaseFk($configureSectionArray['database']['fkpk'], $configureSectionArray['database']['fkwhere']);
         }
 
-
 //FIXME FK-WHERE + FKPK -> musi byt where->pk musi byt v tomto poradi!!!!
-
-
-//        // table name for AS
-//        $this->databaseTableAs = $this->getDatabaseAliasName($this->getDatabaseTableName());
-//        // only name PK for use index in values
-//        $this->databaseTablePkIndex = $this->configureSectionArray['database']['pk'] ?? null;
-//        // sql name for use in sql query with table AS
-//        $this->databaseTablePk = $this->databaseTableAs . '.' . $this->databaseTablePkIndex;
-
-//        // load information schema key column usage
-//        $this->databaseTableListFk = $this->getInformationSchemaKeyColumnUsage();
-
-        //TODO obrzlicka na nastaveni items!!! - opravit!!!
-//        $this->configureItems = $configureSectionArray['items'] ?? [];
 
         // set items
         $this->setItems($configureSectionArray['items'] ?? []);
-
-        // set elements to configure
-//        $this->loadElements($this->getItems());
-
-//TODO sjednotit na jednu globalni metodu!!
-        // load visible elements
-//        $elements = [];
-//        foreach ($this->getItems() as $key => $item) {
-//            $element = $this->adminElement->getElement($item['type']);
-//            if ($element) {
-//                $instance = clone $element; // clone instance
-//                if ($instance) {
-//                    $instance->setWrapperSection($this);    // set wrapper
-//                    $instance->setIdElement($key);          // set element id
-//                    $elements[$key] = $instance;
-//                }
-//            }
-//        }
-//        $this->configureSectionArray['elements'] = $elements;   // set elements to configure section array
-
-//        $this->configureReady = true;
     }
 
 
