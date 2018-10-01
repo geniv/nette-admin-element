@@ -695,20 +695,6 @@ class WrapperSection
 
 
     /**
-     * Get configure section value.
-     *
-     * @deprecated
-     *
-     * @param string $index
-     * @return mixed|null
-     */
-    public function getConfigureSectionValue(string $index)
-    {
-        return $this->configureSectionArray[$index] ?? null;
-    }
-
-
-    /**
      * Get database alias name.
      *
      * @internal
