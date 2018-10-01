@@ -102,7 +102,7 @@ class WrapperSection
     /** @var int */
     private $fkId;
     /** @var string */
-    private $subSectionId;
+    private $subSectionId, $subElementName, $subElementConfig;
     /** @var bool */
     private $archive = false;
 
@@ -188,7 +188,7 @@ class WrapperSection
      */
     private function getSubSectionByElement(array $configure): array
     {
-        $result = [];
+        $result = [];//FIXME upravit!
         if (isset($configure['items'][$configure['subelement']])) {
             $item = $configure['items'][$configure['subelement']];
 
@@ -223,7 +223,7 @@ class WrapperSection
             if (isset($idSection)) {
                 $list = $this->configureSection->getListSection();
                 foreach ($list as $item) {
-                    if (isset($item['subelement'])) {
+                    if (isset($item['subelement'])) {   //FIXME upravit!
                         $result[$item['id']]['subsection'] = $this->getSubSectionByElement($item);
                     }
                 }
@@ -258,7 +258,7 @@ class WrapperSection
      */
     public function getSubsectionName(string $idSubSection = null): string
     {
-        $items = $this->getSubSectionByElement($this->configureSectionArray);   //FIXME vyhodit!
+        $items = $this->getSubSectionByElement($this->configureSectionArray);   //FIXME predelat!!
         return $items[$idSubSection]['name'] ?? '';
     }
 
@@ -522,6 +522,10 @@ class WrapperSection
                 $this->setDatabaseTestSql($configureSectionArray['database']['testsql']);
             }
         }
+
+        // set sub-element
+        $this->setSubElementName($configureSectionArray['subelement'] ?? null);
+        $this->setSubElementConfig($configureSectionArray['subelementconfig'] ?? null);
 
 //FIXME FK-WHERE + FKPK -> musi byt where->pk musi byt v tomto poradi!!!!
 
@@ -940,7 +944,7 @@ class WrapperSection
                 }
 
                 // select by subSectionId
-                if (isset($this->configureSectionArray['subelement']) && $this->subSectionId && $this->configureSectionArray['subelement'] == $idItem) {
+                if ($this->getSubElementName() && $this->getSubElementName() == $idItem && $this->subSectionId) {
                     if (isset($item['fk'])) {
                         $fk = $this->databaseTableListFk[$item['fk']];
 //                        dump($fk);
@@ -1260,9 +1264,9 @@ class WrapperSection
     {
         $this->subSectionId = $subSectionId;
 
-        // if subelementconfig is set
-        if (isset($this->configureSectionArray['subelementconfig']) && $this->configureSectionArray['subelementconfig']) {
-            $this->getById($this->configureSectionArray['subelementconfig'], $this->actionType);
+        // if sub-element config is set
+        if ($this->subElementConfig) {
+            $this->getById($this->subElementConfig, $this->actionType);
         }
 
         $this->getSource(false);    // need regenerate fluent with new subSectionId!!
@@ -1270,13 +1274,47 @@ class WrapperSection
 
 
     /**
-     * Get sub element name.
+     * Get sub-element name.
      *
      * @return string
      */
     public function getSubElementName(): string
     {
-        return $this->configureSectionArray['subelement'];
+        return $this->subElementName;
+//        return $this->configureSectionArray['subelement'];
+    }
+
+
+    /**
+     * Set sub-element name.
+     *
+     * @param string|null $subElementName
+     */
+    public function setSubElementName(string $subElementName = null)
+    {
+        $this->subElementName = $subElementName;
+    }
+
+
+    /**
+     * Get sub-element config.
+     *
+     * @return string
+     */
+    public function getSubElementConfig(): string
+    {
+        return $this->subElementConfig;
+    }
+
+
+    /**
+     * Set sub-element config.
+     *
+     * @param string|null $subElementConfig
+     */
+    public function setSubElementConfig(string $subElementConfig = null)
+    {
+        $this->subElementConfig = $subElementConfig;
     }
 
 
