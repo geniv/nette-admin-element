@@ -351,7 +351,7 @@ class UploadElement extends AbstractElement
     {
         if (isset($this->configure['share']) && !$this->configure['share']) {
             $values = $this->wrapperSection->getDatabaseValues();
-            $this->removeFile($this->getAbsolutePath() . $values);
+            $this->removeFile($this->getAbsolutePath() . $values[$this->idElement]);
         }
     }
 
