@@ -102,7 +102,7 @@ class WrapperSection
     /** @var int */
     private $fkId;
     /** @var string */
-    private $sectionName, $subSectionId, $subElementName, $subElementConfig;
+    private $sectionId, $sectionName, $subSectionId, $subElementName, $subElementConfig;
     /** @var bool */
     private $archive = false;
 
@@ -496,6 +496,9 @@ class WrapperSection
         $this->configureSectionArray = $configureSectionArray;  //FIXME docasna obrzlicka!!!
 
         //TODO tady toto pouzit jen nako lokalni promennou: configureSectionArray!!!
+
+        // set idSection
+        $this->sectionId = $idSection;
 
         // set action type
         $this->setActionType($actionType);
@@ -1001,6 +1004,27 @@ class WrapperSection
 
 
     /**
+     * Get idElement by fkType.
+     *
+     * @internal
+     * @param string $fkType
+     * @return string
+     */
+    private function getIdElementByFkType(string $fkType): string
+    {
+        // switch fkType for correct idElement
+        switch ($fkType) {
+            case'fkpk':
+                return $this->databaseTableFkPk;
+
+            case 'fkwhere':
+                return $this->databaseTableFkWhere;
+        }
+        return '';
+    }
+
+
+    /**
      * Get FK name by type.
      *
      * @internal
@@ -1010,18 +1034,7 @@ class WrapperSection
      */
     private function getFkNameByType(string $fkType, string $index = 'foreign')
     {
-        $idElement = null;
-        // switch fkType for correct idElement
-        switch ($fkType) {
-            case'fkpk':
-                $idElement = $this->databaseTableFkPk;
-                break;
-
-            case 'fkwhere':
-                $idElement = $this->databaseTableFkWhere;
-                break;
-        }
-
+        $idElement = $this->getIdElementByFkType($fkType);
         if ($idElement) {
             $item = $this->getItem($idElement);
             if (isset($item[$index])) {
@@ -1071,10 +1084,11 @@ class WrapperSection
     public function setForeign(AbstractElement $abstractElement, string $type)
     {
         $configure = $abstractElement->getConfigure();
-
         if (isset($configure['foreign']) && $configure['foreign']) {
-            if ($this->configureSectionArray[IConfigureSection::FILE_SECTION_DATABASE_INDEX][$type] != $abstractElement->getIdElement()) {
-                $this->configureSection->saveSectionPart($this->configureSectionArray['id'], IConfigureSection::FILE_SECTION_DATABASE_INDEX, [$type => $abstractElement->getIdElement()]);
+//            if ($this->configureSectionArray[IConfigureSection::FILE_SECTION_DATABASE_INDEX][$type] != $abstractElement->getIdElement()) {
+            //$this->sectionId
+            if ($this->getIdElementByFkType($type) != $abstractElement->getIdElement()) {
+                $this->configureSection->saveSectionPart($this->sectionId, IConfigureSection::FILE_SECTION_DATABASE_INDEX, [$type => $abstractElement->getIdElement()]);
             }
         }
     }
