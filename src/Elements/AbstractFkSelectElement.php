@@ -164,8 +164,8 @@ abstract class AbstractFkSelectElement extends AbstractSelectElement
         $configure['image'] = false;
         $items = $this->getSelectItems($configure);
 
+        $item = $items[$data[$this->idElement]] ?? $this->configure['defaultvalue'];
         if (isset($this->configure['image']) && $this->configure['image']) {
-            $item = $items[$data[$this->idElement]];
             if (file_exists($this->getAbsolutePath() . $item) && is_file($this->getAbsolutePath() . $item)) {
                 // via code: \AdminElement\Elements\AbstractUploadImageElement::getRenderRow
                 $src = Thumbnail::getSrcPath($this->getRelativePath(), $item, null, '64');
@@ -173,6 +173,6 @@ abstract class AbstractFkSelectElement extends AbstractSelectElement
                 return (string) $html;
             }
         }
-        return $items[$data[$this->idElement]] ?? $this->configure['defaultvalue'];
+        return $item;
     }
 }
