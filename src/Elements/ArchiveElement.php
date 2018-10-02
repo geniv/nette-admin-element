@@ -28,7 +28,8 @@ class ArchiveElement extends HiddenElement
      */
     public function preProcessUpdateValues(array $values)
     {
-        $values[$this->idElement] = new DateTime();
+        // set date or reset value
+        $values[$this->idElement] = ($this->wrapperSection->isCleanArchive() ? null : new DateTime());
 
         return parent::preProcessUpdateValues($values);
     }
@@ -41,7 +42,7 @@ class ArchiveElement extends HiddenElement
      */
     public function getSource(Fluent $fluent)
     {
-        if (!$this->wrapperSection->isArchive()) {
+        if ($this->wrapperSection->isArchive()) {
             // if archive disabled (default false)
             if ($this->configure['foreign']) {
                 $foreign = $this->wrapperSection->getDatabaseTableListFk();
