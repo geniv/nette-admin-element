@@ -1092,13 +1092,21 @@ class WrapperSection
     }
 
 
+    /**
+     * Clean archive.
+     */
     public function cleanArchive()
     {
         $this->archive = null;
     }
 
 
-    public function isCleanArchive()
+    /**
+     * Is clean archive.
+     *
+     * @return bool
+     */
+    public function isCleanArchive(): bool
     {
         return is_null($this->archive);
     }
