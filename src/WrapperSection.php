@@ -1088,7 +1088,7 @@ class WrapperSection
     public function isArchive(): bool
     {
         // archive switch for only list
-        return ($this->actionType == self::ACTION_LIST ? $this->archive : false);
+        return ($this->actionType == self::ACTION_LIST ? (bool) $this->archive : false);
     }
 
 
