@@ -1092,10 +1092,16 @@ class WrapperSection
     }
 
 
-//    public function cleanArchive()
-//    {
-//        $this->archive = null;
-//    }
+    public function cleanArchive()
+    {
+        $this->archive = null;
+    }
+
+
+    public function isCleanArchive()
+    {
+        return is_null($this->archive);
+    }
 
 
     /**

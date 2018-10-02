@@ -28,7 +28,8 @@ class ArchiveElement extends HiddenElement
      */
     public function preProcessUpdateValues(array $values)
     {
-        $values[$this->idElement] = new DateTime();
+        // set date or reset value
+        $values[$this->idElement] = ($this->wrapperSection->isCleanArchive() ? null : new DateTime());
 
         return parent::preProcessUpdateValues($values);
     }
