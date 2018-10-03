@@ -366,6 +366,17 @@ class WrapperSection
 
 
     /**
+     * Get action type.
+     *
+     * @return string
+     */
+    public function getActionType(): string
+    {
+        return $this->actionType;
+    }
+
+
+    /**
      * Set action type.
      *
      * @param string $actionType
