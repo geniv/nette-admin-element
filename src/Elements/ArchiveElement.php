@@ -54,7 +54,9 @@ class ArchiveElement extends HiddenElement
             // if archive disabled (default false)
             $fluent->where([$where => null]);
         } else {
-            $fluent->where($where . ' IS NOT NULL');
+            if ($this->wrapperSection->getActionType() == WrapperSection::ACTION_LIST) {
+                $fluent->where($where . ' IS NOT NULL');
+            }
         }
     }
 }
