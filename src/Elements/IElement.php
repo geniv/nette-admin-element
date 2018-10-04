@@ -54,6 +54,7 @@ interface IElement
      * Get source.
      *
      * @param Fluent $fluent
+     * @param bool   $rawSource
      */
-    public function getSource(Fluent $fluent,bool $rawSource=false);
+    public function getSource(Fluent $fluent, bool $rawSource = false);
 }

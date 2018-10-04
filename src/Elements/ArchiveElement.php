@@ -36,29 +36,42 @@ class ArchiveElement extends HiddenElement
 
 
     /**
+     * Get manual source.
+     *
+     * @param Fluent $fluent
+     * @param bool   $isArchive
+     */
+    public function getManualSource(Fluent $fluent, bool $isArchive)
+    {
+        if ($this->configure['foreign']) {
+            $foreign = $this->wrapperSection->getDatabaseTableListFk();
+            $fk = $foreign[$this->configure['foreign']];
+            $where = $this->wrapperSection->getDatabaseAliasName($fk['referenced_table_name']) . '.' . $this->configure['name'];
+        } else {
+            $where = $this->wrapperSection->getDatabaseAliasName($this->wrapperSection->getDatabaseTableName()) . '.' . $this->configure['name'];
+        }
+
+        if ($isArchive) {
+            // if archive disabled (default false)
+            $fluent->where([$where => null]);
+        } else {
+            if ($this->wrapperSection->getActionType() == WrapperSection::ACTION_LIST) {
+                $fluent->where($where . ' IS NOT NULL');
+            }
+        }
+    }
+
+
+    /**
      * Get source.
      *
      * @param Fluent $fluent
+     * @param bool   $rawSource
      */
-    public function getSource(Fluent $fluent,bool $rawSource=false)
+    public function getSource(Fluent $fluent, bool $rawSource = false)
     {
         if (!$rawSource) {
-            if ($this->configure['foreign']) {
-                $foreign = $this->wrapperSection->getDatabaseTableListFk();
-                $fk = $foreign[$this->configure['foreign']];
-                $where = $this->wrapperSection->getDatabaseAliasName($fk['referenced_table_name']) . '.' . $this->configure['name'];
-            } else {
-                $where = $this->wrapperSection->getDatabaseAliasName($this->wrapperSection->getDatabaseTableName()) . '.' . $this->configure['name'];
-            }
-
-            if ($this->wrapperSection->isArchive()) {
-                // if archive disabled (default false)
-                $fluent->where([$where => null]);
-            } else {
-                if ($this->wrapperSection->getActionType() == WrapperSection::ACTION_LIST) {
-                    $fluent->where($where . ' IS NOT NULL');
-                }
-            }
+            $this->getManualSource($fluent, $this->wrapperSection->isArchive());
         }
     }
 }

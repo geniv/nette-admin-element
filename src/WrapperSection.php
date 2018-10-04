@@ -913,78 +913,80 @@ class WrapperSection
      * Get source.
      *
      * @param bool $singleton
+     * @param bool $rawSource
      * @return Fluent
      */
     public function getSource(bool $singleton = true, bool $rawSource = false): Fluent
     {
-        if (!isset(self::$staticSource) || !$singleton) {
-            /*
-             * build select
-             */
+        if ($singleton) {
+            if (isset(self::$staticSource)) {
+                return self::$staticSource;
+            }
+        }
 
-            // init fluent
-            $result = $this->connection->select($this->getDatabaseTablePk())->from($this->getDatabaseTableName())->as($this->databaseTableAs);
+        // init fluent
+        $result = $this->connection->select($this->getDatabaseTablePk())->from($this->getDatabaseTableName())->as($this->databaseTableAs);
 
-            $orderDefault = [];
-            $orderPosition = 1;
-            foreach ($this->getItems() as $idItem => $item) {
-                $element = $this->getElement($idItem);
+        $orderDefault = [];
+        $orderPosition = 1;
+        foreach ($this->getItems() as $idItem => $item) {
+            $element = $this->getElement($idItem);
 
+            if (isset($item['foreign']) && $item['foreign']) {
+                $foreign = $this->databaseTableListFk[$item['foreign']];
+
+                if (!($element instanceof ForeignFkWhereElement || $element instanceof ForeignFkPkElement)) {
+                    $result->select([$this->getDatabaseAliasName($foreign['referenced_table_name']) . '.' . $item['name'] => $idItem]);
+                }
+            } else {
+                // add item to select, condition for insert new configure section
+                if (isset($item['name'])) {
+                    $result->select([$this->databaseTableAs . '.' . $item['name'] => $idItem]);
+                }
+            }
+
+            // select by subSectionId
+            if ($this->getSubElementName() && $this->getSubElementName() == $idItem && $this->subSectionId) {
+                if (isset($item['fk'])) {
+                    $fk = $this->databaseTableListFk[$item['fk']];
+//                        dump($fk);
+                    $result->where([$this->getDatabaseAliasName($fk['table_name']) . '.' . $fk['column_name'] => $this->subSectionId]);
+                } else {
+                    $result->where([$this->databaseTableAs . '.' . $item['name'] => $this->subSectionId]);
+                }
+            }
+
+            // call getSource for each element
+            $element->getSource($result, $rawSource);
+
+            // collected default order
+            if (isset($item['orderdefault']) && $item['orderdefault'] && isset($item['name'])) {
+                $index = $this->databaseTableAs . '.' . $item['name'];
                 if (isset($item['foreign']) && $item['foreign']) {
                     $foreign = $this->databaseTableListFk[$item['foreign']];
-
-                    if (!($element instanceof ForeignFkWhereElement || $element instanceof ForeignFkPkElement)) {
-                        $result->select([$this->getDatabaseAliasName($foreign['referenced_table_name']) . '.' . $item['name'] => $idItem]);
-                    }
-                } else {
-                    // add item to select, condition for insert new configure section
-                    if (isset($item['name'])) {
-                        $result->select([$this->databaseTableAs . '.' . $item['name'] => $idItem]);
-                    }
+                    $index = $this->getDatabaseAliasName($foreign['referenced_table_name']) . '.' . $item['name'];
                 }
 
-                // select by subSectionId
-                if ($this->getSubElementName() && $this->getSubElementName() == $idItem && $this->subSectionId) {
-                    if (isset($item['fk'])) {
-                        $fk = $this->databaseTableListFk[$item['fk']];
-//                        dump($fk);
-                        $result->where([$this->getDatabaseAliasName($fk['table_name']) . '.' . $fk['column_name'] => $this->subSectionId]);
-                    } else {
-                        $result->where([$this->databaseTableAs . '.' . $item['name'] => $this->subSectionId]);
-                    }
-                }
-
-                // call getSource for each element
-                $element->getSource($result, $rawSource);
-
-                // collected default order
-                if (isset($item['orderdefault']) && $item['orderdefault'] && isset($item['name'])) {
-                    $index = $this->databaseTableAs . '.' . $item['name'];
-                    if (isset($item['foreign']) && $item['foreign']) {
-                        $foreign = $this->databaseTableListFk[$item['foreign']];
-                        $index = $this->getDatabaseAliasName($foreign['referenced_table_name']) . '.' . $item['name'];
-                    }
-
-                    $orderDefault[$index] = [
-                        'orderposition' => $item['orderposition'] ?? $orderPosition,
-                        'orderdefault'  => $item['orderdefault'],
-                    ];
-                    $orderPosition++;
-                }
+                $orderDefault[$index] = [
+                    'orderposition' => $item['orderposition'] ?? $orderPosition,
+                    'orderdefault'  => $item['orderdefault'],
+                ];
+                $orderPosition++;
             }
-
-            if ($orderDefault) {
-                // manual order by orderposition
-                uasort($orderDefault, function ($a, $b) { return $a['orderposition'] > $b['orderposition']; });
-                $this->databaseOrderDefault = array_map(function ($row) { return $row['orderdefault']; }, $orderDefault);
-            }
-
-            if ($this->isTestSQL()) {
-                $this->processTestSQL($result);
-            }
-            self::$staticSource = $result;
         }
-        return self::$staticSource;
+
+        if ($orderDefault) {
+            // manual order by orderposition
+            uasort($orderDefault, function ($a, $b) { return $a['orderposition'] > $b['orderposition']; });
+            $this->databaseOrderDefault = array_map(function ($row) { return $row['orderdefault']; }, $orderDefault);
+        }
+
+        if ($this->isTestSQL()) {
+            $this->processTestSQL($result);
+        }
+
+        self::$staticSource = $result;  // save result for static
+        return $result;
     }
 
 
