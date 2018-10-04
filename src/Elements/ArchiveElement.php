@@ -40,9 +40,9 @@ class ArchiveElement extends HiddenElement
      *
      * @param Fluent $fluent
      */
-    public function getSource(Fluent $fluent)
+    public function getSource(Fluent $fluent,bool $rawSource=false)
     {
-        if (!$this->wrapperSection->isRawSource()) {
+        if (!$rawSource) {
             if ($this->configure['foreign']) {
                 $foreign = $this->wrapperSection->getDatabaseTableListFk();
                 $fk = $foreign[$this->configure['foreign']];

@@ -119,7 +119,7 @@ class ForeignFkWhereElement extends AbstractElement
      *
      * @param Fluent $fluent
      */
-    public function getSource(Fluent $fluent)
+    public function getSource(Fluent $fluent,bool $rawSource=false)
     {
         $foreign = $this->wrapperSection->getDatabaseTableListFk();
         $fk = $foreign[$this->configure['foreign']];

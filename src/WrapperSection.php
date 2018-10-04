@@ -80,7 +80,7 @@ class WrapperSection
     /** @var string */
     private $sectionId, $sectionName, $subSectionId, $subElementName, $subElementConfig;
     /** @var bool */
-    private $archive = false, $rawSource = false;
+    private $archive = false;
 
 
     /**
@@ -909,21 +909,14 @@ class WrapperSection
     }
 
 
-    public function isRawSource()
-    {
-        return $this->rawSource;
-    }
-
-
     /**
      * Get source.
      *
      * @param bool $singleton
      * @return Fluent
      */
-    public function getSource(bool $singleton = true, $rawSource = false): Fluent
+    public function getSource(bool $singleton = true, bool $rawSource = false): Fluent
     {
-        $this->rawSource = $rawSource;
         if (!isset(self::$staticSource) || !$singleton) {
             /*
              * build select
@@ -962,7 +955,7 @@ class WrapperSection
                 }
 
                 // call getSource for each element
-                $element->getSource($result);
+                $element->getSource($result, $rawSource);
 
                 // collected default order
                 if (isset($item['orderdefault']) && $item['orderdefault'] && isset($item['name'])) {
