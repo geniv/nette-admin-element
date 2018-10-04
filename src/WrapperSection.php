@@ -80,7 +80,7 @@ class WrapperSection
     /** @var string */
     private $sectionId, $sectionName, $subSectionId, $subElementName, $subElementConfig;
     /** @var bool */
-    private $archive = false;
+    private $archive = false, $rawSource = false;
 
 
     /**
@@ -906,6 +906,18 @@ class WrapperSection
     public function getCache(): Cache
     {
         return $this->cache;
+    }
+
+
+    public function setRawSource(bool $state)
+    {
+        $this->rawSource = $state;
+    }
+
+
+    public function isRawSource()
+    {
+        return $this->rawSource;
     }
 
 

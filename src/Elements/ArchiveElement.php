@@ -42,20 +42,22 @@ class ArchiveElement extends HiddenElement
      */
     public function getSource(Fluent $fluent)
     {
-        if ($this->configure['foreign']) {
-            $foreign = $this->wrapperSection->getDatabaseTableListFk();
-            $fk = $foreign[$this->configure['foreign']];
-            $where = $this->wrapperSection->getDatabaseAliasName($fk['referenced_table_name']) . '.' . $this->configure['name'];
-        } else {
-            $where = $this->wrapperSection->getDatabaseAliasName($this->wrapperSection->getDatabaseTableName()) . '.' . $this->configure['name'];
-        }
+        if (!$this->wrapperSection->isRawSource()) {
+            if ($this->configure['foreign']) {
+                $foreign = $this->wrapperSection->getDatabaseTableListFk();
+                $fk = $foreign[$this->configure['foreign']];
+                $where = $this->wrapperSection->getDatabaseAliasName($fk['referenced_table_name']) . '.' . $this->configure['name'];
+            } else {
+                $where = $this->wrapperSection->getDatabaseAliasName($this->wrapperSection->getDatabaseTableName()) . '.' . $this->configure['name'];
+            }
 
-        if ($this->wrapperSection->isArchive()) {
-            // if archive disabled (default false)
-            $fluent->where([$where => null]);
-        } else {
-            if ($this->wrapperSection->getActionType() == WrapperSection::ACTION_LIST) {
-                $fluent->where($where . ' IS NOT NULL');
+            if ($this->wrapperSection->isArchive()) {
+                // if archive disabled (default false)
+                $fluent->where([$where => null]);
+            } else {
+                if ($this->wrapperSection->getActionType() == WrapperSection::ACTION_LIST) {
+                    $fluent->where($where . ' IS NOT NULL');
+                }
             }
         }
     }
