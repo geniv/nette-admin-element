@@ -909,12 +909,6 @@ class WrapperSection
     }
 
 
-    public function setRawSource(bool $state)
-    {
-        $this->rawSource = $state;
-    }
-
-
     public function isRawSource()
     {
         return $this->rawSource;
@@ -927,8 +921,9 @@ class WrapperSection
      * @param bool $singleton
      * @return Fluent
      */
-    public function getSource(bool $singleton = true): Fluent
+    public function getSource(bool $singleton = true, $rawSource = false): Fluent
     {
+        $this->rawSource = $rawSource;
         if (!isset(self::$staticSource) || !$singleton) {
             /*
              * build select
