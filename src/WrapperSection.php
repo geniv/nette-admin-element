@@ -919,6 +919,7 @@ class WrapperSection
     public function getSource(bool $singleton = true, bool $rawSource = false): Fluent
     {
         if ($singleton) {
+            // return static singleton
             if (isset(self::$staticSource)) {
                 return self::$staticSource;
             }
@@ -985,7 +986,10 @@ class WrapperSection
             $this->processTestSQL($result);
         }
 
-        self::$staticSource = $result;  // save result for static
+        if ($singleton) {
+            // save result for static singleton
+            self::$staticSource = $result;
+        }
         return $result;
     }
 
@@ -1149,6 +1153,23 @@ class WrapperSection
     {
         $element = $this->getArchiveElement();
         return $element != '';
+    }
+
+
+    /**
+     * Get count archive.
+     *
+     * @return int
+     */
+    public function getCountArchive(): int
+    {
+        if ($this->isArchiveConfigure()) {
+            $fluent = $this->getSource(false, true);    // get source
+            $element = $this->getElement($this->getArchiveElement());   // get archive element
+            $element->getManualSource($fluent, false);      // process manual source for archive
+            return count($fluent);
+        }
+        return 0;
     }
 
 
