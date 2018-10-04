@@ -1201,6 +1201,20 @@ class WrapperSection
 
 
     /**
+     * Get count sortable.
+     *
+     * @return int
+     */
+    public function getCountSortable(): int
+    {
+        if ($this->isSortableConfigure()) {
+            return count($this->getSource());
+        }
+        return 0;
+    }
+
+
+    /**
      * Save sortable position.
      *
      * @param array $values
