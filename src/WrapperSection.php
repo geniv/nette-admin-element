@@ -1335,8 +1335,8 @@ class WrapperSection
         $this->subSectionId = $subSectionId;
 
         // if sub-element config is set
-        if ($this->subElementConfig) {
-            $this->getById($this->subElementConfig, $this->actionType);
+        if ($this->getSubElementConfig()) {
+            $this->getById($this->getSubElementConfig(), $this->getActionType());
         }
 
         $this->getSource(false);    // need regenerate fluent with new subSectionId!!
