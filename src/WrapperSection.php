@@ -218,16 +218,18 @@ class WrapperSection
      * Get menu item presenter.
      *
      * @param array $item
+     * @param bool  $idSubSection
      * @return string
      */
-    public function getMenuItemPresenter(array $item): string
+    public function getMenuItemPresenter(array $item, bool $idSubSection = false): string
     {
         if (!$this->listSection) {
             $this->listSection = $this->configureSection->getListSection();
         }
 
-        $type = $item['type'];
-        if (isset($item['subelementconfig'])) {
+        $type = $item['type'];  // load default type
+        if ($idSubSection && isset($item['subelementconfig'])) {
+            // load sub-element-config type
             $type = $this->listSection[$item['subelementconfig']]['type'];
         }
         return IConfigureSection::PRESENTER[$type];
