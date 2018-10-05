@@ -79,6 +79,8 @@ class WrapperSection
     private $fkId;
     /** @var string */
     private $sectionId, $sectionName, $subSectionId, $subElementName, $subElementConfig;
+    /** @var array */
+    private $listSection = [];
     /** @var bool */
     private $archive = false;
 
@@ -172,7 +174,6 @@ class WrapperSection
             $instance->setWrapperSection($this);
 
             $data = $instance->getSelectItems($item);
-
             foreach ($data as $idValue => $value) {
                 $result[$idValue] = [
                     'id'   => $idValue,
@@ -210,6 +211,26 @@ class WrapperSection
             }
         }
         return $result ?? [];
+    }
+
+
+    /**
+     * Get menu item presenter.
+     *
+     * @param array $item
+     * @return string
+     */
+    public function getMenuItemPresenter(array $item): string
+    {
+        if (!$this->listSection) {
+            $this->listSection = $this->configureSection->getListSection();
+        }
+
+        $type = $item['type'];
+        if (isset($item['subelementconfig'])) {
+            $type = $this->listSection[$item['subelementconfig']]['type'];
+        }
+        return IConfigureSection::PRESENTER[$type];
     }
 
 
