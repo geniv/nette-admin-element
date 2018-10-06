@@ -1499,6 +1499,12 @@ class WrapperSection
 //        if (!isset(self::$staticDataFkSelect[$key])) {
             $variable = $this->getValuesByPreview($preview);
 
+            // check exist foreign key
+            if (!isset($this->databaseTableListFk[$fk])) {
+                Debugger::log('Foreign key "' . $fk . '" does not exist!', ILogger::EXCEPTION);
+                return [];
+            }
+
             $fkName = $this->databaseTableListFk[$fk];
             $pk = $fkName[$referenced ? 'referenced_column_name' : 'column_name'];
             $res = $this->connection->select($pk)
