@@ -15,6 +15,7 @@ use Nette\Application\UI\Form;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
 use Nette\DI\Container;
+use Nette\Security\User;
 use Nette\SmartObject;
 use Nette\Utils\Finder;
 use Tracy\Debugger;
@@ -79,8 +80,12 @@ class WrapperSection
     private $fkId;
     /** @var string */
     private $sectionId, $sectionName, $subSectionId, $subElementName, $subElementConfig;
+    /** @var array */
+    private $listSection = [];
     /** @var bool */
     private $archive = false;
+    /** @var User */
+    private $user;
 
 
     /**
@@ -92,12 +97,13 @@ class WrapperSection
      * @param Connection        $connection
      * @param IStorage          $storage
      */
-    public function __construct(IConfigureSection $configureSection, AdminElement $adminElement, Container $container, Connection $connection, IStorage $storage)
+    public function __construct(IConfigureSection $configureSection, AdminElement $adminElement, Container $container, Connection $connection, IStorage $storage, User $user)
     {
         $this->configureSection = $configureSection;            // load configure section
         $this->adminElement = $adminElement;                    // load admin element
         $this->connection = $connection;                        // load database connection
         $this->configureParameters = $container->parameters;    // load system configure
+        $this->user = $user;                                    // load system user
 
         // init cache
         $this->cache = new Cache($storage, 'WrapperSection');
@@ -164,15 +170,18 @@ class WrapperSection
      */
     private function getSubSectionByElement(array $configure): array
     {
-        $result = [];
         if (isset($configure['items'][$configure['subelement']])) {
             $item = $configure['items'][$configure['subelement']];
+        } else {
+            $item = $this->getItem($configure['subelement']);
+        }
 
+        $result = [];
+        if ($item) {
             $instance = $this->adminElement->getElement($item['type']);
             $instance->setWrapperSection($this);
 
             $data = $instance->getSelectItems($item);
-
             foreach ($data as $idValue => $value) {
                 $result[$idValue] = [
                     'id'   => $idValue,
@@ -210,6 +219,59 @@ class WrapperSection
             }
         }
         return $result ?? [];
+    }
+
+
+    /**
+     * Set section id.
+     *
+     * @param string $sectionId
+     */
+    public function setSectionId(string $sectionId)
+    {
+        $this->sectionId = $sectionId;
+    }
+
+
+    /**
+     * Get list menu item.
+     *
+     * @param string $idGroup
+     * @return array
+     */
+    public function getListMenuItem(string $idGroup): array
+    {
+        $subSection = $this->getSubSection($this->sectionId ?? null);
+
+        $listSectionByGroup = $this->configureSection->getListSectionByGroup($idGroup);
+        // merge and array intersect by key with original menu and subsection part
+        $list = array_merge_recursive($listSectionByGroup, array_intersect_key($subSection, $listSectionByGroup));
+        // filter empty group
+        return array_filter($list, function ($item) {
+            return $this->user->isAllowed($item['id'], 'default');
+        });
+    }
+
+
+    /**
+     * Get menu item presenter.
+     *
+     * @param array $item
+     * @param bool  $idSubSection
+     * @return string
+     */
+    public function getMenuItemPresenter(array $item, bool $idSubSection = false): string
+    {
+        if (!$this->listSection) {
+            $this->listSection = $this->configureSection->getListSection();
+        }
+
+        $type = $item['type'];  // load default type
+        if ($idSubSection && isset($item['subelementconfig'])) {
+            // load sub-element-config type
+            $type = $this->listSection[$item['subelementconfig']]['type'];
+        }
+        return IConfigureSection::PRESENTER[$type];
     }
 
 
@@ -480,10 +542,8 @@ class WrapperSection
             throw new Exception('Section "' . $idSection . '" does not exist!');
         }
 
-        //TODO tady toto pouzit jen nako lokalni promennou: configureSectionArray!!!
-
         // set idSection
-        $this->sectionId = $idSection;
+        $this->setSectionId($idSection);
 
         // set action type
         $this->setActionType($actionType);
@@ -496,8 +556,6 @@ class WrapperSection
             // if define cache, explode by ";"
             $this->setCacheNames(explode(';', $configureSectionArray['cache']));
         }
-
-//TODO nastavovat po jednom jako v konfiguraci contentu!!!!
 
         // set database
         if (isset($configureSectionArray['database'])) {
@@ -1166,7 +1224,7 @@ class WrapperSection
         if ($this->isArchiveConfigure()) {
             $fluent = $this->getSource(false, true);    // get source
             $element = $this->getElement($this->getArchiveElement());   // get archive element
-            $element->getManualSource($fluent, false);      // process manual source for archive
+            $element->getArchiveSource($fluent, false);      // process manual source for archive
             return count($fluent);
         }
         return 0;
@@ -1335,8 +1393,8 @@ class WrapperSection
         $this->subSectionId = $subSectionId;
 
         // if sub-element config is set
-        if ($this->subElementConfig) {
-            $this->getById($this->subElementConfig, $this->actionType);
+        if ($this->getSubElementConfig()) {
+            $this->getById($this->getSubElementConfig(), $this->getActionType());
         }
 
         $this->getSource(false);    // need regenerate fluent with new subSectionId!!

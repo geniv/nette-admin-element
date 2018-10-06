@@ -302,3 +302,13 @@ $htmlSelect->setRoute('SwitchFkId!');
 $htmlSelect->setItems($this->wrapperSection->getForeignItems());
 $htmlSelect->setActiveValue($this->wrapperSection->getFkId());
 ```
+
+presenter - menu
+```php
+// get list group
+$this->template->listMenuGroup = $this->configureGroup->getListGroup();
+// get list menu item
+$this->template->listMenuItem = Callback::closure($this->wrapperSection, 'getListMenuItem');
+// get presenter name for each menu
+$this->template->getMenuItemPresenter = Callback::closure($this->wrapperSection, 'getMenuItemPresenter');
+```
