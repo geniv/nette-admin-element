@@ -176,16 +176,18 @@ class WrapperSection
             $item = $this->getItem($configure['subelement']);
         }
 
-        $instance = $this->adminElement->getElement($item['type']);
-        $instance->setWrapperSection($this);
-
         $result = [];
-        $data = $instance->getSelectItems($item);
-        foreach ($data as $idValue => $value) {
-            $result[$idValue] = [
-                'id'   => $idValue,
-                'name' => $value,
-            ];
+        if ($item) {
+            $instance = $this->adminElement->getElement($item['type']);
+            $instance->setWrapperSection($this);
+
+            $data = $instance->getSelectItems($item);
+            foreach ($data as $idValue => $value) {
+                $result[$idValue] = [
+                    'id'   => $idValue,
+                    'name' => $value,
+                ];
+            }
         }
         return $result;
     }
