@@ -1220,7 +1220,7 @@ class WrapperSection
         if ($this->isArchiveConfigure()) {
             $fluent = $this->getSource(false, true);    // get source
             $element = $this->getElement($this->getArchiveElement());   // get archive element
-            $element->getManualSource($fluent, false);      // process manual source for archive
+            $element->getArchiveSource($fluent, false);      // process manual source for archive
             return count($fluent);
         }
         return 0;

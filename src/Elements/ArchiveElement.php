@@ -36,12 +36,12 @@ class ArchiveElement extends HiddenElement
 
 
     /**
-     * Get manual source.
+     * Get archive source.
      *
      * @param Fluent $fluent
      * @param bool   $isArchive
      */
-    public function getManualSource(Fluent $fluent, bool $isArchive)
+    public function getArchiveSource(Fluent $fluent, bool $isArchive)
     {
         if ($this->configure['foreign']) {
             $foreign = $this->wrapperSection->getDatabaseTableListFk();
@@ -71,7 +71,7 @@ class ArchiveElement extends HiddenElement
     public function getSource(Fluent $fluent, bool $rawSource = false)
     {
         if (!$rawSource) {
-            $this->getManualSource($fluent, $this->wrapperSection->isArchive());
+            $this->getArchiveSource($fluent, $this->wrapperSection->isArchive());
         }
     }
 }
