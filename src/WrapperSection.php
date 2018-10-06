@@ -686,7 +686,6 @@ class WrapperSection
         $cacheName = 'getInformationSchemaKeyColumnUsage' . $tableName;
         $result = $this->cache->load($cacheName);
         if ($result === null) {
-//        if (!isset(self::$staticDatabaseTableFk[$tableName])) {
             $result = $this->connection->select('kcu.constraint_name, ' .
                 'kcu.table_schema, kcu.table_name, kcu.column_name, ' .
                 'kcu.referenced_table_name, kcu.referenced_column_name, ' .
@@ -703,9 +702,7 @@ class WrapperSection
             if ($this->isTestSQL()) {
                 $this->processTestSQL($result);
             }
-//            self::$staticDatabaseTableFk[$tableName] = $result->fetchAssoc('constraint_name');
-//        }
-//        return self::$staticDatabaseTableFk[$tableName];
+
             $result = $result->fetchAssoc('constraint_name');
             try {
                 $this->cache->save($cacheName, $result, [Cache::TAGS => 'fk']);
@@ -1496,7 +1493,6 @@ class WrapperSection
         $cacheName = 'getDataByFk' . $fk . $preview . $referenced;
         $result = $this->cache->load($cacheName);
         if ($result === null) {
-//        if (!isset(self::$staticDataFkSelect[$key])) {
             $variable = $this->getValuesByPreview($preview);
 
             // check exist foreign key
@@ -1517,10 +1513,6 @@ class WrapperSection
                 return str_replace($variable, (array) $row, $preview);
             }, $res);
 
-//        return $result;
-//            self::$staticDataFkSelect[$key] = $result;
-//        }
-//        return self::$staticDataFkSelect[$key];
             try {
                 $this->cache->save($cacheName, $result, [Cache::TAGS => 'fk']);
             } catch (\Throwable $e) {
