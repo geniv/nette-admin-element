@@ -1464,22 +1464,6 @@ class WrapperSection
     }
 
 
-//    public function getDataBySourceTable(string $sourcePkTableName, string $sourceTableName, string $preview): array
-//    {
-//        //FIXME prepravcovat pokud bude potreba na statiku!!!
-//        $variable = $this->getValuesByPreview($preview);
-//        $alias = $this->getDatabaseAliasName($sourceTableName);
-//        $result = $this->connection->select($alias . '.' . $sourcePkTableName)->select($variable)
-//            ->from($sourceTableName)->as($alias)
-//            ->fetchAssoc($sourcePkTableName);
-//
-//        return array_map(function ($row) use ($sourcePkTableName, $variable, $preview) {
-//            unset($row[$sourcePkTableName]);    // remove pk from row
-//            return str_replace($variable, (array) $row, $preview);
-//        }, $result);
-//    }
-
-
     /**
      * Get data by fk.
      *
