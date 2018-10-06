@@ -15,6 +15,7 @@ use Nette\Application\UI\Form;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
 use Nette\DI\Container;
+use Nette\Security\User;
 use Nette\SmartObject;
 use Nette\Utils\Finder;
 use Tracy\Debugger;
@@ -83,6 +84,8 @@ class WrapperSection
     private $listSection = [];
     /** @var bool */
     private $archive = false;
+    /** @var User */
+    private $user;
 
 
     /**
@@ -94,12 +97,13 @@ class WrapperSection
      * @param Connection        $connection
      * @param IStorage          $storage
      */
-    public function __construct(IConfigureSection $configureSection, AdminElement $adminElement, Container $container, Connection $connection, IStorage $storage)
+    public function __construct(IConfigureSection $configureSection, AdminElement $adminElement, Container $container, Connection $connection, IStorage $storage, User $user)
     {
         $this->configureSection = $configureSection;            // load configure section
         $this->adminElement = $adminElement;                    // load admin element
         $this->connection = $connection;                        // load database connection
         $this->configureParameters = $container->parameters;    // load system configure
+        $this->user = $user;                                    // load system user
 
         // init cache
         $this->cache = new Cache($storage, 'WrapperSection');
@@ -222,6 +226,26 @@ class WrapperSection
     public function setSectionId(string $sectionId)
     {
         $this->sectionId = $sectionId;
+    }
+
+
+    /**
+     * Get list menu item.
+     *
+     * @param string $idGroup
+     * @return array
+     */
+    public function getListMenuItem(string $idGroup): array
+    {
+        $subSection = $this->getSubSection($this->sectionId ?? null);
+
+        $listSectionByGroup = $this->configureSection->getListSectionByGroup($idGroup);
+        // merge and array intersect by key with original menu and subsection part
+        $list = array_merge_recursive($listSectionByGroup, array_intersect_key($subSection, $listSectionByGroup));
+        // filter empty group
+        return array_filter($list, function ($item) {
+            return $this->user->isAllowed($item['id'], 'default');
+        });
     }
 
 
