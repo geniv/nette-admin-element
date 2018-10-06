@@ -215,6 +215,17 @@ class WrapperSection
 
 
     /**
+     * Set section id.
+     *
+     * @param string $sectionId
+     */
+    public function setSectionId(string $sectionId)
+    {
+        $this->sectionId = $sectionId;
+    }
+
+
+    /**
      * Get menu item presenter.
      *
      * @param array $item
@@ -503,10 +514,8 @@ class WrapperSection
             throw new Exception('Section "' . $idSection . '" does not exist!');
         }
 
-        //TODO tady toto pouzit jen nako lokalni promennou: configureSectionArray!!!
-
         // set idSection
-        $this->sectionId = $idSection;
+        $this->setSectionId($idSection);
 
         // set action type
         $this->setActionType($actionType);
@@ -519,8 +528,6 @@ class WrapperSection
             // if define cache, explode by ";"
             $this->setCacheNames(explode(';', $configureSectionArray['cache']));
         }
-
-//TODO nastavovat po jednom jako v konfiguraci contentu!!!!
 
         // set database
         if (isset($configureSectionArray['database'])) {
