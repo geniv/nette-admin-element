@@ -43,7 +43,7 @@ class ArchiveElement extends HiddenElement
      */
     public function getArchiveSource(Fluent $fluent, bool $isArchive)
     {
-        if ($this->configure['foreign']) {
+        if (isset($this->configure['foreign']) && $this->configure['foreign']) {
             $foreign = $this->wrapperSection->getDatabaseTableListFk();
             $fk = $foreign[$this->configure['foreign']];
             $where = $this->wrapperSection->getDatabaseAliasName($fk['referenced_table_name']) . '.' . $this->configure['name'];
