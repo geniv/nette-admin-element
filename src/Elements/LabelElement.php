@@ -30,7 +30,7 @@ class LabelElement extends AbstractElement
     {
         parent::getFormContainerAdmin($form, $prefix);  // first position
 
-        unset($form['required'], $form['defaultvalue'], $form['omit']);
+        unset($form['required'], $form['defaultvalue']);
     }
 
 

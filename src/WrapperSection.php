@@ -686,7 +686,6 @@ class WrapperSection
         $cacheName = 'getInformationSchemaKeyColumnUsage' . $tableName;
         $result = $this->cache->load($cacheName);
         if ($result === null) {
-//        if (!isset(self::$staticDatabaseTableFk[$tableName])) {
             $result = $this->connection->select('kcu.constraint_name, ' .
                 'kcu.table_schema, kcu.table_name, kcu.column_name, ' .
                 'kcu.referenced_table_name, kcu.referenced_column_name, ' .
@@ -703,9 +702,7 @@ class WrapperSection
             if ($this->isTestSQL()) {
                 $this->processTestSQL($result);
             }
-//            self::$staticDatabaseTableFk[$tableName] = $result->fetchAssoc('constraint_name');
-//        }
-//        return self::$staticDatabaseTableFk[$tableName];
+
             $result = $result->fetchAssoc('constraint_name');
             try {
                 $this->cache->save($cacheName, $result, [Cache::TAGS => 'fk']);
@@ -1467,22 +1464,6 @@ class WrapperSection
     }
 
 
-//    public function getDataBySourceTable(string $sourcePkTableName, string $sourceTableName, string $preview): array
-//    {
-//        //FIXME prepravcovat pokud bude potreba na statiku!!!
-//        $variable = $this->getValuesByPreview($preview);
-//        $alias = $this->getDatabaseAliasName($sourceTableName);
-//        $result = $this->connection->select($alias . '.' . $sourcePkTableName)->select($variable)
-//            ->from($sourceTableName)->as($alias)
-//            ->fetchAssoc($sourcePkTableName);
-//
-//        return array_map(function ($row) use ($sourcePkTableName, $variable, $preview) {
-//            unset($row[$sourcePkTableName]);    // remove pk from row
-//            return str_replace($variable, (array) $row, $preview);
-//        }, $result);
-//    }
-
-
     /**
      * Get data by fk.
      *
@@ -1496,8 +1477,13 @@ class WrapperSection
         $cacheName = 'getDataByFk' . $fk . $preview . $referenced;
         $result = $this->cache->load($cacheName);
         if ($result === null) {
-//        if (!isset(self::$staticDataFkSelect[$key])) {
             $variable = $this->getValuesByPreview($preview);
+
+            // check exist foreign key
+            if (!isset($this->databaseTableListFk[$fk])) {
+                Debugger::log('Foreign key "' . $fk . '" does not exist!', ILogger::EXCEPTION);
+                return [];
+            }
 
             $fkName = $this->databaseTableListFk[$fk];
             $pk = $fkName[$referenced ? 'referenced_column_name' : 'column_name'];
@@ -1511,10 +1497,6 @@ class WrapperSection
                 return str_replace($variable, (array) $row, $preview);
             }, $res);
 
-//        return $result;
-//            self::$staticDataFkSelect[$key] = $result;
-//        }
-//        return self::$staticDataFkSelect[$key];
             try {
                 $this->cache->save($cacheName, $result, [Cache::TAGS => 'fk']);
             } catch (\Throwable $e) {
@@ -1947,9 +1929,11 @@ class WrapperSection
                     $result[$item['foreign']][$item['name']] = $values[$key];
                 }
             } else {
-                if (isset($values[$key])) { // skip undefined index: omit=>true
-                    $result[$item['name']] = $values[$key];
+                // skip undefined index: omit=>true
+                if (isset($item['omit']) && $item['omit']) {
+                    continue;
                 }
+                $result[$item['name']] = $values[$key];
             }
         }
         return $result;

@@ -35,7 +35,7 @@ abstract class AbstractDateTimeElement extends AbstractTextElement
             // picker element
         } else {
             // remove elements
-            unset($form['required'], $form['omit']);
+            unset($form['required']);
 
             $form->addCheckbox('currentdatetime', $prefix . 'currentdatetime');
         }

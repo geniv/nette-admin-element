@@ -39,7 +39,7 @@ class PositionElement extends AbstractElement
             ->setOption('hint', $prefix . 'group-hint')
             ->setTranslator(null);
 
-        unset($form['required'], $form['omit'], $form['hint']);
+        unset($form['required'], $form['hint']);
     }
 
 
