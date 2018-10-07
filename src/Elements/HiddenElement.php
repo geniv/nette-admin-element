@@ -28,7 +28,7 @@ class HiddenElement extends AbstractElement
     {
         parent::getFormContainerAdmin($form, $prefix);  // first position
 
-        unset($form['alias'], $form['required'], $form['defaultvalue'], $form['omit'], $form['ordering'], $form['orderdefault'], $form['hint']);
+        unset($form['alias'], $form['required'], $form['defaultvalue'], $form['ordering'], $form['orderdefault'], $form['hint']);
     }
 
 

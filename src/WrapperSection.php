@@ -1929,9 +1929,11 @@ class WrapperSection
                     $result[$item['foreign']][$item['name']] = $values[$key];
                 }
             } else {
-                if (isset($values[$key])) { // skip undefined index: omit=>true
-                    $result[$item['name']] = $values[$key];
+                // skip undefined index: omit=>true
+                if (isset($item['omit']) && $item['omit']) {
+                    continue;
                 }
+                $result[$item['name']] = $values[$key];
             }
         }
         return $result;
