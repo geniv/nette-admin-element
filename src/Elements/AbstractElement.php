@@ -24,7 +24,7 @@ abstract class AbstractElement implements IElement
     const
         DESCRIPTION = '',
         USAGE = [IConfigureSection::PRESENTER_TABLE, IConfigureSection::PRESENTER_FOREIGN, IConfigureSection::PRESENTER_TREE],
-        ACTION_TYPES = WrapperSection::ACTION_TYPES;
+        ACTION_TYPES = WrapperSection::ACTION_TYPES_ELEMENT;
 
     /** @var WrapperSection */
     protected $wrapperSection;
