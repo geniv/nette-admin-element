@@ -179,8 +179,8 @@ class WrapperSection
 
         $result = [];
         if ($item) {
-            $instance = $this->adminElement->getElement($item['type']);
-            $instance->setWrapperSection($this);
+            $element = $this->adminElement->getElement($item['type']);
+            $instance = new $element($this, $configure['subelement']); // new instance, set wrapper, set element id
 
             $data = $instance->getSelectItems($item);
             foreach ($data as $idValue => $value) {
