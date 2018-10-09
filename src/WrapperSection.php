@@ -384,10 +384,8 @@ class WrapperSection
         foreach ($items as $key => $item) {
             $element = $this->adminElement->getElement($item['type']);
             if ($element) {
-                $instance = clone $element; // clone instance
+                $instance = new $element($this, $key); // new instance, set wrapper, set element id
                 if ($instance) {
-                    $instance->setWrapperSection($this);    // set wrapper
-                    $instance->setIdElement($key);          // set element id
                     $elements[$key] = $instance;
                 }
             }
