@@ -2,9 +2,9 @@
 
 namespace AdminElement\Elements;
 
+use AdminElement\WrapperSection;
 use Nette\Application\UI\Form;
 use Nette\Caching\Cache;
-use Nette\Caching\IStorage;
 use Nette\Forms\Container;
 use Nette\Http\FileUpload;
 use Nette\Utils\Finder;
@@ -34,11 +34,13 @@ class UploadElement extends AbstractElement
     /**
      * UploadElement constructor.
      *
-     * @param IStorage $storage
+     * @param WrapperSection $wrapperSection
+     * @param string         $idElement
      */
-    public function __construct(IStorage $storage)
+    public function __construct(WrapperSection $wrapperSection, string $idElement)
     {
-        $this->cache = new Cache($storage, 'UploadElement');
+        parent::__construct($wrapperSection, $idElement);
+        $this->cache = $this->wrapperSection->getCache();
     }
 
 
