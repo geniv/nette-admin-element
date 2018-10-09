@@ -38,13 +38,14 @@ class WrapperSection
         ACTION_LIST = 'list',
         ACTION_ADD = 'add',
         ACTION_EDIT = 'edit',
+        ACTION_DETAIL = 'detail',
         ACTION_DELETE = 'delete',
         ACTION_ARCHIVE = 'archive',
-        ACTION_DETAIL = 'detail',
+        ACTION_EXPORT = 'export',
         ACTION_SORTABLE = 'sortable';
     // list all action types (actiontype)
     const
-        ACTION_TYPES = [self::ACTION_LIST, self::ACTION_ADD, self::ACTION_EDIT, self::ACTION_DETAIL, self::ACTION_ARCHIVE], // all types
+        ACTION_TYPES = [self::ACTION_LIST, self::ACTION_ADD, self::ACTION_EDIT, self::ACTION_DETAIL, self::ACTION_ARCHIVE, self::ACTION_EXPORT], // all types
         ACTION_TYPES_ELEMENT = [self::ACTION_LIST, self::ACTION_ADD, self::ACTION_EDIT, self::ACTION_DETAIL];   // select types
     // default order types
     const
