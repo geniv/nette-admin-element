@@ -41,7 +41,6 @@ class WrapperSection
         ACTION_DELETE = 'delete',
         ACTION_ARCHIVE = 'archive',
         ACTION_DETAIL = 'detail',
-        ACTION_EMPTY = 'empty', //FIXME vyhodit tento typ!!
         ACTION_SORTABLE = 'sortable';
     // list all action types (actiontype)
     const
