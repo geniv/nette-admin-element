@@ -35,6 +35,20 @@ abstract class AbstractElement implements IElement
 
 
     /**
+     * Set wrapper section.
+     *
+     * @param WrapperSection $wrapperSection
+     * @param string         $idElement
+     */
+    public function __construct(WrapperSection $wrapperSection, string $idElement)
+    {
+        $this->wrapperSection = $wrapperSection;
+        $this->idElement = $idElement;
+        $this->configure = $wrapperSection->getItem($idElement);
+    }
+
+
+    /**
      * __toString.
      *
      * @return string
@@ -70,33 +84,6 @@ abstract class AbstractElement implements IElement
         $class = get_class($this);
         $description = $class::DESCRIPTION;
         return ($description ?? '');
-    }
-
-
-    /**
-     * Set wrapper section.
-     *
-     * @param WrapperSection $wrapperSection
-     * @return AbstractElement
-     */
-    public function setWrapperSection(WrapperSection $wrapperSection): self
-    {
-        $this->wrapperSection = $wrapperSection;
-        return $this;
-    }
-
-
-    /**
-     * Set id element.
-     *
-     * @param $idElement
-     * @return AbstractElement
-     */
-    public final function setIdElement(string $idElement): self
-    {
-        $this->idElement = $idElement;
-        $this->configure = $this->wrapperSection->getItem($idElement);
-        return $this;
     }
 
 
