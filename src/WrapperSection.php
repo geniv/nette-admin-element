@@ -348,7 +348,7 @@ class WrapperSection
 
 //FIXME do datagridu pridat select filtr na zobrazeni jednotlivych typu obsahu (select filt na urovni sortable)!!!!!
 
-//TODO na HP by mobl prijit specialni vystup elementu typu nove objednavky/atd??
+//TODO na HP by mohl prijit specialni vystup elementu typu nove objednavky/atd??
 
 //FIXME system podmenu predelat!! filtrovani jako bylo tenkrat na konfiguratoru bude leda umet fitr na gridu!!!!!
 //TODO grid: filtrovani on-off, hledani on-off <- session + multiple moznost v zakladu
@@ -357,6 +357,7 @@ class WrapperSection
 //FIXME pri editaci foreign sekce a defaultni zvolenem jazyku se nezobrazi obsah i kdyz je nastavevym pro proklikani se zobrazi konektne
 
 //TODO zobrazovani podle typu: zobrazit kdyz element X (select) bude mit tuto Y (text) honodu - eg.selektivni prepinani => insert: text, update: label
+
 
     /**
      * Init internal configure.
