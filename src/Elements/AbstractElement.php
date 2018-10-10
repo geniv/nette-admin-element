@@ -55,35 +55,9 @@ abstract class AbstractElement implements IElement
      */
     public function __toString(): string
     {
-        $description = $this->getClassDescription();
-        return $this->getClassName() . ($description ? ' - ' . $description : '---');
-    }
-
-
-    /**
-     * Get class name.
-     *
-     * @return string
-     */
-    public function getClassName(): string
-    {
-        $class = get_class($this);
-        list(, , $className) = explode('\\', $class);
-        return $className;
-
-    }
-
-
-    /**
-     * Get class description.
-     *
-     * @return string
-     */
-    public function getClassDescription(): string
-    {
-        $class = get_class($this);
-        $description = $class::DESCRIPTION;
-        return ($description ?? '');
+        $class = get_class($this);  // load class name
+        $description = WrapperSection::getClassDescription($class);
+        return WrapperSection::getClassName($class) . ($description ? ' - ' . $description : '---');
     }
 
 

@@ -112,6 +112,32 @@ class WrapperSection
 
 
     /**
+     * Get class name.
+     *
+     * @param string $class
+     * @return string
+     */
+    public static function getClassName(string $class): string
+    {
+        list(, , $className) = explode('\\', $class);
+        return $className;
+    }
+
+
+    /**
+     * Get class description.
+     *
+     * @param string $class
+     * @return string
+     */
+    public static function getClassDescription(string $class): string
+    {
+        $description = $class::DESCRIPTION;
+        return ($description ?? '');
+    }
+
+
+    /**
      * Get configure parameters.
      *
      * @return array

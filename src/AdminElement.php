@@ -38,8 +38,7 @@ class AdminElement
      */
     public function getElements(string $usage = null): array
     {
-        return array_filter($this->elements, function ($row) use ($usage) {
-            $class = get_class($row);
+        return array_filter($this->elements, function ($class) use ($usage) {
             return ($usage ? in_array($usage, $class::USAGE) : true);
         });
     }
