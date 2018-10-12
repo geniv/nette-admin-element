@@ -112,6 +112,7 @@ abstract class AbstractElement implements IElement
         $form->addText('defaultvalue', $prefix . 'defaultvalue');
         $form->addText('emptyvalue', $prefix . 'emptyvalue')
             ->setDefaultValue('---');
+        $form->addCheckbox('emptyvaluehide', $prefix . 'emptyvaluehide');
 
         $form->addText('required', $prefix . 'required');   // only require text
         $form->addCheckbox('omit', $prefix . 'omit');   // not set with post data
@@ -148,14 +149,12 @@ abstract class AbstractElement implements IElement
 
         // set empty value
         if ((isset($this->configure['defaultvalue']) && $this->configure['defaultvalue'])) {
-            $emptyValue = $this->configure['defaultvalue'];
-
             if (!$form[$this->idElement]->getValue()) {
                 // insert default Value to value
-                $form[$this->idElement]->setValue($emptyValue);
+                $form[$this->idElement]->setValue($this->configure['defaultvalue']);
             } else {
                 // set DefaultValue to value
-                $form[$this->idElement]->setDefaultValue($emptyValue);
+                $form[$this->idElement]->setDefaultValue($this->configure['defaultvalue']);
             }
         }
 
