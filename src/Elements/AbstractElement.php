@@ -109,8 +109,9 @@ abstract class AbstractElement implements IElement
         $form->addText('name', $prefix . 'name')
             ->setRequired($prefix . 'name-required');
         $form->addText('alias', $prefix . 'alias');
-        $form->addText('defaultvalue', $prefix . 'defaultvalue')
-            ->setOption('hint', $prefix . 'defaultvalue-hint');
+        $form->addText('defaultvalue', $prefix . 'defaultvalue');
+        $form->addText('emptyvalue', $prefix . 'emptyvalue')
+            ->setDefaultValue('---');
 
         $form->addText('required', $prefix . 'required');   // only require text
         $form->addCheckbox('omit', $prefix . 'omit');   // not set with post data
