@@ -250,6 +250,17 @@ class WrapperSection
 
 
     /**
+     * Get section id.
+     *
+     * @return string
+     */
+    public function getSectionId(): string
+    {
+        return $this->sectionId;
+    }
+
+
+    /**
      * Set section id.
      *
      * @param string $sectionId
