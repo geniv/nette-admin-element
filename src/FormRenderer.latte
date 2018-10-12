@@ -23,10 +23,6 @@
         {php $startGroup=null}
     {/if}
 
-    {if isset($configure['emptyvaluehide']) && $configure['emptyvaluehide'] && !$item->getValue()}
-        {continueIf true}
-    {/if}
-
     {*({$name} - {$item->getOption('type')})*}
     {switch $item->getOption('type')}
         {case checkbox}
