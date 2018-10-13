@@ -1608,7 +1608,9 @@ class WrapperSection
         foreach ($this->getItemsByShow(self::ACTION_DETAIL) as $key => $item) {
             // load data and inset to array
             $item['render_row'] = $this->getInternalElement($key)->getRenderRow($data);
-            $result[$key] = $item;
+            if (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? $item['render_row'] : true) {
+                $result[$key] = $item;
+            }
         }
         return $result;
     }
@@ -1637,9 +1639,12 @@ class WrapperSection
      */
     public function getFormContainerContent(Form $form)
     {
+        $values = $this->getDatabaseValues();
         // generate list html elements for content
         foreach ($this->getItemsByShow($this->actionType) as $key => $item) {
-            $this->getInternalElement($key)->getFormContainerContent($form, $item);
+            if (isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? $values[$key] : true) {
+                $this->getInternalElement($key)->getFormContainerContent($form, $item);
+            }
         }
     }
 
