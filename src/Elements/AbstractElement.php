@@ -114,7 +114,7 @@ abstract class AbstractElement implements IElement
             ->setDefaultValue('---');
         $form->addCheckbox('hideemptyvaluelist', $prefix . 'hideemptyvaluelist');   // for hide in list
         $form->addCheckbox('hideemptyvalueform', $prefix . 'hideemptyvalueform');   // for hide in form
-        $form->addSelect('showforkey', $prefix . 'showforkey')
+        $form->addSelect('showforkey', $translator->translate($prefix . 'showforkey'))
             ->setPrompt($translator->translate($prefix . 'showforkey-prompt'))
             ->setItems($this->wrapperSection->getItemsFormatted())
             ->setTranslator(null);  // show for value
