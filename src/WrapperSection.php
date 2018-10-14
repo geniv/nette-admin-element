@@ -1644,13 +1644,9 @@ class WrapperSection
         $values = $this->getDatabaseValues();
         // generate list html elements for content
         foreach ($this->getItemsByShow($this->actionType) as $key => $item) {
-            //showforvalue, showforkey
-            //dump($item, $values[$key]);
-//            if (isset($item['showforvalue'])){
-//                dump($item['showforvalue'] , $values['type']);
-//            }
-
-            if (isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? $values[$key] : true) {
+            $condition = isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? $values[$key] : true &&
+            isset($item['showforkey']) && isset($item['showforvalue']) ? isset($values[$item['showforkey']]) && $values[$item['showforkey']] == $item['showforvalue'] : true;
+            if ($condition) {
                 $this->getInternalElement($key)->getFormContainerContent($form, $item);
             }
         }
