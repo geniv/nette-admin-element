@@ -181,6 +181,8 @@ class WrapperSection
             } else {
                 if (is_string($item) && is_dir($item)) {
                     $result[$keyItem][$item] = realpath($item);
+                } else if (is_string($item) && is_dir($webDir . $item)) {
+                    $result[$keyItem][$item] = realpath($webDir . $item);
                 }
             }
         }
