@@ -343,6 +343,23 @@ class WrapperSection
 
 
     /**
+     * Get section id menu item.
+     *
+     * @param array $item
+     * @return string
+     */
+    public function getSectionIdMenuItem(array $item): string
+    {
+        $result = $item['id'];
+        if ($this->actionType != self::ACTION_LIST && isset($item['subelementconfig'])) {
+            // change for section exception list
+            $result = $item['subelementconfig'];
+        }
+        return $result;
+    }
+
+
+    /**
      * Get section name.
      *
      * @return string
