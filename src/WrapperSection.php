@@ -1617,7 +1617,7 @@ class WrapperSection
      */
     private function showEmptyValueList(array $item, $value): bool
     {
-        return (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? $value : true);
+        return (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? boolval($value) : true);
     }
 
 
@@ -1631,7 +1631,7 @@ class WrapperSection
      */
     private function showEmptyValueForm(string $key, array $item, array $values): bool
     {
-        return (isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? $values[$key] : true);
+        return (isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? boolval($values[$key]) : true);
     }
 
 
