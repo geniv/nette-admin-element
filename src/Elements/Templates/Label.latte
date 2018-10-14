@@ -1,5 +1,5 @@
 <div class="form-group form-group-label">
-    {label $item/}
+    <label n:name="$item">{$item->caption}:</label>
     {input $item, class=>"form-content"}
     <div class="help-block" n:if="$item->getOption('hint')">{_$item->getOption('hint')}</div>
 </div>
