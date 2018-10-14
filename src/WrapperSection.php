@@ -266,6 +266,19 @@ class WrapperSection
 
 
     /**
+     * Get section id by sub element config.
+     *
+     * @param string $subElementConfig
+     * @return string
+     */
+    public function getSectionIdBySubElementConfig(string $subElementConfig): string
+    {
+        $result = $this->getSectionBySubElementConfig($subElementConfig);
+        return (implode(array_keys($result)) ?: $subElementConfig);
+    }
+
+
+    /**
      * Get section id.
      *
      * @return string
