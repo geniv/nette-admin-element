@@ -38,6 +38,20 @@ class FileSystem
 
 
     /**
+     * Get clean file name.
+     *
+     * @param string $item
+     * @param int    $length
+     * @return string
+     */
+    public static function getCleanFileName(string $item, int $length = -20): string
+    {
+        $pathInfo = pathinfo($item);
+        return substr($pathInfo['filename'], 0, $length) . '.' . $pathInfo['extension'];
+    }
+
+
+    /**
      * Get list files.
      *
      * @param $path
