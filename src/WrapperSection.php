@@ -1642,6 +1642,10 @@ class WrapperSection
         $values = $this->getDatabaseValues();
         // generate list html elements for content
         foreach ($this->getItemsByShow($this->actionType) as $key => $item) {
+            //showforvalue
+            //dump($item, $values[$key]);
+
+
             if (isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? $values[$key] : true) {
                 $this->getInternalElement($key)->getFormContainerContent($form, $item);
             }

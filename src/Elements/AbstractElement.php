@@ -112,8 +112,9 @@ abstract class AbstractElement implements IElement
         $form->addText('defaultvalue', $prefix . 'defaultvalue');
         $form->addText('emptyvalue', $prefix . 'emptyvalue')
             ->setDefaultValue('---');
-        $form->addCheckbox('hideemptyvaluelist', $prefix . 'hideemptyvaluelist');
-        $form->addCheckbox('hideemptyvalueform', $prefix . 'hideemptyvalueform');
+        $form->addCheckbox('hideemptyvaluelist', $prefix . 'hideemptyvaluelist');   // for hide in list
+        $form->addCheckbox('hideemptyvalueform', $prefix . 'hideemptyvalueform');   // for hide in form
+        $form->addText('showforvalue', $prefix . 'showforvalue');   // show for value
         $form->addText('required', $prefix . 'required');   // only require text
         $form->addCheckbox('omit', $prefix . 'omit');   // not set with post data
         $form->addCheckbox('ordering', $prefix . 'ordering');   // ordering in grid
