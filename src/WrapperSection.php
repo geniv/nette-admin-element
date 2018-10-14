@@ -1558,6 +1558,19 @@ class WrapperSection
 
 
     /**
+     * Remove item.
+     *
+     * @param string $idElement
+     */
+    public function removeItem(string $idElement)
+    {
+        if (isset($this->configureItems[$idElement])) {
+            unset($this->configureItems[$idElement]);
+        }
+    }
+
+
+    /**
      * Get items.
      *
      * @return array
@@ -1595,6 +1608,24 @@ class WrapperSection
     }
 
 
+    private function showEmptyValueList(array $item, $value): bool
+    {
+        return (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? $value : true);
+    }
+
+
+    private function showEmptyValueForm(string $key, array $item, array $values): bool
+    {
+        return (isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? $values[$key] : true);
+    }
+
+
+    private function showForElement(array $item, array $values): bool
+    {
+        return (isset($item['showforkey']) && isset($item['showforvalue']) ? isset($values[$item['showforkey']]) && $values[$item['showforkey']] == $item['showforvalue'] : true);
+    }
+
+
     /**
      * Get detail container content.
      *
@@ -1610,11 +1641,22 @@ class WrapperSection
         foreach ($this->getItemsByShow(self::ACTION_DETAIL) as $key => $item) {
             // load data and inset to array
             $item['render_row'] = $this->getInternalElement($key)->getRenderRow($data);
-            if (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? $item['render_row'] : true) {
+//            if (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? $item['render_row'] : true) { //TODO remove!
+            if ($this->showEmptyValueList($item, $item['render_row'])) {
                 $result[$key] = $item;
             }
         }
         return $result;
+    }
+
+
+    private function checkElements(array $values)
+    {
+        foreach ($this->getItemsByShow($this->actionType) as $key => $item) {
+            if (!$this->showForElement($item, $values)) {
+                $this->removeItem($key);
+            }
+        }
     }
 
 
@@ -1644,12 +1686,15 @@ class WrapperSection
         $values = $this->getDatabaseValues();
         // generate list html elements for content
         foreach ($this->getItemsByShow($this->actionType) as $key => $item) {
-            $condition = isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? $values[$key] : true &&
-            isset($item['showforkey']) && isset($item['showforvalue']) ? isset($values[$item['showforkey']]) && $values[$item['showforkey']] == $item['showforvalue'] : true;
-            if ($condition) {
+//            $condition = isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? $values[$key] : true &&
+//            isset($item['showforkey']) && isset($item['showforvalue']) ? isset($values[$item['showforkey']]) && $values[$item['showforkey']] == $item['showforvalue'] : true;
+//            if ($condition) { //TODO remove!!
+            if ($this->showEmptyValueForm($key, $item, $values) && $this->showForElement($item, $values)) {
                 $this->getInternalElement($key)->getFormContainerContent($form, $item);
             }
         }
+
+        $this->checkElements($values);
     }
 
 
