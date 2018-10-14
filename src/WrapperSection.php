@@ -1608,18 +1608,40 @@ class WrapperSection
     }
 
 
+    /**
+     * Show empty value list.
+     *
+     * @param array $item
+     * @param       $value
+     * @return bool
+     */
     private function showEmptyValueList(array $item, $value): bool
     {
         return (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? $value : true);
     }
 
 
+    /**
+     * Show empty value form.
+     *
+     * @param string $key
+     * @param array  $item
+     * @param array  $values
+     * @return bool
+     */
     private function showEmptyValueForm(string $key, array $item, array $values): bool
     {
         return (isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? $values[$key] : true);
     }
 
 
+    /**
+     * Show for element.
+     *
+     * @param array $item
+     * @param array $values
+     * @return bool
+     */
     private function showForElement(array $item, array $values): bool
     {
         return (isset($item['showforkey']) && isset($item['showforvalue']) ? isset($values[$item['showforkey']]) && $values[$item['showforkey']] == $item['showforvalue'] : true);
@@ -1641,7 +1663,6 @@ class WrapperSection
         foreach ($this->getItemsByShow(self::ACTION_DETAIL) as $key => $item) {
             // load data and inset to array
             $item['render_row'] = $this->getInternalElement($key)->getRenderRow($data);
-//            if (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? $item['render_row'] : true) { //TODO remove!
             if ($this->showEmptyValueList($item, $item['render_row'])) {
                 $result[$key] = $item;
             }
@@ -1650,6 +1671,11 @@ class WrapperSection
     }
 
 
+    /**
+     * Check elements.
+     *
+     * @param array $values
+     */
     private function checkElements(array $values)
     {
         foreach ($this->getItemsByShow($this->actionType) as $key => $item) {
@@ -1686,14 +1712,12 @@ class WrapperSection
         $values = $this->getDatabaseValues();
         // generate list html elements for content
         foreach ($this->getItemsByShow($this->actionType) as $key => $item) {
-//            $condition = isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? $values[$key] : true &&
-//            isset($item['showforkey']) && isset($item['showforvalue']) ? isset($values[$item['showforkey']]) && $values[$item['showforkey']] == $item['showforvalue'] : true;
-//            if ($condition) { //TODO remove!!
             if ($this->showEmptyValueForm($key, $item, $values) && $this->showForElement($item, $values)) {
                 $this->getInternalElement($key)->getFormContainerContent($form, $item);
             }
         }
 
+        // internal check elements and remove unused
         $this->checkElements($values);
     }
 
