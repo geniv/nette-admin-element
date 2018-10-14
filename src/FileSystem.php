@@ -47,7 +47,8 @@ class FileSystem
     public static function getCleanFileName(string $item, int $length = -20): string
     {
         $pathInfo = pathinfo($item);
-        return substr($pathInfo['filename'], 0, $length) . '.' . $pathInfo['extension'];
+        $substring = substr($pathInfo['filename'], 0, $length);
+        return ($substring ?: $pathInfo['filename']) . '.' . $pathInfo['extension'];
     }
 
 
