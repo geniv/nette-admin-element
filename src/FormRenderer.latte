@@ -36,19 +36,8 @@
             {/switch}
         {case label}
             {*({$configure['type']})*}
-            {switch $configure['type']}
-                {case date}
-                    {include "Elements/Templates/TextInputDateTime.latte", item=>$item}
-                {case time}
-                    {include "Elements/Templates/TextInputDateTime.latte", item=>$item}
-                {case datetime}
-                    {include "Elements/Templates/TextInputDateTime.latte", item=>$item}
-                {case foreigndatetime}
-                    {include "Elements/Templates/TextInputDateTime.latte", item=>$item}
-                {default}
-                    {*label, foreignlabel*}
-                    {include "Elements/Templates/Label.latte", item=>$item}
-            {/switch}
+            {*date, time, datetime, foreigndatetime, label, foreignlabel*}
+            {include "Elements/Templates/Label.latte", item=>$item}
         {case text}
             {*({$configure['type']})*}
             {switch $configure['type']}
