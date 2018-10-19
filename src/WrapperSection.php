@@ -440,6 +440,10 @@ class WrapperSection
 
 //FIXME pri editaci foreign sekce a defaultni zvolenem jazyku se nezobrazi obsah i kdyz je nastavevym pro proklikani se zobrazi konektne
 
+//TODO pridat tlacitko na export csv - respektive nastaveni uvnit configure section jake formaty budou pouzite, jake budou oddelovace/ a neli by se zapinat jako "drivery"
+//TODO umoznit u textovych elementu prohanet vystupni text funkcema typu webalize... atd
+//TODO element odkaz uvnitr adminu, kde obsah v odkazu muze byt text/obrazek
+
 
     /**
      * Init internal configure.
