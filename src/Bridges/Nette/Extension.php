@@ -100,18 +100,12 @@ class Extension extends CompilerExtension
         $builder = $this->getContainerBuilder();
         $config = $this->validateConfig($this->defaults);
 
-        // load elements
-        $elements = [];
-        foreach ($config['elements'] as $name => $element) {
-            $elements[$name] = $builder->addDefinition($this->prefix($name))
-                ->setFactory($element)
-                ->setAutowired(true);
-        }
-
+        // load admin element
         $builder->addDefinition($this->prefix('default'))
-            ->setFactory(AdminElement::class, [$elements])
+            ->setFactory(AdminElement::class, [$config['elements']])
             ->setAutowired(true);
 
+        // load wrapper
         $builder->addDefinition($this->prefix('wrapper'))
             ->setFactory(WrapperSection::class)
             ->setAutowired(true);

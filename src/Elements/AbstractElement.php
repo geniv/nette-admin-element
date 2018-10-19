@@ -24,7 +24,7 @@ abstract class AbstractElement implements IElement
     const
         DESCRIPTION = '',
         USAGE = [IConfigureSection::PRESENTER_TABLE, IConfigureSection::PRESENTER_FOREIGN, IConfigureSection::PRESENTER_TREE],
-        ACTION_TYPES = WrapperSection::ACTION_TYPES;
+        ACTION_TYPES = WrapperSection::ACTION_TYPES_ELEMENT;
 
     /** @var WrapperSection */
     protected $wrapperSection;
@@ -35,68 +35,29 @@ abstract class AbstractElement implements IElement
 
 
     /**
+     * Set wrapper section.
+     *
+     * @param WrapperSection $wrapperSection
+     * @param string         $idElement
+     */
+    public function __construct(WrapperSection $wrapperSection, string $idElement)
+    {
+        $this->wrapperSection = $wrapperSection;
+        $this->idElement = $idElement;
+        $this->configure = $wrapperSection->getItem($idElement);
+    }
+
+
+    /**
      * __toString.
      *
      * @return string
      */
     public function __toString(): string
     {
-        $description = $this->getClassDescription();
-        return $this->getClassName() . ($description ? ' - ' . $description : '---');
-    }
-
-
-    /**
-     * Get class name.
-     *
-     * @return string
-     */
-    public function getClassName(): string
-    {
-        $class = get_class($this);
-        list(, , $className) = explode('\\', $class);
-        return $className;
-
-    }
-
-
-    /**
-     * Get class description.
-     *
-     * @return string
-     */
-    public function getClassDescription(): string
-    {
-        $class = get_class($this);
-        $description = $class::DESCRIPTION;
-        return ($description ?? '');
-    }
-
-
-    /**
-     * Set wrapper section.
-     *
-     * @param WrapperSection $wrapperSection
-     * @return AbstractElement
-     */
-    public function setWrapperSection(WrapperSection $wrapperSection): self
-    {
-        $this->wrapperSection = $wrapperSection;
-        return $this;
-    }
-
-
-    /**
-     * Set id element.
-     *
-     * @param $idElement
-     * @return AbstractElement
-     */
-    public final function setIdElement(string $idElement): self
-    {
-        $this->idElement = $idElement;
-        $this->configure = $this->wrapperSection->getItem($idElement);
-        return $this;
+        $class = get_class($this);  // load class name
+        $description = WrapperSection::getClassDescription($class);
+        return WrapperSection::getClassName($class) . ($description ? ' - ' . $description : '---');
     }
 
 
@@ -148,9 +109,16 @@ abstract class AbstractElement implements IElement
         $form->addText('name', $prefix . 'name')
             ->setRequired($prefix . 'name-required');
         $form->addText('alias', $prefix . 'alias');
-        $form->addText('defaultvalue', $prefix . 'defaultvalue')
-            ->setOption('hint', $prefix . 'defaultvalue-hint');
-
+        $form->addText('defaultvalue', $prefix . 'defaultvalue');
+        $form->addText('emptyvalue', $prefix . 'emptyvalue')
+            ->setDefaultValue('---');
+        $form->addCheckbox('hideemptyvaluelist', $prefix . 'hideemptyvaluelist');   // for hide in list
+        $form->addCheckbox('hideemptyvalueform', $prefix . 'hideemptyvalueform');   // for hide in form
+        $form->addSelect('showforkey', $translator->translate($prefix . 'showforkey'))
+            ->setPrompt($translator->translate($prefix . 'showforkey-prompt'))
+            ->setItems($this->wrapperSection->getItemsFormatted())
+            ->setTranslator(null);  // show for value
+        $form->addText('showforvalue', $prefix . 'showforvalue');   // show for value
         $form->addText('required', $prefix . 'required');   // only require text
         $form->addCheckbox('omit', $prefix . 'omit');   // not set with post data
         $form->addCheckbox('ordering', $prefix . 'ordering');   // ordering in grid
@@ -186,14 +154,12 @@ abstract class AbstractElement implements IElement
 
         // set empty value
         if ((isset($this->configure['defaultvalue']) && $this->configure['defaultvalue'])) {
-            $emptyValue = $this->configure['defaultvalue'];
-
             if (!$form[$this->idElement]->getValue()) {
                 // insert default Value to value
-                $form[$this->idElement]->setValue($emptyValue);
+                $form[$this->idElement]->setValue($this->configure['defaultvalue']);
             } else {
                 // set DefaultValue to value
-                $form[$this->idElement]->setDefaultValue($emptyValue);
+                $form[$this->idElement]->setDefaultValue($this->configure['defaultvalue']);
             }
         }
 

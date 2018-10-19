@@ -38,14 +38,15 @@ class WrapperSection
         ACTION_LIST = 'list',
         ACTION_ADD = 'add',
         ACTION_EDIT = 'edit',
+        ACTION_DETAIL = 'detail',
         ACTION_DELETE = 'delete',
         ACTION_ARCHIVE = 'archive',
-        ACTION_DETAIL = 'detail',
-        ACTION_EMPTY = 'empty', //FIXME vyhodit tento typ!!
+        ACTION_EXPORT = 'export',
         ACTION_SORTABLE = 'sortable';
     // list all action types (actiontype)
     const
-        ACTION_TYPES = [self::ACTION_LIST, self::ACTION_ADD, self::ACTION_EDIT, self::ACTION_DETAIL, self::ACTION_ARCHIVE];
+        ACTION_TYPES = [self::ACTION_LIST, self::ACTION_ADD, self::ACTION_EDIT, self::ACTION_DETAIL, self::ACTION_ARCHIVE, self::ACTION_EXPORT], // all types
+        ACTION_TYPES_ELEMENT = [self::ACTION_LIST, self::ACTION_ADD, self::ACTION_EDIT, self::ACTION_DETAIL];   // select types
     // default order types
     const
         DEFAULT_ORDER_TYPES = [null => 'NULL', 'asc' => 'ASC', 'desc' => 'DESC',];
@@ -111,6 +112,32 @@ class WrapperSection
 
 
     /**
+     * Get class name.
+     *
+     * @param string $class
+     * @return string
+     */
+    public static function getClassName(string $class): string
+    {
+        list(, , $className) = explode('\\', $class);
+        return $className;
+    }
+
+
+    /**
+     * Get class description.
+     *
+     * @param string $class
+     * @return string
+     */
+    public static function getClassDescription(string $class): string
+    {
+        $description = $class::DESCRIPTION;
+        return ($description ?? '');
+    }
+
+
+    /**
      * Get configure parameters.
      *
      * @return array
@@ -154,6 +181,8 @@ class WrapperSection
             } else {
                 if (is_string($item) && is_dir($item)) {
                     $result[$keyItem][$item] = realpath($item);
+                } else if (is_string($item) && is_dir($webDir . $item)) {
+                    $result[$keyItem][$item] = realpath($webDir . $item);
                 }
             }
         }
@@ -178,8 +207,8 @@ class WrapperSection
 
         $result = [];
         if ($item) {
-            $instance = $this->adminElement->getElement($item['type']);
-            $instance->setWrapperSection($this);
+            $element = $this->adminElement->getElement($item['type']);
+            $instance = new $element($this, $configure['subelement']); // new instance, set wrapper, set element id
 
             $data = $instance->getSelectItems($item);
             foreach ($data as $idValue => $value) {
@@ -219,6 +248,44 @@ class WrapperSection
             }
         }
         return $result ?? [];
+    }
+
+
+    /**
+     * Get section by sub element config.
+     *
+     * @param string $subElementConfig
+     * @return array
+     */
+    public function getSectionBySubElementConfig(string $subElementConfig): array
+    {
+        return array_filter($this->configureSection->getListSection(), function ($item) use ($subElementConfig) {
+            return (isset($item['subelementconfig']) && $item['subelementconfig'] == $subElementConfig);
+        });
+    }
+
+
+    /**
+     * Get section id by sub element config.
+     *
+     * @param string $subElementConfig
+     * @return string
+     */
+    public function getSectionIdBySubElementConfig(string $subElementConfig): string
+    {
+        $result = $this->getSectionBySubElementConfig($subElementConfig);
+        return (implode(array_keys($result)) ?: $subElementConfig);
+    }
+
+
+    /**
+     * Get section id.
+     *
+     * @return string
+     */
+    public function getSectionId(): string
+    {
+        return $this->sectionId;
     }
 
 
@@ -272,6 +339,23 @@ class WrapperSection
             $type = $this->listSection[$item['subelementconfig']]['type'];
         }
         return IConfigureSection::PRESENTER[$type];
+    }
+
+
+    /**
+     * Get section id menu item.
+     *
+     * @param array $item
+     * @return string
+     */
+    public function getSectionIdMenuItem(array $item): string
+    {
+        $result = $item['id'];
+        if ($this->actionType != self::ACTION_LIST && isset($item['subelementconfig'])) {
+            // change for section exception list
+            $result = $item['subelementconfig'];
+        }
+        return $result;
     }
 
 
@@ -348,7 +432,7 @@ class WrapperSection
 
 //FIXME do datagridu pridat select filtr na zobrazeni jednotlivych typu obsahu (select filt na urovni sortable)!!!!!
 
-//TODO na HP by mobl prijit specialni vystup elementu typu nove objednavky/atd??
+//TODO na HP by mohl prijit specialni vystup elementu typu nove objednavky/atd??
 
 //FIXME system podmenu predelat!! filtrovani jako bylo tenkrat na konfiguratoru bude leda umet fitr na gridu!!!!!
 //TODO grid: filtrovani on-off, hledani on-off <- session + multiple moznost v zakladu
@@ -356,7 +440,10 @@ class WrapperSection
 
 //FIXME pri editaci foreign sekce a defaultni zvolenem jazyku se nezobrazi obsah i kdyz je nastavevym pro proklikani se zobrazi konektne
 
-//TODO zobrazovani podle typu: zobrazit kdyz element X (select) bude mit tuto Y (text) honodu - eg.selektivni prepinani => insert: text, update: label
+//TODO pridat tlacitko na export csv - respektive nastaveni uvnit configure section jake formaty budou pouzite, jake budou oddelovace/ a neli by se zapinat jako "drivery"
+//TODO umoznit u textovych elementu prohanet vystupni text funkcema typu webalize... atd
+//TODO element odkaz uvnitr adminu, kde obsah v odkazu muze byt text/obrazek
+
 
     /**
      * Init internal configure.
@@ -383,10 +470,8 @@ class WrapperSection
         foreach ($items as $key => $item) {
             $element = $this->adminElement->getElement($item['type']);
             if ($element) {
-                $instance = clone $element; // clone instance
+                $instance = new $element($this, $key); // new instance, set wrapper, set element id
                 if ($instance) {
-                    $instance->setWrapperSection($this);    // set wrapper
-                    $instance->setIdElement($key);          // set element id
                     $elements[$key] = $instance;
                 }
             }
@@ -1519,6 +1604,19 @@ class WrapperSection
 
 
     /**
+     * Remove item.
+     *
+     * @param string $idElement
+     */
+    public function removeItem(string $idElement)
+    {
+        if (isset($this->configureItems[$idElement])) {
+            unset($this->configureItems[$idElement]);
+        }
+    }
+
+
+    /**
      * Get items.
      *
      * @return array
@@ -1557,6 +1655,46 @@ class WrapperSection
 
 
     /**
+     * Show empty value list.
+     *
+     * @param array $item
+     * @param       $value
+     * @return bool
+     */
+    private function showEmptyValueList(array $item, $value): bool
+    {
+        return (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? boolval($value) : true);
+    }
+
+
+    /**
+     * Show empty value form.
+     *
+     * @param string $key
+     * @param array  $item
+     * @param array  $values
+     * @return bool
+     */
+    private function showEmptyValueForm(string $key, array $item, array $values): bool
+    {
+        return (isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? boolval($values[$key]) : true);
+    }
+
+
+    /**
+     * Show for element.
+     *
+     * @param array $item
+     * @param array $values
+     * @return bool
+     */
+    private function showForElement(array $item, array $values): bool
+    {
+        return (isset($item['showforkey']) && isset($item['showforvalue']) ? isset($values[$item['showforkey']]) && $values[$item['showforkey']] == $item['showforvalue'] : true);
+    }
+
+
+    /**
      * Get detail container content.
      *
      * @param int $id
@@ -1571,9 +1709,26 @@ class WrapperSection
         foreach ($this->getItemsByShow(self::ACTION_DETAIL) as $key => $item) {
             // load data and inset to array
             $item['render_row'] = $this->getInternalElement($key)->getRenderRow($data);
-            $result[$key] = $item;
+            if ($this->showEmptyValueList($item, $item['render_row'])) {
+                $result[$key] = $item;
+            }
         }
         return $result;
+    }
+
+
+    /**
+     * Check elements.
+     *
+     * @param array $values
+     */
+    private function checkElements(array $values)
+    {
+        foreach ($this->getItemsByShow($this->actionType) as $key => $item) {
+            if (!$this->showForElement($item, $values)) {
+                $this->removeItem($key);
+            }
+        }
     }
 
 
@@ -1600,10 +1755,16 @@ class WrapperSection
      */
     public function getFormContainerContent(Form $form)
     {
+        $values = $this->getDatabaseValues();
         // generate list html elements for content
         foreach ($this->getItemsByShow($this->actionType) as $key => $item) {
-            $this->getInternalElement($key)->getFormContainerContent($form, $item);
+            if ($this->showEmptyValueForm($key, $item, $values) && $this->showForElement($item, $values)) {
+                $this->getInternalElement($key)->getFormContainerContent($form, $item);
+            }
         }
+
+        // internal check elements and remove unused
+        $this->checkElements($values);
     }
 
 
