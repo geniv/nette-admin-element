@@ -10,7 +10,7 @@ use AdminElement\Elements\PositionElement;
 use dibi;
 use Dibi\Connection;
 use Dibi\Exception;
-use Dibi\Fluent;
+use Dibi\IDataSource;
 use Nette\Application\UI\Form;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
@@ -71,7 +71,7 @@ class WrapperSection
     private $databaseTestSql = false;
     /** @var array */
     private $databaseOrderDefault = [], $databaseTableListFk = [], $databaseValues = [];
-    /** @var Fluent */
+    /** @var IDataSource */
     private static $staticSource;
     /** @var Cache */
     private $cache;
@@ -830,9 +830,9 @@ class WrapperSection
      * Process test SQL.
      *
      * @internal
-     * @param Fluent $fluent
+     * @param IDataSource $fluent
      */
-    private function processTestSQL(Fluent $fluent)
+    private function processTestSQL(IDataSource $fluent)
     {
         Debugger::log((string) $fluent, 'test-sql');
     }
@@ -1054,9 +1054,9 @@ class WrapperSection
      *
      * @param bool $singleton
      * @param bool $rawSource
-     * @return Fluent
+     * @return IDataSource
      */
-    public function getSource(bool $singleton = true, bool $rawSource = false): Fluent
+    public function getSource(bool $singleton = true, bool $rawSource = false): IDataSource
     {
         if ($singleton) {
             // return static singleton
