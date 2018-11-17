@@ -243,7 +243,7 @@ class WrapperSection
                 }
             }
             try {
-                $this->cache->save($cacheName, $result, [Cache::TAGS => 'grid']);
+                $this->cache->save($cacheName, $result, [Cache::TAGS => ['grid']]);
             } catch (\Throwable $e) {
             }
         }
@@ -790,7 +790,7 @@ class WrapperSection
 
             $result = $result->fetchAssoc('constraint_name');
             try {
-                $this->cache->save($cacheName, $result, [Cache::TAGS => 'fk']);
+                $this->cache->save($cacheName, $result, [Cache::TAGS => ['fk']]);
             } catch (\Throwable $e) {
             }
         }
@@ -992,7 +992,7 @@ class WrapperSection
                     ->where([$fkPk['column_name'] => $id])
                     ->fetchAssoc($fkWhere['column_name']);
                 try {
-                    $this->cache->save($cacheName, $result, [Cache::TAGS => 'fk']);
+                    $this->cache->save($cacheName, $result, [Cache::TAGS => ['fk']]);
                 } catch (\Throwable $e) {
                 }
             }
@@ -1583,7 +1583,7 @@ class WrapperSection
             }, $res);
 
             try {
-                $this->cache->save($cacheName, $result, [Cache::TAGS => 'fk']);
+                $this->cache->save($cacheName, $result, [Cache::TAGS => ['fk']]);
             } catch (\Throwable $e) {
             }
         }
@@ -1776,8 +1776,8 @@ class WrapperSection
     public function cleanCache()
     {
         // internal clean cache
-        $this->cache->clean([Cache::TAGS => 'fk']);     // internal clean cache for FK / foreign
-        $this->cache->clean([Cache::TAGS => 'grid']);   // internal clean cache for grid
+        $this->cache->clean([Cache::TAGS => ['fk']]);     // internal clean cache for FK / foreign
+        $this->cache->clean([Cache::TAGS => ['grid']]);   // internal clean cache for grid
 
         // user defined cache
         if ($this->cacheNames) {

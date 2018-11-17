@@ -150,7 +150,7 @@ class UploadElement extends AbstractElement
                     $result = array_combine($internalItems, $internalItems);
                 }
                 try {
-                    $this->cache->save($cacheName, $result, [Cache::TAGS => 'upload']);
+                    $this->cache->save($cacheName, $result, [Cache::TAGS => ['upload']]);
                 } catch (\Throwable $e) {
                 }
             }
@@ -272,7 +272,7 @@ class UploadElement extends AbstractElement
             $file->move($this->getAbsolutePath() . $sanitizedName);
 
             // invalidate cache
-            $this->cache->clean([Cache::TAGS => 'upload']);
+            $this->cache->clean([Cache::TAGS => ['upload']]);
 
             $values[$this->idElement] = $sanitizedName;
         } else {
@@ -326,7 +326,7 @@ class UploadElement extends AbstractElement
         }
 
         // invalidate cache
-        $this->cache->clean([Cache::TAGS => 'upload']);
+        $this->cache->clean([Cache::TAGS => ['upload']]);
     }
 
 
