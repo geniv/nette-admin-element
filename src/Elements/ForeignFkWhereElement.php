@@ -158,7 +158,7 @@ class ForeignFkWhereElement extends AbstractElement
                         ->orderBy([$fk['referenced_column_name'] => 'asc'])
                         ->fetchSingle();
                     try {
-                        $cache->save($cacheName, $fkId, [Cache::TAGS => 'fk']);
+                        $cache->save($cacheName, $fkId, [Cache::TAGS => ['fk']]);
                     } catch (\Throwable $e) {
                     }
                 }

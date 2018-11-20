@@ -45,7 +45,8 @@ class FkSelectElement extends AbstractFkSelectElement
             ->setTranslator(null);
 
         // enable null value
-        $form->addText('prompt', $prefix . 'prompt');
+        $form->addText('prompt', $prefix . 'prompt')
+            ->setOption('hint', $prefix . 'prompt-hint');
 
         $form->addText('preview', $prefix . 'preview')
             ->setRequired($prefix . 'preview-required');

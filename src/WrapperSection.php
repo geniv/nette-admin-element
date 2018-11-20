@@ -10,7 +10,7 @@ use AdminElement\Elements\PositionElement;
 use dibi;
 use Dibi\Connection;
 use Dibi\Exception;
-use Dibi\Fluent;
+use Dibi\IDataSource;
 use Nette\Application\UI\Form;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
@@ -71,7 +71,7 @@ class WrapperSection
     private $databaseTestSql = false;
     /** @var array */
     private $databaseOrderDefault = [], $databaseTableListFk = [], $databaseValues = [];
-    /** @var Fluent */
+    /** @var IDataSource */
     private static $staticSource;
     /** @var Cache */
     private $cache;
@@ -243,7 +243,7 @@ class WrapperSection
                 }
             }
             try {
-                $this->cache->save($cacheName, $result, [Cache::TAGS => 'grid']);
+                $this->cache->save($cacheName, $result, [Cache::TAGS => ['grid']]);
             } catch (\Throwable $e) {
             }
         }
@@ -413,9 +413,6 @@ class WrapperSection
 
 //TODO admin: cisty export dat (do CSV) podle aktualniho vypisu
 //TODO grid: export: csv, pdf, xml...a moznost dalsich - ovladat pres typ zobrazeni co se ma exportovat a co ne!!!
-
-//TODO zobrazovani elementu pro submenu/zobrazovani elementu pro hlavni sekci, zobrazovat pro: element=hodnota
-//TODO element podle vybrane moznosti - napr: select moznost: admin: element=upload, guest=textarea, moderator=text
 
 //TODO hledani skrz cely admin (jen skrz sekce admin/ nebo v kazde sekci samostatne)
 //TODO element: href (na proklikyna produkt)
@@ -790,7 +787,7 @@ class WrapperSection
 
             $result = $result->fetchAssoc('constraint_name');
             try {
-                $this->cache->save($cacheName, $result, [Cache::TAGS => 'fk']);
+                $this->cache->save($cacheName, $result, [Cache::TAGS => ['fk']]);
             } catch (\Throwable $e) {
             }
         }
@@ -830,9 +827,9 @@ class WrapperSection
      * Process test SQL.
      *
      * @internal
-     * @param Fluent $fluent
+     * @param IDataSource $fluent
      */
-    private function processTestSQL(Fluent $fluent)
+    private function processTestSQL(IDataSource $fluent)
     {
         Debugger::log((string) $fluent, 'test-sql');
     }
@@ -992,7 +989,7 @@ class WrapperSection
                     ->where([$fkPk['column_name'] => $id])
                     ->fetchAssoc($fkWhere['column_name']);
                 try {
-                    $this->cache->save($cacheName, $result, [Cache::TAGS => 'fk']);
+                    $this->cache->save($cacheName, $result, [Cache::TAGS => ['fk']]);
                 } catch (\Throwable $e) {
                 }
             }
@@ -1054,9 +1051,9 @@ class WrapperSection
      *
      * @param bool $singleton
      * @param bool $rawSource
-     * @return Fluent
+     * @return IDataSource
      */
-    public function getSource(bool $singleton = true, bool $rawSource = false): Fluent
+    public function getSource(bool $singleton = true, bool $rawSource = false): IDataSource
     {
         if ($singleton) {
             // return static singleton
@@ -1583,7 +1580,7 @@ class WrapperSection
             }, $res);
 
             try {
-                $this->cache->save($cacheName, $result, [Cache::TAGS => 'fk']);
+                $this->cache->save($cacheName, $result, [Cache::TAGS => ['fk']]);
             } catch (\Throwable $e) {
             }
         }
@@ -1655,19 +1652,6 @@ class WrapperSection
 
 
     /**
-     * Show empty value list.
-     *
-     * @param array $item
-     * @param       $value
-     * @return bool
-     */
-    private function showEmptyValueList(array $item, $value): bool
-    {
-        return (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? boolval($value) : true);
-    }
-
-
-    /**
      * Show empty value form.
      *
      * @param string $key
@@ -1677,7 +1661,7 @@ class WrapperSection
      */
     private function showEmptyValueForm(string $key, array $item, array $values): bool
     {
-        return (isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? boolval($values[$key]) : true);
+        return (isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? boolval($values[$key] ?? null) : true);
     }
 
 
@@ -1709,9 +1693,7 @@ class WrapperSection
         foreach ($this->getItemsByShow(self::ACTION_DETAIL) as $key => $item) {
             // load data and inset to array
             $item['render_row'] = $this->getInternalElement($key)->getRenderRow($data);
-            if ($this->showEmptyValueList($item, $item['render_row'])) {
-                $result[$key] = $item;
-            }
+            $result[$key] = $item;
         }
         return $result;
     }
@@ -1776,8 +1758,8 @@ class WrapperSection
     public function cleanCache()
     {
         // internal clean cache
-        $this->cache->clean([Cache::TAGS => 'fk']);     // internal clean cache for FK / foreign
-        $this->cache->clean([Cache::TAGS => 'grid']);   // internal clean cache for grid
+        $this->cache->clean([Cache::TAGS => ['fk']]);     // internal clean cache for FK / foreign
+        $this->cache->clean([Cache::TAGS => ['grid']]);   // internal clean cache for grid
 
         // user defined cache
         if ($this->cacheNames) {
