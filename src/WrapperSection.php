@@ -1654,17 +1654,17 @@ class WrapperSection
     }
 
 
-    /**
-     * Show empty value list.
-     *
-     * @param array $item
-     * @param       $value
-     * @return bool
-     */
-    private function showEmptyValueList(array $item, $value): bool
-    {
-        return (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? boolval($value) : true);
-    }
+//    /**
+//     * Show empty value list.
+//     *
+//     * @param array $item
+//     * @param       $value
+//     * @return bool
+//     */
+//    private function showEmptyValueList(array $item, $value): bool
+//    {
+//        return (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? boolval($value) : true);
+//    }
 
 
     /**
@@ -1677,7 +1677,7 @@ class WrapperSection
      */
     private function showEmptyValueForm(string $key, array $item, array $values): bool
     {
-        return (isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? boolval($values[$key]) : true);
+        return (isset($item['hideemptyvalueform']) && $item['hideemptyvalueform'] ? boolval($values[$key] ?? null) : true);
     }
 
 
@@ -1709,9 +1709,9 @@ class WrapperSection
         foreach ($this->getItemsByShow(self::ACTION_DETAIL) as $key => $item) {
             // load data and inset to array
             $item['render_row'] = $this->getInternalElement($key)->getRenderRow($data);
-            if ($this->showEmptyValueList($item, $item['render_row'])) {
-                $result[$key] = $item;
-            }
+//            if ($this->showEmptyValueList($item, $item['render_row'])) {
+            $result[$key] = $item;
+//            }
         }
         return $result;
     }
