@@ -414,9 +414,6 @@ class WrapperSection
 //TODO admin: cisty export dat (do CSV) podle aktualniho vypisu
 //TODO grid: export: csv, pdf, xml...a moznost dalsich - ovladat pres typ zobrazeni co se ma exportovat a co ne!!!
 
-//TODO zobrazovani elementu pro submenu/zobrazovani elementu pro hlavni sekci, zobrazovat pro: element=hodnota
-//TODO element podle vybrane moznosti - napr: select moznost: admin: element=upload, guest=textarea, moderator=text
-
 //TODO hledani skrz cely admin (jen skrz sekce admin/ nebo v kazde sekci samostatne)
 //TODO element: href (na proklikyna produkt)
 
@@ -1654,19 +1651,6 @@ class WrapperSection
     }
 
 
-//    /**
-//     * Show empty value list.
-//     *
-//     * @param array $item
-//     * @param       $value
-//     * @return bool
-//     */
-//    private function showEmptyValueList(array $item, $value): bool
-//    {
-//        return (isset($item['hideemptyvaluelist']) && $item['hideemptyvaluelist'] ? boolval($value) : true);
-//    }
-
-
     /**
      * Show empty value form.
      *
@@ -1709,9 +1693,7 @@ class WrapperSection
         foreach ($this->getItemsByShow(self::ACTION_DETAIL) as $key => $item) {
             // load data and inset to array
             $item['render_row'] = $this->getInternalElement($key)->getRenderRow($data);
-//            if ($this->showEmptyValueList($item, $item['render_row'])) {
             $result[$key] = $item;
-//            }
         }
         return $result;
     }
