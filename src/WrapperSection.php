@@ -29,7 +29,7 @@ use Tracy\ILogger;
  * @author  geniv
  * @package AdminElement
  */
-class WrapperSection
+class WrapperSection implements IWrapperSection
 {
     use SmartObject;
 
