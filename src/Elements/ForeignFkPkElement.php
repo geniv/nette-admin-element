@@ -3,7 +3,7 @@
 namespace AdminElement\Elements;
 
 use AdminElement\IConfigureSection;
-use AdminElement\WrapperSection;
+use AdminElement\IWrapperSection;
 use Dibi\Fluent;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
@@ -21,7 +21,7 @@ class ForeignFkPkElement extends AbstractElement
     const
         DESCRIPTION = 'FK PK (:N)',
         USAGE = [IConfigureSection::PRESENTER_FOREIGN],
-        ACTION_TYPES = [WrapperSection::ACTION_ADD, WrapperSection::ACTION_EDIT, WrapperSection::ACTION_ARCHIVE];
+        ACTION_TYPES = [IWrapperSection::ACTION_ADD, IWrapperSection::ACTION_EDIT, IWrapperSection::ACTION_ARCHIVE];
 
 
     /**

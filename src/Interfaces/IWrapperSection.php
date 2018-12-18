@@ -416,6 +416,15 @@ interface IWrapperSection
 
 
     /**
+     * Get database table list fk.
+     *
+     * @internal
+     * @return array
+     */
+    public function getDatabaseTableListFk(): array;
+
+
+    /**
      * Get foreign items.
      *
      * @return array

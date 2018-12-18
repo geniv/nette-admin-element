@@ -2,7 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use AdminElement\WrapperSection;
+use AdminElement\IWrapperSection;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
 
@@ -17,7 +17,7 @@ class PositionElement extends AbstractElement
 {
     const
         DESCRIPTION = 'position element for sortable in 1:N table',
-        ACTION_TYPES = [WrapperSection::ACTION_LIST, WrapperSection::ACTION_ADD];
+        ACTION_TYPES = [IWrapperSection::ACTION_LIST, IWrapperSection::ACTION_ADD];
 
 
     /**
