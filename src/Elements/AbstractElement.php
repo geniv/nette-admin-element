@@ -3,10 +3,10 @@
 namespace AdminElement\Elements;
 
 use AdminElement\IConfigureSection;
+use AdminElement\IWrapperSection;
 use Dibi\Fluent;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
-use AdminElement\WrapperSection;
 use Nette\SmartObject;
 
 
@@ -16,7 +16,7 @@ use Nette\SmartObject;
  * @author  geniv
  * @package AdminElement\Elements
  */
-abstract class AbstractElement implements IElement
+abstract class AbstractElement implements IAbstractElement
 {
     use SmartObject;
 
@@ -24,9 +24,9 @@ abstract class AbstractElement implements IElement
     const
         DESCRIPTION = '',
         USAGE = [IConfigureSection::PRESENTER_TABLE, IConfigureSection::PRESENTER_FOREIGN, IConfigureSection::PRESENTER_TREE],
-        ACTION_TYPES = WrapperSection::ACTION_TYPES_ELEMENT;
+        ACTION_TYPES = IWrapperSection::ACTION_TYPES_ELEMENT;
 
-    /** @var WrapperSection */
+    /** @var IWrapperSection */
     protected $wrapperSection;
     /** @var string */
     protected $idElement;
@@ -35,12 +35,12 @@ abstract class AbstractElement implements IElement
 
 
     /**
-     * Set wrapper section.
+     * AbstractElement constructor.
      *
-     * @param WrapperSection $wrapperSection
-     * @param string         $idElement
+     * @param IWrapperSection $wrapperSection
+     * @param string          $idElement
      */
-    public function __construct(WrapperSection $wrapperSection, string $idElement)
+    public function __construct(IWrapperSection $wrapperSection, string $idElement)
     {
         $this->wrapperSection = $wrapperSection;
         $this->idElement = $idElement;
@@ -56,8 +56,8 @@ abstract class AbstractElement implements IElement
     public function __toString(): string
     {
         $class = get_class($this);  // load class name
-        $description = WrapperSection::getClassDescription($class);
-        return WrapperSection::getClassName($class) . ($description ? ' - ' . $description : '---');
+        $description = IWrapperSection::getClassDescription($class);
+        return IWrapperSection::getClassName($class) . ($description ? ' - ' . $description : '---');
     }
 
 
@@ -123,7 +123,7 @@ abstract class AbstractElement implements IElement
         $form->addCheckbox('ordering', $prefix . 'ordering');   // ordering in grid
         // order default
         $form->addRadioList('orderdefault', $translator->translate($prefix . 'orderdefault'))
-            ->setItems(WrapperSection::DEFAULT_ORDER_TYPES)
+            ->setItems(IWrapperSection::DEFAULT_ORDER_TYPES)
             ->setTranslator(null);
         if (isset($this->configure['orderdefault']) && $this->configure['orderdefault']) { // if orderdefault is define
             $form->addText('orderposition', $prefix . 'orderposition');     // position order
@@ -132,7 +132,7 @@ abstract class AbstractElement implements IElement
 
         // show for grid
         $form->addCheckboxList('show', $translator->translate($prefix . 'show'))
-            ->setItems(WrapperSection::ACTION_TYPES, false)
+            ->setItems(IWrapperSection::ACTION_TYPES, false)
             ->setTranslator(null);
     }
 
