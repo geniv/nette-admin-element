@@ -2,7 +2,6 @@
 
 namespace AdminElement;
 
-
 /**
  * Interface IConfigureSection
  *
