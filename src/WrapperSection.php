@@ -1416,7 +1416,7 @@ class WrapperSection implements IWrapperSection
      */
     public function getFkId(): int
     {
-        return $this->fkId;
+        return $this->fkId ?? 0;
     }
 
 
@@ -1439,7 +1439,7 @@ class WrapperSection implements IWrapperSection
      */
     public function getSubSectionId(): string
     {
-        return $this->subSectionId;
+        return $this->subSectionId ?? '';
     }
 
 
