@@ -2,7 +2,6 @@
 
 namespace AdminElement;
 
-use AdminElement\Elements\AbstractElement;
 use AdminElement\Elements\ArchiveElement;
 use AdminElement\Elements\ForeignFkPkElement;
 use AdminElement\Elements\ForeignFkWhereElement;
@@ -1735,8 +1734,6 @@ class WrapperSection implements IWrapperSection
 
     /**
      * Clean cache.
-     *
-     * @internal
      */
     public function cleanCache()
     {
@@ -2410,6 +2407,6 @@ class WrapperSection implements IWrapperSection
             $this->processTestSQL($result);
             die;
         }
-        return $result->execute();
+        return $result->execute(Dibi::AFFECTED_ROWS);
     }
 }

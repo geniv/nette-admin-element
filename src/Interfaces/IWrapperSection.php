@@ -5,6 +5,7 @@ namespace AdminElement;
 use AdminElement\Elements\IAbstractElement;
 use Dibi\Connection;
 use Dibi\IDataSource;
+use Nette\Application\UI\Form;
 use Nette\Caching\Cache;
 
 
@@ -567,4 +568,175 @@ interface IWrapperSection
      * @param string $subSectionId
      */
     public function setSubSectionId(string $subSectionId);
+
+
+    /**
+     * Get sub-element name.
+     *
+     * @return string
+     */
+    public function getSubElementName(): string;
+
+
+    /**
+     * Set sub-element name.
+     *
+     * @param string|null $subElementName
+     */
+    public function setSubElementName(string $subElementName = null);
+
+
+    /**
+     * Get sub-element config.
+     *
+     * @return string
+     */
+    public function getSubElementConfig(): string;
+
+
+    /**
+     * Set sub-element config.
+     *
+     * @param string|null $subElementConfig
+     */
+    public function setSubElementConfig(string $subElementConfig = null);
+
+
+    /**
+     * Get data by fk.
+     *
+     * @param string $fk
+     * @param string $preview
+     * @param bool   $referenced
+     * @return array
+     */
+    public function getDataByFk(string $fk, string $preview, bool $referenced = true): array;
+
+
+    /**
+     * Get item.
+     *
+     * @param string $idElement
+     * @return array
+     */
+    public function getItem(string $idElement): array;
+
+
+    /**
+     * Remove item.
+     *
+     * @param string $idElement
+     */
+    public function removeItem(string $idElement);
+
+
+    /**
+     * Get items.
+     *
+     * @return array
+     */
+    public function getItems(): array;
+
+
+    /**
+     * Get items by show.
+     *
+     * @param string $action
+     * @return array
+     */
+    public function getItemsByShow(string $action): array;
+
+
+    /**
+     * Get items formatted.
+     *
+     * @return array
+     */
+    public function getItemsFormatted(): array;
+
+
+    /**
+     * Get detail container content.
+     *
+     * @param int $id
+     * @return array
+     */
+    public function getDetailContainerContent(int $id): array;
+
+
+    /**
+     * Get form renderer path.
+     *
+     * @param bool $section
+     * @return string
+     */
+    public static function getFormRendererPath($section = false): string;
+
+
+    /**
+     * Get form container content.
+     *
+     * @param Form $form
+     */
+    public function getFormContainerContent(Form $form);
+
+
+    /**
+     * Clean cache.
+     */
+    public function cleanCache();
+
+
+    /**
+     * Set defaults.
+     *
+     * @param array $values
+     * @return array
+     */
+    public function setDefaults(array $values): array;
+
+
+    /**
+     * Get database values.
+     *
+     * @return array
+     */
+    public function getDatabaseValues(): array;
+
+
+    /**
+     * On success insert.
+     *
+     * @param array $values
+     * @return int
+     */
+    public function onSuccessInsert(array $values): int;
+
+
+    /**
+     * On success update.
+     *
+     * @param array $values
+     * @return int
+     */
+    public function onSuccessUpdate(array $values): int;
+
+
+    /**
+     * On success delete.
+     *
+     * @param int $id
+     * @return int
+     */
+    public function onSuccessDelete(int $id): int;
+
+
+    /**
+     * Delete foreign section.
+     *
+     * @param int $id
+     * @param int $idLocale
+     * @return int
+     */
+    public function deleteForeignSection(int $id, int $idLocale): int;
 }
