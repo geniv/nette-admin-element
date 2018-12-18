@@ -6,6 +6,7 @@ use AdminElement\Elements\AbstractElement;
 use AdminElement\Elements\ArchiveElement;
 use AdminElement\Elements\ForeignFkPkElement;
 use AdminElement\Elements\ForeignFkWhereElement;
+use AdminElement\Elements\IAbstractElement;
 use AdminElement\Elements\PositionElement;
 use dibi;
 use Dibi\Connection;
@@ -32,24 +33,6 @@ use Tracy\ILogger;
 class WrapperSection implements IWrapperSection
 {
     use SmartObject;
-
-    // action type
-    const
-        ACTION_LIST = 'list',
-        ACTION_ADD = 'add',
-        ACTION_EDIT = 'edit',
-        ACTION_DETAIL = 'detail',
-        ACTION_DELETE = 'delete',
-        ACTION_ARCHIVE = 'archive',
-        ACTION_EXPORT = 'export',
-        ACTION_SORTABLE = 'sortable';
-    // list all action types (actiontype)
-    const
-        ACTION_TYPES = [self::ACTION_LIST, self::ACTION_ADD, self::ACTION_EDIT, self::ACTION_DETAIL, self::ACTION_ARCHIVE, self::ACTION_EXPORT], // all types
-        ACTION_TYPES_ELEMENT = [self::ACTION_LIST, self::ACTION_ADD, self::ACTION_EDIT, self::ACTION_DETAIL];   // select types
-    // default order types
-    const
-        DEFAULT_ORDER_TYPES = [null => 'NULL', 'asc' => 'ASC', 'desc' => 'DESC',];
 
     /** @var IConfigureSection */
     private $configureSection;
@@ -140,9 +123,10 @@ class WrapperSection implements IWrapperSection
     /**
      * Get configure parameters.
      *
+     * @internal
      * @return array
      */
-    public function getConfigureParameters(): array
+    private function getConfigureParameters(): array
     {
         // get system neon configure
         return $this->configureParameters;
@@ -838,7 +822,6 @@ class WrapperSection implements IWrapperSection
     /**
      * Get database alias name.
      *
-     * @internal
      * @param string $name
      * @return string
      */
@@ -910,9 +893,9 @@ class WrapperSection implements IWrapperSection
      *
      * @internal
      * @param string $idElement
-     * @return AbstractElement
+     * @return IAbstractElement
      */
-    private function getInternalElement(string $idElement): AbstractElement
+    private function getInternalElement(string $idElement): IAbstractElement
     {
         if (!isset($this->configureElements[$idElement])) {
             die('unknown id element: ' . $idElement);
@@ -941,9 +924,9 @@ class WrapperSection implements IWrapperSection
      * Get element.
      *
      * @param string $idElement
-     * @return AbstractElement
+     * @return IAbstractElement
      */
-    public function getElement(string $idElement): AbstractElement
+    public function getElement(string $idElement): IAbstractElement
     {
         return $this->getInternalElement($idElement);
     }
@@ -1209,10 +1192,10 @@ class WrapperSection implements IWrapperSection
     /**
      * Set foreign.
      *
-     * @param AbstractElement $abstractElement
-     * @param string          $type
+     * @param IAbstractElement $abstractElement
+     * @param string           $type
      */
-    public function setForeign(AbstractElement $abstractElement, string $type)
+    public function setForeign(IAbstractElement $abstractElement, string $type)
     {
         $configure = $abstractElement->getConfigure();
         if (isset($configure['foreign']) && $configure['foreign']) {
@@ -1432,7 +1415,7 @@ class WrapperSection implements IWrapperSection
      *
      * @return int
      */
-    public function getFkId()
+    public function getFkId(): int
     {
         return $this->fkId;
     }
@@ -1455,7 +1438,7 @@ class WrapperSection implements IWrapperSection
      *
      * @return string
      */
-    public function getSubSectionId()
+    public function getSubSectionId(): string
     {
         return $this->subSectionId;
     }
