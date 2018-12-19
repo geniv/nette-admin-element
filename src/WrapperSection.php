@@ -388,6 +388,7 @@ class WrapperSection implements IWrapperSection
         return $this->adminElement->getElements($usage);
     }
 
+//FIXME doplnit moznost razeni na ID protoze momentalne to jde jen na vsechny ostastni ale ne vlastni prvni sloupec ID
 
 //TODO prenaset nejak razeni - pokud se odering na strance 1 seradi tak aby drzel sort na dalsi stranky paginatoru 2,3...?? treba pres session?? http://localhost/NetteWeb/admin/content-foreign/?page=3&idSection=5b20edd043afe
 //TODO konfigurator komponenta by mohla umet group/list kde se bude pouzivat jako overlay a bude mit obsah jako sablonu jednoho radku, a v nastaveni komponenty v latte definovane obsahy, kazdy soupec bude mit take mozost enabled pro povolovani ci zakazovani v ramci jazyka!
@@ -423,6 +424,7 @@ class WrapperSection implements IWrapperSection
 //TODO pridat tlacitko na export csv - respektive nastaveni uvnit configure section jake formaty budou pouzite, jake budou oddelovace/ a neli by se zapinat jako "drivery"
 //TODO umoznit u textovych elementu prohanet vystupni text funkcema typu webalize... atd
 //TODO element odkaz uvnitr adminu, kde obsah v odkazu muze byt text/obrazek
+//TODO elememt typu ENUM
 
 
     /**
@@ -1696,20 +1698,20 @@ class WrapperSection implements IWrapperSection
     }
 
 
-    /**
-     * Get form renderer path.
-     *
-     * @param bool $section
-     * @return string
-     */
-    public static function getFormRendererPath($section = false): string
-    {
-        if ($section) {
-            return __DIR__ . '/FormSectionRenderer.latte';
-        } else {
-            return __DIR__ . '/FormRenderer.latte';
-        }
-    }
+//    /**
+//     * Get form renderer path.
+//     *
+//     * @param bool $section
+//     * @return string
+//     */
+//    public static function getFormRendererPath($section = false): string
+//    {
+//        if ($section) {
+//            return __DIR__ . '/FormSectionRenderer.latte';
+//        } else {
+//            return __DIR__ . '/FormRenderer.latte';
+//        }
+//    }
 
 
     /**

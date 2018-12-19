@@ -4,6 +4,7 @@ namespace AdminElement\Elements;
 
 use AdminElement\IConfigureSection;
 use AdminElement\IWrapperSection;
+use AdminElement\WrapperSection;
 use Dibi\Fluent;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
@@ -56,8 +57,8 @@ abstract class AbstractElement implements IAbstractElement
     public function __toString(): string
     {
         $class = get_class($this);  // load class name
-        $description = IWrapperSection::getClassDescription($class);
-        return IWrapperSection::getClassName($class) . ($description ? ' - ' . $description : '---');
+        $description = WrapperSection::getClassDescription($class);
+        return WrapperSection::getClassName($class) . ($description ? ' - ' . $description : '---');
     }
 
 

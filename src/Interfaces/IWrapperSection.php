@@ -34,24 +34,10 @@ interface IWrapperSection
     // default order types
     const
         DEFAULT_ORDER_TYPES = [null => 'NULL', 'asc' => 'ASC', 'desc' => 'DESC',];
-
-
-    /**
-     * Get class name.
-     *
-     * @param string $class
-     * @return string
-     */
-    public static function getClassName(string $class): string;
-
-
-    /**
-     * Get class description.
-     *
-     * @param string $class
-     * @return string
-     */
-    public static function getClassDescription(string $class): string;
+    // define renderer path latte
+    const
+        RENDER_FORM = __DIR__ . '/FormRenderer.latte',
+        RENDER_FORM_SECTION = __DIR__ . '/FormSectionRenderer.latte';
 
 
     /**
@@ -671,15 +657,6 @@ interface IWrapperSection
      * @return array
      */
     public function getDetailContainerContent(int $id): array;
-
-
-    /**
-     * Get form renderer path.
-     *
-     * @param bool $section
-     * @return string
-     */
-    public static function getFormRendererPath($section = false): string;
 
 
     /**
