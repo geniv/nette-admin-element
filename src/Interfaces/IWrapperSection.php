@@ -36,8 +36,8 @@ interface IWrapperSection
         DEFAULT_ORDER_TYPES = [null => 'NULL', 'asc' => 'ASC', 'desc' => 'DESC',];
     // define renderer path latte
     const
-        RENDER_FORM = __DIR__ . '/FormRenderer.latte',
-        RENDER_FORM_SECTION = __DIR__ . '/FormSectionRenderer.latte';
+        RENDERER_FORM = __DIR__ . '/FormRenderer.latte',
+        RENDERER_FORM_SECTION = __DIR__ . '/FormSectionRenderer.latte';
 
 
     /**
