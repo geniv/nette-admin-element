@@ -1698,22 +1698,6 @@ class WrapperSection implements IWrapperSection
     }
 
 
-//    /**
-//     * Get form renderer path.
-//     *
-//     * @param bool $section
-//     * @return string
-//     */
-//    public static function getFormRendererPath($section = false): string
-//    {
-//        if ($section) {
-//            return __DIR__ . '/FormSectionRenderer.latte';
-//        } else {
-//            return __DIR__ . '/FormRenderer.latte';
-//        }
-//    }
-
-
     /**
      * Get form container content.
      *
