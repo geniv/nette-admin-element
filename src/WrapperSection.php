@@ -42,7 +42,7 @@ class WrapperSection implements IWrapperSection
     /** @var bool */
     private $configureReady = false;
     /** @var array */
-    private $configureMain, $configureDatabase, $configureItems, $configureElements, $configureParameters;
+    private $configureItems, $configureElements, $configureParameters;
     /** @var string */
     private $actionType;
     /** @var string */
@@ -642,6 +642,11 @@ class WrapperSection implements IWrapperSection
             // set testSql
             if (isset($configureSectionArray['database']['testsql'])) {
                 $this->setDatabaseTestSql($configureSectionArray['database']['testsql']);
+            }
+
+            // set pk order
+            if (isset($configureSectionArray['database']['pkorder']) && $configureSectionArray['database']['pkorder']) {
+                $this->databaseOrderDefault = [$this->getDatabaseTablePk() => $configureSectionArray['database']['pkorder']];
             }
         }
 
