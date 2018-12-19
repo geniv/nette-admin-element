@@ -3,7 +3,7 @@
 namespace AdminElement\Elements;
 
 use AdminElement\IConfigureSection;
-use AdminElement\WrapperSection;
+use AdminElement\IWrapperSection;
 use Dibi\Fluent;
 use Nette\Application\UI\Form;
 use Nette\Caching\Cache;
@@ -22,7 +22,7 @@ class ForeignFkWhereElement extends AbstractElement
     const
         DESCRIPTION = 'FK WHERE (M:)',
         USAGE = [IConfigureSection::PRESENTER_FOREIGN],
-        ACTION_TYPES = [WrapperSection::ACTION_LIST, WrapperSection::ACTION_ADD, WrapperSection::ACTION_EDIT, WrapperSection::ACTION_ARCHIVE];
+        ACTION_TYPES = [IWrapperSection::ACTION_LIST, IWrapperSection::ACTION_ADD, IWrapperSection::ACTION_EDIT, IWrapperSection::ACTION_ARCHIVE];
 
 
     /**

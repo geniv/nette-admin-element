@@ -2,7 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use AdminElement\WrapperSection;
+use AdminElement\IWrapperSection;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
 
@@ -17,7 +17,7 @@ class LabelElement extends AbstractElement
 {
     const
         DESCRIPTION = 'label element for show plain text in 1:N table',
-        ACTION_TYPES = [WrapperSection::ACTION_EDIT];
+        ACTION_TYPES = [IWrapperSection::ACTION_EDIT];
 
 
     /**

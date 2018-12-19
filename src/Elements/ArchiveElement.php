@@ -2,7 +2,7 @@
 
 namespace AdminElement\Elements;
 
-use AdminElement\WrapperSection;
+use AdminElement\IWrapperSection;
 use DateTime;
 use Dibi\Fluent;
 
@@ -17,7 +17,7 @@ class ArchiveElement extends HiddenElement
 {
     const
         DESCRIPTION = 'archive/deleted element for archive row in 1:N table',
-        ACTION_TYPES = [WrapperSection::ACTION_ARCHIVE];
+        ACTION_TYPES = [IWrapperSection::ACTION_ARCHIVE];
 
 
     /**
@@ -25,6 +25,7 @@ class ArchiveElement extends HiddenElement
      *
      * @param array $values
      * @return string|null
+     * @throws \Exception
      */
     public function preProcessUpdateValues(array $values)
     {
@@ -55,7 +56,7 @@ class ArchiveElement extends HiddenElement
             // if archive disabled (default false)
             $fluent->where([$where => null]);
         } else {
-            if ($this->wrapperSection->getActionType() == WrapperSection::ACTION_LIST) {
+            if ($this->wrapperSection->getActionType() == IWrapperSection::ACTION_LIST) {
                 $fluent->where($where . ' IS NOT NULL');
             }
         }

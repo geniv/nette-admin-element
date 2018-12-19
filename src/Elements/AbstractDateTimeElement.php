@@ -2,6 +2,7 @@
 
 namespace AdminElement\Elements;
 
+use DateTime;
 use Nette\Application\UI\Form;
 use Nette\Forms\Container;
 
@@ -78,7 +79,7 @@ abstract class AbstractDateTimeElement extends AbstractTextElement
     {
         if (isset($this->configure['format'])) {
             $value = $values[$this->idElement];
-            if ($value instanceof \DateTime) {
+            if ($value instanceof DateTime) {
                 $values[$this->idElement] = $value->format(static::SYSTEM_FORMAT);
             }
         }
@@ -119,6 +120,7 @@ abstract class AbstractDateTimeElement extends AbstractTextElement
      *
      * @param $data
      * @return string
+     * @throws \Exception
      */
     public function getRenderRow($data): string
     {
@@ -130,9 +132,9 @@ abstract class AbstractDateTimeElement extends AbstractTextElement
                     return '';
                 }
                 // string convert to datetime
-                $item = new \DateTime($item);
+                $item = new DateTime($item);
             }
-            if ($item instanceof \DateTime) {
+            if ($item instanceof DateTime) {
                 // format output
                 return $item->format($this->configure['format']);
             }

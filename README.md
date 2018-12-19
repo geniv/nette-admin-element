@@ -38,7 +38,7 @@ extensions:
 
 presenters - startup:
 ```php
-$this->template->formRendererPath = WrapperSection::getFormRendererPath();
+$this->template->formRendererPath = IWrapperSection::RENDERER_FORM;
 ```
 
 presenters - grid table component:

@@ -2,10 +2,10 @@
 
 namespace AdminElement;
 
-use AdminElement\Elements\AbstractElement;
 use AdminElement\Elements\ArchiveElement;
 use AdminElement\Elements\ForeignFkPkElement;
 use AdminElement\Elements\ForeignFkWhereElement;
+use AdminElement\Elements\IAbstractElement;
 use AdminElement\Elements\PositionElement;
 use dibi;
 use Dibi\Connection;
@@ -29,27 +29,9 @@ use Tracy\ILogger;
  * @author  geniv
  * @package AdminElement
  */
-class WrapperSection
+class WrapperSection implements IWrapperSection
 {
     use SmartObject;
-
-    // action type
-    const
-        ACTION_LIST = 'list',
-        ACTION_ADD = 'add',
-        ACTION_EDIT = 'edit',
-        ACTION_DETAIL = 'detail',
-        ACTION_DELETE = 'delete',
-        ACTION_ARCHIVE = 'archive',
-        ACTION_EXPORT = 'export',
-        ACTION_SORTABLE = 'sortable';
-    // list all action types (actiontype)
-    const
-        ACTION_TYPES = [self::ACTION_LIST, self::ACTION_ADD, self::ACTION_EDIT, self::ACTION_DETAIL, self::ACTION_ARCHIVE, self::ACTION_EXPORT], // all types
-        ACTION_TYPES_ELEMENT = [self::ACTION_LIST, self::ACTION_ADD, self::ACTION_EDIT, self::ACTION_DETAIL];   // select types
-    // default order types
-    const
-        DEFAULT_ORDER_TYPES = [null => 'NULL', 'asc' => 'ASC', 'desc' => 'DESC',];
 
     /** @var IConfigureSection */
     private $configureSection;
@@ -60,7 +42,7 @@ class WrapperSection
     /** @var bool */
     private $configureReady = false;
     /** @var array */
-    private $configureMain, $configureDatabase, $configureItems, $configureElements, $configureParameters;
+    private $configureItems, $configureElements, $configureParameters;
     /** @var string */
     private $actionType;
     /** @var string */
@@ -140,9 +122,10 @@ class WrapperSection
     /**
      * Get configure parameters.
      *
+     * @internal
      * @return array
      */
-    public function getConfigureParameters(): array
+    private function getConfigureParameters(): array
     {
         // get system neon configure
         return $this->configureParameters;
@@ -405,6 +388,7 @@ class WrapperSection
         return $this->adminElement->getElements($usage);
     }
 
+//FIXME doplnit moznost razeni na ID protoze momentalne to jde jen na vsechny ostastni ale ne vlastni prvni sloupec ID
 
 //TODO prenaset nejak razeni - pokud se odering na strance 1 seradi tak aby drzel sort na dalsi stranky paginatoru 2,3...?? treba pres session?? http://localhost/NetteWeb/admin/content-foreign/?page=3&idSection=5b20edd043afe
 //TODO konfigurator komponenta by mohla umet group/list kde se bude pouzivat jako overlay a bude mit obsah jako sablonu jednoho radku, a v nastaveni komponenty v latte definovane obsahy, kazdy soupec bude mit take mozost enabled pro povolovani ci zakazovani v ramci jazyka!
@@ -440,6 +424,7 @@ class WrapperSection
 //TODO pridat tlacitko na export csv - respektive nastaveni uvnit configure section jake formaty budou pouzite, jake budou oddelovace/ a neli by se zapinat jako "drivery"
 //TODO umoznit u textovych elementu prohanet vystupni text funkcema typu webalize... atd
 //TODO element odkaz uvnitr adminu, kde obsah v odkazu muze byt text/obrazek
+//TODO elememt typu ENUM
 
 
     /**
@@ -658,6 +643,11 @@ class WrapperSection
             if (isset($configureSectionArray['database']['testsql'])) {
                 $this->setDatabaseTestSql($configureSectionArray['database']['testsql']);
             }
+
+            // set pk order
+            if (isset($configureSectionArray['database']['pkorder']) && $configureSectionArray['database']['pkorder']) {
+                $this->databaseOrderDefault = [$this->getDatabaseTablePk() => $configureSectionArray['database']['pkorder']];
+            }
         }
 
         // set section name
@@ -838,7 +828,6 @@ class WrapperSection
     /**
      * Get database alias name.
      *
-     * @internal
      * @param string $name
      * @return string
      */
@@ -910,9 +899,9 @@ class WrapperSection
      *
      * @internal
      * @param string $idElement
-     * @return AbstractElement
+     * @return IAbstractElement
      */
-    private function getInternalElement(string $idElement): AbstractElement
+    private function getInternalElement(string $idElement): IAbstractElement
     {
         if (!isset($this->configureElements[$idElement])) {
             die('unknown id element: ' . $idElement);
@@ -941,9 +930,9 @@ class WrapperSection
      * Get element.
      *
      * @param string $idElement
-     * @return AbstractElement
+     * @return IAbstractElement
      */
-    public function getElement(string $idElement): AbstractElement
+    public function getElement(string $idElement): IAbstractElement
     {
         return $this->getInternalElement($idElement);
     }
@@ -1209,10 +1198,10 @@ class WrapperSection
     /**
      * Set foreign.
      *
-     * @param AbstractElement $abstractElement
-     * @param string          $type
+     * @param IAbstractElement $abstractElement
+     * @param string           $type
      */
-    public function setForeign(AbstractElement $abstractElement, string $type)
+    public function setForeign(IAbstractElement $abstractElement, string $type)
     {
         $configure = $abstractElement->getConfigure();
         if (isset($configure['foreign']) && $configure['foreign']) {
@@ -1432,9 +1421,9 @@ class WrapperSection
      *
      * @return int
      */
-    public function getFkId()
+    public function getFkId(): int
     {
-        return $this->fkId;
+        return $this->fkId ?? 0;
     }
 
 
@@ -1455,9 +1444,9 @@ class WrapperSection
      *
      * @return string
      */
-    public function getSubSectionId()
+    public function getSubSectionId(): string
     {
-        return $this->subSectionId;
+        return $this->subSectionId ?? '';
     }
 
 
@@ -1715,22 +1704,6 @@ class WrapperSection
 
 
     /**
-     * Get form renderer path.
-     *
-     * @param bool $section
-     * @return string
-     */
-    public static function getFormRendererPath($section = false): string
-    {
-        if ($section) {
-            return __DIR__ . '/FormSectionRenderer.latte';
-        } else {
-            return __DIR__ . '/FormRenderer.latte';
-        }
-    }
-
-
-    /**
      * Get form container content.
      *
      * @param Form $form
@@ -1752,8 +1725,6 @@ class WrapperSection
 
     /**
      * Clean cache.
-     *
-     * @internal
      */
     public function cleanCache()
     {
@@ -2427,6 +2398,6 @@ class WrapperSection
             $this->processTestSQL($result);
             die;
         }
-        return $result->execute();
+        return $result->execute(Dibi::AFFECTED_ROWS);
     }
 }
