@@ -169,7 +169,9 @@ class WrapperSection implements IWrapperSection
                 }
             }
         }
-        $result['FileSystem'][FileSystem::FILES_DIR] = realpath($webDir . FileSystem::FILES_DIR);   // add file system for configure content
+
+        $fileSystem = realpath($webDir . FileSystem::FILES_DIR);
+        $result['FileSystem'][$fileSystem] = $fileSystem;   // add file system for configure content
         return $result;
     }
 
