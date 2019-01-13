@@ -717,6 +717,86 @@ class WrapperSection implements IWrapperSection
 
 
     /**
+     * Get usage auto increment.
+     *
+     * @param string $tableName
+     * @return array
+     */
+    public function getUsageAutoIncrement(string $tableName): array
+    {
+        $tableColumns = $this->getInformationSchemaColumns($tableName);
+        $tableColumnPri = array_filter($tableColumns, function ($row) {
+            return $row['column_key'] == 'PRI';
+        });
+
+        $tableColumnPriKey = array_keys($tableColumnPri)[0];    // get key PK (PRI)
+        $tableId = $tableColumnPri[$tableColumnPriKey];         // get array of PK
+
+//      SELECT ~0 as max_bigint_unsigned
+//,      ~0 >> 32 as max_int_unsigned
+//,      ~0 >> 40 as max_mediumint_unsigned
+//,      ~0 >> 48 as max_smallint_unsigned
+//,      ~0 >> 56 as max_tinyint_unsigned
+//,      ~0 >> 1  as max_bigint_signed
+//,      ~0 >> 33 as max_int_signed
+//,      ~0 >> 41 as max_mediumint_signed
+//,      ~0 >> 49 as max_smallint_signed
+//,      ~0 >> 57 as max_tinyint_signed
+//        IF(COLUMN_TYPE LIKE '%unsigned', 'YES', 'NO')
+
+        $maxValue = '';
+        $dataType = $tableId['data_type'] . (strrpos($tableId['column_type'], 'unsigned') ? ' unsigned' : null);
+        switch ($dataType) {
+            case 'tinyint':
+                $maxValue = '~0 >> 57';
+                break;
+
+            case 'tinyint unsigned':
+                $maxValue = '~0 >> 56';
+                break;
+
+            case 'smallint':
+                $maxValue = '~0 >> 49';
+                break;
+
+            case 'smallint unsigned':
+                $maxValue = '~0 >> 48';
+                break;
+
+            case 'mediumint':
+                $maxValue = '~0 >> 41';
+                break;
+
+            case 'mediumint unsigned':
+                $maxValue = '~0 >> 40';
+                break;
+
+            case 'int':
+                $maxValue = '~0 >> 33';
+                break;
+
+            case 'int unsigned':
+                $maxValue = '~0 >> 32';
+                break;
+
+            case 'bigint':
+                $maxValue = '~0 >> 1';
+                break;
+
+            case 'bigint unsigned':
+                $maxValue = '~0';
+                break;
+        }
+
+        $result = $this->connection->select('AUTO_INCREMENT, ' . $maxValue . ' AS maximum, ((AUTO_INCREMENT/(' . $maxValue . '))*100) AS ai_use')
+            ->from('[information_schema].[tables]')
+            ->where(['table_name' => $tableName])->fetch();
+
+        return (array) ($result ?: []);
+    }
+
+
+    /**
      * Get information schema columns.
      *
      * @param string $tableName

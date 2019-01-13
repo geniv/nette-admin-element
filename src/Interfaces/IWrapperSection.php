@@ -280,6 +280,15 @@ interface IWrapperSection
 
 
     /**
+     * Get usage auto increment.
+     *
+     * @param string $tableName
+     * @return array
+     */
+    public function getUsageAutoIncrement(string $tableName): array;
+
+
+    /**
      * Get information schema columns.
      *
      * @param string $tableName
