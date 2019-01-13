@@ -724,13 +724,16 @@ class WrapperSection implements IWrapperSection
      */
     public function getUsageAutoIncrement(string $tableName): array
     {
-        $tableColumns = $this->getInformationSchemaColumns($tableName);
-        $tableColumnPri = array_filter($tableColumns, function ($row) {
-            return $row['column_key'] == 'PRI';
-        });
+        $cacheName = 'getUsageAutoIncrement' . $tableName;
+        $result = $this->cache->load($cacheName);
+        if ($result === null) {
+            $tableColumns = $this->getInformationSchemaColumns($tableName);
+            $tableColumnPri = array_filter($tableColumns, function ($row) {
+                return $row['column_key'] == 'PRI';
+            });
 
-        $tableColumnPriKey = array_keys($tableColumnPri)[0];    // get key PK (PRI)
-        $tableId = $tableColumnPri[$tableColumnPriKey];         // get array of PK
+            $tableColumnPriKey = array_keys($tableColumnPri)[0];    // get key PK (PRI)
+            $tableId = $tableColumnPri[$tableColumnPriKey];         // get array of PK
 
 //      SELECT ~0 as max_bigint_unsigned
 //,      ~0 >> 32 as max_int_unsigned
@@ -744,59 +747,65 @@ class WrapperSection implements IWrapperSection
 //,      ~0 >> 57 as max_tinyint_signed
 //        IF(COLUMN_TYPE LIKE '%unsigned', 'YES', 'NO')
 
-        $maxValue = '';
-        $dataType = $tableId['data_type'] . (strrpos($tableId['column_type'], 'unsigned') ? ' unsigned' : null);
-        switch ($dataType) {
-            case 'tinyint':
-                $maxValue = '~0 >> 57';
-                break;
+            $maxValue = '';
+            $dataType = $tableId['data_type'] . (strrpos($tableId['column_type'], 'unsigned') ? ' unsigned' : null);
+            switch ($dataType) {
+                case 'tinyint':
+                    $maxValue = '~0 >> 57';
+                    break;
 
-            case 'tinyint unsigned':
-                $maxValue = '~0 >> 56';
-                break;
+                case 'tinyint unsigned':
+                    $maxValue = '~0 >> 56';
+                    break;
 
-            case 'smallint':
-                $maxValue = '~0 >> 49';
-                break;
+                case 'smallint':
+                    $maxValue = '~0 >> 49';
+                    break;
 
-            case 'smallint unsigned':
-                $maxValue = '~0 >> 48';
-                break;
+                case 'smallint unsigned':
+                    $maxValue = '~0 >> 48';
+                    break;
 
-            case 'mediumint':
-                $maxValue = '~0 >> 41';
-                break;
+                case 'mediumint':
+                    $maxValue = '~0 >> 41';
+                    break;
 
-            case 'mediumint unsigned':
-                $maxValue = '~0 >> 40';
-                break;
+                case 'mediumint unsigned':
+                    $maxValue = '~0 >> 40';
+                    break;
 
-            case 'int':
-                $maxValue = '~0 >> 33';
-                break;
+                case 'int':
+                    $maxValue = '~0 >> 33';
+                    break;
 
-            case 'int unsigned':
-                $maxValue = '~0 >> 32';
-                break;
+                case 'int unsigned':
+                    $maxValue = '~0 >> 32';
+                    break;
 
-            case 'bigint':
-                $maxValue = '~0 >> 1';
-                break;
+                case 'bigint':
+                    $maxValue = '~0 >> 1';
+                    break;
 
-            case 'bigint unsigned':
-                $maxValue = '~0';
-                break;
+                case 'bigint unsigned':
+                    $maxValue = '~0';
+                    break;
+            }
+
+            $result = $this->connection->select('AUTO_INCREMENT, ' . $maxValue . ' AS maximum, ((AUTO_INCREMENT/(' . $maxValue . '))*100) AS ai_use')
+                ->from('[information_schema].[tables]')
+                ->where(['table_name' => $tableName]);
+
+            if ($this->isTestSQL()) {
+                $this->processTestSQL($result);
+            }
+
+            $result = $result->fetch();
+            try {
+                $this->cache->save($cacheName, $result, [Cache::TAGS => ['fk']]);
+            } catch (\Throwable $e) {
+            }
         }
-
-        $result = $this->connection->select('AUTO_INCREMENT, ' . $maxValue . ' AS maximum, ((AUTO_INCREMENT/(' . $maxValue . '))*100) AS ai_use')
-            ->from('[information_schema].[tables]')
-            ->where(['table_name' => $tableName]);
-
-        if ($this->isTestSQL()) {
-            $this->processTestSQL($result);
-        }
-
-        return (array) ($result->fetch() ?: []);
+        return (array) ($result ?: []);
     }
 
 
