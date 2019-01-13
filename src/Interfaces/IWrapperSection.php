@@ -280,6 +280,15 @@ interface IWrapperSection
 
 
     /**
+     * Get information schema columns.
+     *
+     * @param string $tableName
+     * @return array
+     */
+    public function getInformationSchemaColumns(string $tableName): array;
+
+
+    /**
      * Get information schema key column usage.
      *
      * @param string|null $tableName

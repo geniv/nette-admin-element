@@ -716,38 +716,36 @@ class WrapperSection implements IWrapperSection
     }
 
 
-//    public function getInformationSchemaTablesConstraints(string $table): array
-//    {
-//        // list database constraint name by table name
-//        $result = $this->connection->select('*, tc.constraint_name, tc.constraint_type')
-//            ->from('[INFORMATION_SCHEMA].[TABLE_CONSTRAINTS]')->as('tc')
-//            ->where(['tc.table_name' => $table]);
-//
-//        if ($this->isTestSQL()) {
-//            $this->processTestSQL($result);
-//        }
-//        return $result->fetchPairs('constraint_name', 'constraint_type');
-//    }
+    /**
+     * Get information schema columns.
+     *
+     * @param string $tableName
+     * @return array
+     */
+    public function getInformationSchemaColumns(string $tableName): array
+    {
+        // list database columns by table name
+        $cacheName = 'getInformationSchemaColumns' . $tableName;
+        $result = $this->cache->load($cacheName);
+        if ($result === null) {
+            $result = $this->connection->select('c.column_name, c.ordinal_position, c.column_default, c.is_nullable, ' .
+                'c.data_type, c.character_maximum_length, c.numeric_precision, c.datetime_precision, c.character_set_name, ' .
+                'c.collation_name, c.column_type, c.privileges, c.column_comment')
+                ->from('[INFORMATION_SCHEMA].[COLUMNS]')->as('c')
+                ->where(['c.table_name' => $tableName]);
 
+            if ($this->isTestSQL()) {
+                $this->processTestSQL($result);
+            }
 
-//    private static $databaseListColumnsArray;
-//    public function getInformationSchemaColumns(string $table): array
-//    {
-//        // list database columns by table name
-//        if (!isset(self::$databaseListColumnsArray)) {
-//            $result = $this->connection->select('c.column_name, c.ordinal_position, c.column_default, c.is_nullable, ' .
-//                'c.data_type, c.character_maximum_length, c.numeric_precision, c.datetime_precision, c.character_set_name, ' .
-//                'c.collation_name, c.column_type, c.privileges, c.column_comment')
-//                ->from('[INFORMATION_SCHEMA].[COLUMNS]')->as('c')
-//                ->where(['c.table_name' => $table]);
-//
-//            if ($this->isTestSQL()) {
-//                $this->processTestSQL($result);
-//            }
-//            self::$databaseListColumnsArray = $result->fetchAssoc('column_name');
-//        }
-//        return self::$databaseListColumnsArray;
-//    }
+            $result = $result->fetchAssoc('column_name');
+            try {
+                $this->cache->save($cacheName, $result, [Cache::TAGS => ['fk']]);
+            } catch (\Throwable $e) {
+            }
+        }
+        return $result ?? [];
+    }
 
 
     /**
