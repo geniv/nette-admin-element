@@ -632,7 +632,7 @@ class WrapperSection implements IWrapperSection
             // if define database for add configuration section mode
             $this->setDatabase($configureSectionArray['database']['table'], $configureSectionArray['database']['pk']);
 
-            //set fkpk + fkwhere
+            //set fkpk + fkwhere - FK-WHERE ==> FKPK
             if (isset($configureSectionArray['database']['fkpk']) && isset($configureSectionArray['database']['fkwhere'])) {
                 $this->setDatabaseFk($configureSectionArray['database']['fkpk'], $configureSectionArray['database']['fkwhere']);
             }
@@ -659,8 +659,6 @@ class WrapperSection implements IWrapperSection
         // set sub-element
         $this->setSubElementName($configureSectionArray['subelement'] ?? null);
         $this->setSubElementConfig($configureSectionArray['subelementconfig'] ?? null);
-
-//FIXME FK-WHERE + FKPK -> musi byt where->pk musi byt v tomto poradi!!!!
 
         // set items
         $this->setItems($configureSectionArray['items'] ?? []);
