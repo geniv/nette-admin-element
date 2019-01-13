@@ -790,9 +790,13 @@ class WrapperSection implements IWrapperSection
 
         $result = $this->connection->select('AUTO_INCREMENT, ' . $maxValue . ' AS maximum, ((AUTO_INCREMENT/(' . $maxValue . '))*100) AS ai_use')
             ->from('[information_schema].[tables]')
-            ->where(['table_name' => $tableName])->fetch();
+            ->where(['table_name' => $tableName]);
 
-        return (array) ($result ?: []);
+        if ($this->isTestSQL()) {
+            $this->processTestSQL($result);
+        }
+
+        return (array) ($result->fetch() ?: []);
     }
 
 
