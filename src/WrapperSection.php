@@ -730,7 +730,7 @@ class WrapperSection implements IWrapperSection
         if ($result === null) {
             $result = $this->connection->select('c.column_name, c.ordinal_position, c.column_default, c.is_nullable, ' .
                 'c.data_type, c.character_maximum_length, c.numeric_precision, c.datetime_precision, c.character_set_name, ' .
-                'c.collation_name, c.column_type, c.privileges, c.column_comment')
+                'c.collation_name, c.column_type, c.column_key, c.extra, c.privileges, c.column_comment')
                 ->from('[INFORMATION_SCHEMA].[COLUMNS]')->as('c')
                 ->where(['c.table_name' => $tableName]);
 
