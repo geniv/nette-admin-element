@@ -280,6 +280,15 @@ interface IWrapperSection
 
 
     /**
+     * Get primary key by information schema.
+     *
+     * @param string $tableName
+     * @return string
+     */
+    public function getPrimaryKeyByInformationSchema(string $tableName): string;
+
+
+    /**
      * Get usage auto increment.
      *
      * @param string $tableName

@@ -714,6 +714,22 @@ class WrapperSection implements IWrapperSection
 
 
     /**
+     * Get primary key by information schema.
+     *
+     * @param string $tableName
+     * @return string
+     */
+    public function getPrimaryKeyByInformationSchema(string $tableName): string
+    {
+        $tableColumns = $this->getInformationSchemaColumns($tableName);
+        $tableColumnPri = array_filter($tableColumns, function ($row) {
+            return $row['column_key'] == 'PRI';
+        });
+        return array_keys($tableColumnPri)[0] ?? '';
+    }
+
+
+    /**
      * Get usage auto increment.
      *
      * @param string $tableName
@@ -725,12 +741,8 @@ class WrapperSection implements IWrapperSection
         $result = $this->cache->load($cacheName);
         if ($result === null) {
             $tableColumns = $this->getInformationSchemaColumns($tableName);
-            $tableColumnPri = array_filter($tableColumns, function ($row) {
-                return $row['column_key'] == 'PRI';
-            });
-
-            $tableColumnPriKey = array_keys($tableColumnPri)[0];    // get key PK (PRI)
-            $tableId = $tableColumnPri[$tableColumnPriKey];         // get array of PK
+            $tableColumnPriKey = $this->getPrimaryKeyByInformationSchema($tableName);   // get key PK (PRI)
+            $tableId = $tableColumns[$tableColumnPriKey];   // get array of PK
 
             //       ~0 as max_bigint_unsigned
             // ~0 >> 32 as max_int_unsigned
