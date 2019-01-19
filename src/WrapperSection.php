@@ -929,6 +929,19 @@ class WrapperSection implements IWrapperSection
 
 
     /**
+     * Get database name.
+     *
+     * @param string $name
+     * @return string
+     */
+    public function getDatabaseName(string $name): string
+    {
+        $explode = array_slice(explode('_', $name), 1); // always remove prefix
+        return implode('_', $explode ?? []);
+    }
+
+
+    /**
      * Get database alias name.
      *
      * @param string $name

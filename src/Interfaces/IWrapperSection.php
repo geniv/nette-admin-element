@@ -325,6 +325,15 @@ interface IWrapperSection
 
 
     /**
+     * Get database name.
+     *
+     * @param string $name
+     * @return string
+     */
+    public function getDatabaseName(string $name): string;
+
+
+    /**
      * Get database alias name.
      *
      * @param string $name
