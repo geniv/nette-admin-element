@@ -13,6 +13,6 @@
 <div n:class="!$item->getOption('image') && !$item->getOption('content') ? hidden, group-custom-contents">
     <img n:if="$item->getOption('image')" class="before-upload-image-preview hidden">
     {if $item->getOption('content')}
-        <a n:tag-if="$item->getOption('image')" href="{$item->getOption('path')}" target="_blank">{$item->getOption('content')}</a>
+        <a n:tag-if="$item->getOption('image')" href="{$baseUrl|noescape}/{$item->getOption('path')}" target="_blank">{$item->getOption('content')}</a>
     {/if}
 </div>

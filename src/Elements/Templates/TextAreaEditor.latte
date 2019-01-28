@@ -10,7 +10,7 @@
                     <li n:foreach="$item->getOption('list') as $file" draggable="true">
                         <div class="data-source" data-file-type="{if $item->getOption('isImage')($file)}image{else}file{/if}" data-file-name="{$file->getBasename()}">
                             <span>
-                                <img src="{if $item->getOption('isImage')($file)}{thumb $item->getOption('path'), $file->getBasename(), 280, 140}{else}www/images/file-image.svg{/if}">
+                                <img src="{$baseUrl|noescape}/{if $item->getOption('isImage')($file)}{thumb $item->getOption('path'), $file->getBasename(), 280, 140}{else}www/images/file-image.svg{/if}">
                             </span>
                             <b>{$file->getBasename()}</b>
                         </div>
