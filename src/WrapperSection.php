@@ -12,6 +12,8 @@ use Dibi\Connection;
 use Dibi\Exception;
 use Dibi\IDataSource;
 use Nette\Application\UI\Form;
+use Nette\Application\UI\ITemplate;
+use Nette\Application\UI\ITemplateFactory;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
 use Nette\DI\Container;
@@ -39,6 +41,8 @@ class WrapperSection implements IWrapperSection
     private $adminElement;
     /** @var Connection */
     private $connection;
+    /** @var ITemplate */
+    private $template;
     /** @var bool */
     private $configureReady = false;
     /** @var array */
@@ -87,6 +91,7 @@ class WrapperSection implements IWrapperSection
         $this->connection = $connection;                        // load database connection
         $this->configureParameters = $container->parameters;    // load system configure
         $this->user = $user;                                    // load system user
+        $this->template = $container->getByType(ITemplateFactory::class)->createTemplate(); // load template from presenter
 
         // init cache
         $this->cache = new Cache($storage, 'WrapperSection');
@@ -1137,6 +1142,17 @@ class WrapperSection implements IWrapperSection
     public function getConnection(): Connection
     {
         return $this->connection;
+    }
+
+
+    /**
+     * Get template.
+     *
+     * @return ITemplate
+     */
+    public function getTemplate(): ITemplate
+    {
+        return $this->template;
     }
 
 

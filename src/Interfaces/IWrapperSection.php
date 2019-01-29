@@ -6,6 +6,7 @@ use AdminElement\Elements\IAbstractElement;
 use Dibi\Connection;
 use Dibi\IDataSource;
 use Nette\Application\UI\Form;
+use Nette\Application\UI\ITemplate;
 use Nette\Caching\Cache;
 
 
@@ -417,6 +418,14 @@ interface IWrapperSection
      * @return Connection
      */
     public function getConnection(): Connection;
+
+
+    /**
+     * Get template.
+     *
+     * @return ITemplate
+     */
+    public function getTemplate(): ITemplate;
 
 
     /**
