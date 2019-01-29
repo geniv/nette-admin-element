@@ -26,7 +26,7 @@ abstract class AbstractUploadImageElement extends UploadElement
         $values = $this->wrapperSection->getDatabaseValues() ?: null;
         // uploadimage element
         $form->addUploadImage($this->idElement, $this->getTranslateNameContent())
-            ->setPath($this->getRelativePath())
+            ->setPath($this->getRelativePath(), $this->baseUrl . '/')
             ->setImageSize(null, '200')
             ->setValue($values[$this->idElement . 'select'])
             ->setOption('image', true);
