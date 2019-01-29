@@ -29,6 +29,8 @@ class UploadElement extends AbstractElement
     private $deleteFile;
     /** @var Cache */
     protected $cache;
+    /** @var string */
+    protected $baseUrl;
 
 
     /**
@@ -41,6 +43,7 @@ class UploadElement extends AbstractElement
     {
         parent::__construct($wrapperSection, $idElement);
         $this->cache = $this->wrapperSection->getCache();
+        $this->baseUrl = $this->wrapperSection->getTemplate()->baseUrl;
     }
 
 
