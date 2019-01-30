@@ -33,6 +33,8 @@ abstract class AbstractElement implements IAbstractElement
     protected $idElement;
     /** @var array */
     protected $configure;
+    /** @var string */
+    protected $baseUrl;
 
 
     /**
@@ -46,6 +48,7 @@ abstract class AbstractElement implements IAbstractElement
         $this->wrapperSection = $wrapperSection;
         $this->idElement = $idElement;
         $this->configure = $wrapperSection->getItem($idElement);
+        $this->baseUrl = $this->wrapperSection->getTemplate()->baseUrl;
     }
 
 

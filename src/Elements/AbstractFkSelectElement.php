@@ -169,7 +169,7 @@ abstract class AbstractFkSelectElement extends AbstractSelectElement
             if (file_exists($this->getAbsolutePath() . $item) && is_file($this->getAbsolutePath() . $item)) {
                 // via code: \AdminElement\Elements\AbstractUploadImageElement::getRenderRow
                 $src = Thumbnail::getSrcPath($this->getRelativePath(), $item, null, '64');
-                $html = Html::el('img', ['src' => $src]);
+                $html = Html::el('img', ['src' => $this->baseUrl . '/' . $src]);
                 return (string) $html;
             }
         }
